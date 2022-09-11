@@ -1,0 +1,13 @@
+.title {
+  background-color: rgb(202, 202, 202);
+  color: #fff;
+  font-size: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+}
+
+.label {
+  font-size: 15;
+  width: 130px;
+}

@@ -14,11 +14,9 @@ const SignIn = () => {
   };
 
   return (
-    <div className="container">
-      <div className="form-title">Đăng nhập</div>
-
+    <div className="c-container">
       <Form
-        className="form"
+        className="c-form"
         name="basic"
         initialValues={{
           remember: true,
@@ -27,6 +25,8 @@ const SignIn = () => {
         onFinishFailed={onFinishFailed}
         autoComplete="off"
         layout="vertical">
+        <div className="c-form-title">Đăng nhập</div>
+
         <Form.Item
           label="Email"
           name="email"
@@ -40,7 +40,7 @@ const SignIn = () => {
               message: "Email sai định dạng",
             },
           ]}>
-          <Input placeholder="Nhập email" />
+          <Input size="large" placeholder="Nhập email" />
         </Form.Item>
 
         <Form.Item
@@ -52,18 +52,23 @@ const SignIn = () => {
               message: "Vui lòng nhập mật khẩu!",
             },
           ]}>
-          <Input.Password placeholder="Nhập mật khẩu" />
+          <Input.Password size="large" placeholder="Nhập mật khẩu" />
         </Form.Item>
 
-        <Form.Item name="remember">
-          <Checkbox>Ghi nhớ đăng nhập</Checkbox>
-        </Form.Item>
+        <div className="d-flex justify-content-between">
+          <Form.Item name="remember">
+            <Checkbox>Ghi nhớ đăng nhập</Checkbox>
+          </Form.Item>
+
+          <Link to="forgot-password">Quên mật khẩu ?</Link>
+        </div>
 
         <Button
           type="primary"
           htmlType="submit"
           className="submit-btn"
-          size="large">
+          size="large"
+          style={{ height: 45 }}>
           Đăng nhập
         </Button>
       </Form>

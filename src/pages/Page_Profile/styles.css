@@ -1,0 +1,28 @@
+.avatar-wrapper {
+  position: relative;
+  border: 1px solid rgb(148, 148, 148);
+  height: 175px;
+  width: 175px;
+  border-radius: 50%;
+  margin-inline: auto;
+}
+
+.avatar {
+  cursor: pointer;
+  height: 175px;
+  width: 175px;
+  border-radius: 50%;
+}
+
+.avatar-icon {
+  position: absolute;
+  left: 100px;
+  bottom: -10px;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  border-width: 1px;
+  background-color: rgb(216, 97, 23);
+  display: grid;
+  place-items: center;
+}

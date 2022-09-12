@@ -2,7 +2,7 @@ import "../../styles/auth.css";
 
 import React, { useRef } from "react";
 import { Button, Checkbox, Form, Input } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from "axios";
 import { useState } from "react";
@@ -10,12 +10,14 @@ import { useState } from "react";
 const SECRET_KEY = "6LfAy-ohAAAAALIh0SUR83BO4KLe4ikUWv76zLcE";
 
 const ForgotPassword = () => {
+  const navigate = useNavigate();
   const captchaRef = useRef();
 
   const [submitDisabled, setSubmitDisabled] = useState(true);
 
   const onFinish = (values) => {
     console.log("Success:", values);
+    navigate("/confirm-otp");
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -29,11 +31,9 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="container">
-      <div className="form-title">Lấy lại mật khẩu</div>
-
+    <div className="c-container">
       <Form
-        className="form"
+        className="c-form"
         name="basic"
         initialValues={{
           remember: true,
@@ -42,6 +42,7 @@ const ForgotPassword = () => {
         onFinishFailed={onFinishFailed}
         autoComplete="off"
         layout="vertical">
+        <div className="c-form-title">Lấy lại mật khẩu</div>
         <Form.Item
           label="Email"
           name="email"
@@ -55,7 +56,7 @@ const ForgotPassword = () => {
               message: "Email sai định dạng",
             },
           ]}>
-          <Input placeholder="Nhập email" />
+          <Input size="large" placeholder="Nhập email" />
         </Form.Item>
         <Form.Item
           label="Tên đăng nhập"
@@ -66,7 +67,7 @@ const ForgotPassword = () => {
               message: "Vui lòng nhập tên đăng nhập!",
             },
           ]}>
-          <Input.Password placeholder="Nhập tên đăng nhập" />
+          <Input.Password size="large" placeholder="Nhập tên đăng nhập" />
         </Form.Item>
 
         <ReCAPTCHA
@@ -81,9 +82,14 @@ const ForgotPassword = () => {
           type="primary"
           htmlType="submit"
           className="submit-btn"
-          size="large">
+          size="large"
+          style={{ height: 45 }}>
           Gửi email
         </Button>
+
+        <Link to="/">
+          <div className="bottom-text">Quay lại đăng nhập</div>
+        </Link>
       </Form>
     </div>
   );

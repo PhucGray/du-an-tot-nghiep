@@ -1,0 +1,72 @@
+.modal-container {
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 99999;
+
+  display: grid;
+  place-items: center;
+}
+
+.modal-main {
+  height: 80%;
+  width: 60%;
+  position: relative;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fff;
+}
+
+.crop-container {
+  position: absolute;
+  top: 0;
+  height: 50%;
+  width: 50%;
+}
+
+.modal-bottom {
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tools {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding-top: 20px;
+}
+
+.tool {
+  display: flex;
+  width: 30%;
+}
+
+.tool-label {
+  margin-right: 10px;
+}
+
+.tool-item {
+  flex: 1;
+}
+
+.buttons {
+  width: 100%;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.c-btn {
+  width: 200px;
+}

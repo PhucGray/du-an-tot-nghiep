@@ -1,0 +1,29 @@
+.c-container {
+}
+
+.c-table {
+  max-width: 600px;
+  border: 1px solid rgb(151, 151, 151);
+}
+
+.c-row {
+  display: flex;
+  border: 1px solid rgb(151, 151, 151);
+  height: 50px;
+  align-items: center;
+  user-select: none;
+}
+
+.c-stt {
+  width: 10%;
+  text-align: center;
+}
+
+.c-name {
+  flex: 1;
+}
+
+.c-id {
+  width: 10%;
+  text-align: center;
+}

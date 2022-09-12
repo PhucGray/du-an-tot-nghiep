@@ -1,14 +1,8 @@
 import "../../styles/auth.css";
 
-import React, { useRef } from "react";
-import { Button, Checkbox, Form, Input } from "antd";
+import React from "react";
+import { Button, Form, Input } from "antd";
 import { Link } from "react-router-dom";
-import ReCAPTCHA from "react-google-recaptcha";
-import axios from "axios";
-import { useState } from "react";
-import { useForm } from "antd/lib/form/Form";
-
-const SECRET_KEY = "6LfAy-ohAAAAALIh0SUR83BO4KLe4ikUWv76zLcE";
 
 const ResetPassword = () => {
   const onFinish = (values) => {
@@ -20,11 +14,9 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="container">
-      <div className="form-title">Đặt lại mật khẩu</div>
-
+    <div className="c-container">
       <Form
-        className="form"
+        className="c-form"
         name="basic"
         initialValues={{
           remember: true,
@@ -33,6 +25,8 @@ const ResetPassword = () => {
         onFinishFailed={onFinishFailed}
         autoComplete="off"
         layout="vertical">
+        <div className="c-form-title">Đặt lại mật khẩu</div>
+
         <Form.Item
           label="Mật khẩu mới"
           name="newPassword"
@@ -42,28 +36,42 @@ const ResetPassword = () => {
               message: "Vui lòng nhập mật khẩu mới!",
             },
           ]}>
-          <Input.Password placeholder="Nhập mật khẩu mới" />
+          <Input.Password size="large" placeholder="Nhập mật khẩu mới" />
         </Form.Item>
 
         <Form.Item
           label="Xác nhận mật khẩu mới"
           name="confirmNewPassword"
+          dependencies={["newPassword"]}
           rules={[
             {
               required: true,
               message: "Vui lòng nhập xác nhận mật khẩu!",
             },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue("newPassword") === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error("Mật khẩu không trùng khớp!"));
+              },
+            }),
           ]}>
-          <Input.Password placeholder="Nhập xác nhận mật khẩu" />
+          <Input.Password size="large" placeholder="Nhập xác nhận mật khẩu" />
         </Form.Item>
 
         <Button
           type="primary"
           htmlType="submit"
           className="submit-btn"
-          size="large">
+          size="large"
+          style={{ height: 45 }}>
           Cập nhật
         </Button>
+
+        <Link to="/">
+          <div className="bottom-text">Quay lại đăng nhập</div>
+        </Link>
       </Form>
     </div>
   );

@@ -1,51 +1,64 @@
 import "./styles.css";
 
-import React, { useState, useCallback } from "react";
-import Cropper from "react-easy-crop";
+import React, { useState, useRef } from "react";
 import { Button, Slider } from "antd";
+import AvatarEditor from "react-avatar-editor";
+import { uploadBlobToStorage } from "../../../utils/images";
+import { height } from "../../../constants/dimension";
 
-const ModalUpdateImage = ({ visible = false, onClose = () => {} }) => {
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
+const ModalUpdateImage = ({
+  onClose = () => {},
+  image = null,
+  setUrl = () => {},
+}) => {
+  const avatarEditorRef = useRef();
+
+  const [scale, setScale] = useState(1);
   const [rotation, setRotation] = useState(0);
+  const [updateLoading, setUpdateLoading] = useState(false);
 
-  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-    // console.log(croppedArea, croppedAreaPixels);
-  }, []);
+  const onUploadClick = async () => {
+    if (avatarEditorRef) {
+      setUpdateLoading(true);
+      const base64 = avatarEditorRef.current.getImage()?.toDataURL();
 
-  if (!visible) return null;
+      const result = await fetch(base64);
+      const blob = await result.blob();
+      const url = await uploadBlobToStorage(blob);
+
+      setUrl(url);
+      setUpdateLoading(false);
+      onClose();
+    }
+  };
 
   return (
-    <div className="modal-container" onClick={onClose}>
+    <div className="c-container" onClick={onClose}>
       <div
-        className="modal-main"
+        className="c-main"
         onClick={(e) => {
           e.stopPropagation();
         }}>
-        <div className="crop-container">
-          <Cropper
-            image="https://img.huffingtonpost.com/asset/5ab4d4ac2000007d06eb2c56.jpeg?cache=sih0jwle4e&ops=1910_1000"
-            crop={crop}
-            zoom={zoom}
-            rotation={rotation}
-            aspect={1}
-            onCropChange={setCrop}
-            onCropComplete={onCropComplete}
-            onZoomChange={setZoom}
-            cropShape="round"
-            style={{}}
-          />
-        </div>
+        <div className="c-title">Thay đổi ảnh đại diện</div>
+        <AvatarEditor
+          ref={avatarEditorRef}
+          image={image?.data}
+          width={height * 0.8 * 0.35}
+          height={height * 0.8 * 0.35}
+          border={50}
+          scale={scale}
+          rotate={rotation}
+        />
 
-        <div className="modal-bottom">
+        <div className="w-100">
           <div className="tools">
             <div className="tool">
-              <div className="tool-label">Scale:</div>
+              <div className="tool-label">Thu/phóng:</div>
               <Slider
-                value={zoom}
-                onChange={(value) => setZoom(value)}
+                value={scale}
+                onChange={(value) => setScale(value)}
                 min={0}
-                max={3}
+                max={5}
                 step={0.1}
                 defaultValue={1}
                 className="tool-item"
@@ -53,7 +66,7 @@ const ModalUpdateImage = ({ visible = false, onClose = () => {} }) => {
             </div>
 
             <div className="tool">
-              <div className="tool-label">Rotate:</div>
+              <div className="tool-label">Xoay:</div>
               <Slider
                 value={rotation}
                 onChange={(value) => setRotation(value)}
@@ -74,7 +87,12 @@ const ModalUpdateImage = ({ visible = false, onClose = () => {} }) => {
               className="c-btn">
               Thoát
             </Button>
-            <Button type="primary" size="large" className="c-btn">
+            <Button
+              loading={updateLoading}
+              type="primary"
+              size="large"
+              className="c-btn"
+              onClick={onUploadClick}>
               Thay đổi
             </Button>
           </div>

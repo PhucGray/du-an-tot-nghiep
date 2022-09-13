@@ -7,3 +7,9 @@ body {
   width: 100vw;
   overflow: auto;
 }
+
+.ant-btn-loading-icon {
+  display: inline-flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}

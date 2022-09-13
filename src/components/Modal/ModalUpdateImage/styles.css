@@ -1,4 +1,11 @@
-.modal-container {
+.c-title {
+  font-size: 20px;
+  margin-top: 20px;
+  margin-bottom: 40px;
+  font-weight: bold;
+}
+
+.c-container {
   height: 100vh;
   width: 100vw;
   position: absolute;
@@ -11,44 +18,30 @@
   place-items: center;
 }
 
-.modal-main {
+.c-main {
   height: 80%;
-  width: 60%;
+  width: 40%;
   position: relative;
   margin-inline: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #fff;
-}
-
-.crop-container {
-  position: absolute;
-  top: 0;
-  height: 50%;
-  width: 50%;
-}
-
-.modal-bottom {
-  width: 100%;
-  position: absolute;
-  top: 50%;
-  height: 50%;
-  display: flex;
-  flex-direction: column;
   justify-content: center;
+  background-color: #fff;
+  border-radius: 10px;
 }
 
 .tools {
   display: flex;
   justify-content: center;
   gap: 20px;
-  padding-top: 20px;
+  padding-top: 40px;
+  margin-bottom: 40px;
 }
 
 .tool {
   display: flex;
-  width: 30%;
+  width: 40%;
 }
 
 .tool-label {
@@ -61,12 +54,12 @@
 
 .buttons {
   width: 100%;
-  margin-top: 20px;
   display: flex;
   justify-content: center;
   gap: 20px;
 }
 
 .c-btn {
-  width: 200px;
+  min-width: 200px;
+  max-width: 300px;
 }

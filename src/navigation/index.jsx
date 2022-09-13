@@ -13,11 +13,13 @@ import Page_ManageUser from "../pages/Page_ManageUser";
 const Navigation = () => {
   return (
     <Routes>
+      <Route path="/" element={<Page_ForgotPassword />} />
+
       {/* <Route path="/" element={<Page_SignIn />} /> */}
       {/* <Route path="/forgot-password" element={<Page_ForgotPassword />} /> */}
       {/* <Route path="/confirm-otp" element={<Page_ConfirmOTP />} /> */}
       {/* <Route path="/reset-password" element={<Page_ResetPassword />} /> */}
-      <Route path="/" element={<Page_Profile />} />
+      {/* <Route path="/" element={<Page_Profile />} /> */}
       {/* <Route path="/" element={<Page_SignSteps />} /> */}
       {/* <Route path="/" element={<Page_ManageUser />} /> */}
     </Routes>

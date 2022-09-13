@@ -64,10 +64,10 @@ const ManageUser = () => {
         setListUser(fakeData);
         break;
       case "active":
-        setListUser([...listUser].filter((user) => user.state === true));
+        setListUser([...fakeData].filter((user) => user.state === true));
         break;
       case "inactive":
-        setListUser([...listUser].filter((user) => user.state === false));
+        setListUser([...fakeData].filter((user) => user.state === false));
         break;
     }
   };
@@ -100,7 +100,7 @@ const ManageUser = () => {
         </div>
       </div>
 
-      <Table dataSource={listUser}>
+      <Table dataSource={listUser} showSorterTooltip={false}>
         <Column
           title="STT"
           dataIndex="index"

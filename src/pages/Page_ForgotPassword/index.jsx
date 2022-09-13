@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from "axios";
 import { useState } from "react";
+import Reaptcha from "reaptcha";
 
 const SECRET_KEY = "6LfAy-ohAAAAALIh0SUR83BO4KLe4ikUWv76zLcE";
 
@@ -24,10 +25,17 @@ const ForgotPassword = () => {
     console.log("Failed:", errorInfo);
   };
 
-  const onCaptchaChange = (token) => {
-    if (token) {
-      setSubmitDisabled(false);
-    }
+  const onVerify = () => {
+    captchaRef.current
+      .getResponse()
+      .then((res) => {
+        // success
+        setSubmitDisabled(false);
+      })
+      .catch((error) => {
+        console.log("error");
+        console.log(error);
+      });
   };
 
   return (
@@ -67,15 +75,10 @@ const ForgotPassword = () => {
               message: "Vui lòng nhập tên đăng nhập!",
             },
           ]}>
-          <Input.Password size="large" placeholder="Nhập tên đăng nhập" />
+          <Input size="large" placeholder="Nhập tên đăng nhập" />
         </Form.Item>
 
-        <ReCAPTCHA
-          sitekey={SECRET_KEY}
-          onChange={onCaptchaChange}
-          // grecaptcha={grecaptchaObject}
-          ref={captchaRef}
-        />
+        <Reaptcha sitekey={SECRET_KEY} ref={captchaRef} onVerify={onVerify} />
 
         <Button
           disabled={submitDisabled}

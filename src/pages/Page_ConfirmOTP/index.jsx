@@ -16,7 +16,8 @@ const ConfirmOTP = () => {
   const [otpError, setOtpError] = useState("");
 
   const handleConfirmClick = () => {
-    if (!otpValue) return setOtpError(OTP_ERROR_REQUIRED);
+    if (!otpValue || otpValue.length !== 6)
+      return setOtpError(OTP_ERROR_REQUIRED);
 
     navigate("/reset-password");
   };

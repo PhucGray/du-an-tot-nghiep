@@ -1,4 +1,5 @@
-import "../../styles/auth.css";
+import "../../styles/auth.scss";
+import "../../styles/common.scss";
 
 import React from "react";
 import { Button, Checkbox, Form, Input } from "antd";
@@ -16,9 +17,9 @@ const SignIn = () => {
   };
 
   return (
-    <div className="c-container">
+    <div className="auth-container">
       <Form
-        className="c-form"
+        className="form"
         name="basic"
         initialValues={{
           remember: true,
@@ -27,7 +28,7 @@ const SignIn = () => {
         onFinishFailed={onFinishFailed}
         autoComplete="off"
         layout="vertical">
-        <div className="c-form-title">Đăng nhập</div>
+        <div className="form-title">Đăng nhập</div>
 
         <Form.Item
           label="Email"
@@ -69,8 +70,7 @@ const SignIn = () => {
           type="primary"
           htmlType="submit"
           className="submit-btn"
-          size="large"
-          style={{ height: 45 }}>
+          size="large">
           Đăng nhập
         </Button>
       </Form>

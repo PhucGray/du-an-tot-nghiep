@@ -1,4 +1,5 @@
-import "../../styles/auth.css";
+import "../../styles/auth.scss";
+import "../../styles/common.scss";
 
 import React, { useRef } from "react";
 import { Button, Checkbox, Form, Input } from "antd";
@@ -38,9 +39,9 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="c-container">
+    <div className="auth-container">
       <Form
-        className="c-form"
+        className="form"
         name="basic"
         initialValues={{
           remember: true,
@@ -49,7 +50,7 @@ const ForgotPassword = () => {
         onFinishFailed={onFinishFailed}
         autoComplete="off"
         layout="vertical">
-        <div className="c-form-title">Lấy lại mật khẩu</div>
+        <div className="form-title">Lấy lại mật khẩu</div>
         <Form.Item
           label="Email"
           name="email"
@@ -65,17 +66,6 @@ const ForgotPassword = () => {
           ]}>
           <Input size="large" placeholder="Nhập email" />
         </Form.Item>
-        {/* <Form.Item
-          label="Tên đăng nhập"
-          name="username"
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng nhập tên đăng nhập!",
-            },
-          ]}>
-          <Input size="large" placeholder="Nhập tên đăng nhập" />
-        </Form.Item> */}
 
         <Reaptcha sitekey={SECRET_KEY} ref={captchaRef} onVerify={onVerify} />
 
@@ -84,8 +74,7 @@ const ForgotPassword = () => {
           type="primary"
           htmlType="submit"
           className="submit-btn"
-          size="large"
-          style={{ height: 45 }}>
+          size="large">
           Gửi email
         </Button>
 

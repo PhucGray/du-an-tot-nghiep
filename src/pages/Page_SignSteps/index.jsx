@@ -1,4 +1,4 @@
-import "./styles.css";
+import "./styles.scss";
 
 import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -47,8 +47,8 @@ function App() {
   console.log(listTitle);
 
   return (
-    <div className="">
-      <div className="">
+    <>
+      <div className="sign-steps-container">
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="listTitle">
             {(provided) => (
@@ -89,7 +89,7 @@ function App() {
           </Droppable>
         </DragDropContext>
       </div>
-    </div>
+    </>
   );
 }
 

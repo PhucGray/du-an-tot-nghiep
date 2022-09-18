@@ -1,4 +1,5 @@
-import "../../styles/auth.css";
+import "../../styles/auth.scss";
+import "../../styles/common.scss";
 
 import React from "react";
 import { Button, Form, Input } from "antd";
@@ -14,9 +15,9 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="c-container">
+    <div className="auth-container">
       <Form
-        className="c-form"
+        className="form"
         name="basic"
         initialValues={{
           remember: true,
@@ -25,7 +26,7 @@ const ResetPassword = () => {
         onFinishFailed={onFinishFailed}
         autoComplete="off"
         layout="vertical">
-        <div className="c-form-title">Đặt lại mật khẩu</div>
+        <div className="form-title">Đặt lại mật khẩu</div>
 
         <Form.Item
           label="Mật khẩu mới"
@@ -64,8 +65,7 @@ const ResetPassword = () => {
           type="primary"
           htmlType="submit"
           className="submit-btn"
-          size="large"
-          style={{ height: 45 }}>
+          size="large">
           Cập nhật
         </Button>
 

@@ -9,6 +9,7 @@ import Page_TrySign from "../pages/Page_TrySign";
 import Page_Profile from "../pages/Page_Profile";
 import Page_SignSteps from "../pages/Page_SignSteps";
 import Page_ManageUser from "../pages/Page_ManageUser";
+import Page_TestPdf from "../pages/Page_TestPdf";
 
 const Navigation = () => {
   return (
@@ -22,7 +23,8 @@ const Navigation = () => {
       {/* <Route path="/" element={<Page_Profile />} /> */}
       {/* <Route path="/" element={<Page_SignSteps />} /> */}
       {/* <Route path="/" element={<Page_ManageUser />} /> */}
-      <Route path="/" element={<Page_TrySign />} />
+      {/* <Route path="/" element={<Page_TrySign />} /> */}
+      <Route path="/" element={<Page_TestPdf />} />
     </Routes>
   );
 };

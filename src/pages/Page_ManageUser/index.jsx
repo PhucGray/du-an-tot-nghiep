@@ -1,4 +1,4 @@
-import "./styles.css";
+// import "./styles.css";
 
 import { Table, Checkbox, Input, Select } from "antd";
 import React, { Fragment, useState } from "react";

@@ -1,0 +1,29 @@
+.form {
+  width: 40vw;
+  max-width: 450px;
+
+  .form-title {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .submit-btn {
+    width: 100%;
+    margin-top: 10px;
+    height: 50px;
+  }
+
+  .bottom-text {
+    margin-top: 40px;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .otp-error {
+    font-size: 14px;
+    text-align: center;
+    color: red;
+  }
+}

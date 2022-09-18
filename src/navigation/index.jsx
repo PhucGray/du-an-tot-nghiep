@@ -14,7 +14,7 @@ import Page_TestPdf from "../pages/Page_TestPdf";
 const Navigation = () => {
   return (
     <Routes>
-      {/* <Route path="/" element={<Page_ForgotPassword />} /> */}
+      <Route path="/" element={<Page_SignSteps />} />
 
       {/* <Route path="/" element={<Page_SignIn />} /> */}
       {/* <Route path="/forgot-password" element={<Page_ForgotPassword />} /> */}

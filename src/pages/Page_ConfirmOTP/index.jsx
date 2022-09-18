@@ -1,4 +1,5 @@
-import "../../styles/auth.css";
+import "../../styles/auth.scss";
+import "../../styles/common.scss";
 
 import React from "react";
 import { Button } from "antd";
@@ -23,9 +24,9 @@ const ConfirmOTP = () => {
   };
 
   return (
-    <div className="c-container">
-      <div className="c-form">
-        <div className="c-form-title">Xác nhận OTP</div>
+    <div className="auth-container">
+      <div className="form">
+        <div className="form-title">Xác nhận OTP</div>
         <OtpInput
           value={otpValue}
           onChange={(otp) => {
@@ -62,8 +63,7 @@ const ConfirmOTP = () => {
           type="primary"
           htmlType="button"
           className="submit-btn"
-          size="large"
-          style={{ height: 45 }}>
+          size="large">
           Xác nhận
         </Button>
 

@@ -1,4 +1,5 @@
-import "./styles.css";
+import "../../styles/common.scss";
+import "./styles.scss";
 
 import React, { useState, useRef, useEffect } from "react";
 import ModalUpdateImage from "../../components/Modal/ModalUpdateImage";
@@ -58,7 +59,7 @@ const Profile = () => {
       </div>
 
       <Form
-        className="c-form mx-auto mt-3 pb-5"
+        className="form mx-auto mt-3 pb-5"
         name="basic"
         initialValues={{
           remember: true,

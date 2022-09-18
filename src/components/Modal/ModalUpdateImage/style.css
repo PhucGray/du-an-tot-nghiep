@@ -1,11 +1,11 @@
-.c-title {
+.c-modal-title {
   font-size: 20px;
   margin-top: 20px;
   margin-bottom: 40px;
   font-weight: bold;
 }
 
-.c-container {
+.c-modal-container {
   height: 100vh;
   width: 100vw;
   position: absolute;
@@ -18,7 +18,7 @@
   place-items: center;
 }
 
-.c-main {
+.c-modal-main {
   height: 80%;
   width: 40%;
   position: relative;
@@ -31,7 +31,7 @@
   border-radius: 10px;
 }
 
-.tools {
+.modal-tools {
   display: flex;
   justify-content: center;
   gap: 20px;
@@ -39,27 +39,27 @@
   margin-bottom: 40px;
 }
 
-.tool {
+.modal-tool {
   display: flex;
   width: 40%;
 }
 
-.tool-label {
+.modaltool-label {
   margin-right: 10px;
 }
 
-.tool-item {
+.modal-tool-item {
   flex: 1;
 }
 
-.buttons {
+.modal-buttons {
   width: 100%;
   display: flex;
   justify-content: center;
   gap: 20px;
 }
 
-.c-btn {
+.c-modal-btn {
   min-width: 200px;
   max-width: 300px;
 }

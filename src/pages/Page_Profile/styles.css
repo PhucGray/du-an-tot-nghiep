@@ -6,8 +6,8 @@
 
 .avatar-wrapper {
   position: relative;
-  border-radius: 50%;
-  cursor: pointer;
+  display: flex;
+  justify-content: center;
 }
 
 .avatar {
@@ -17,24 +17,8 @@
   border-radius: 50%;
 }
 
-.avatar-icon {
+.input-file {
   position: absolute;
-  left: 100px;
-  bottom: -10px;
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
-  border-width: 1px;
-  background-color: rgb(216, 97, 23);
-  display: grid;
-  place-items: center;
-}
-
-.ant-upload-select-picture-card {
-  width: 175px !important;
-  height: 175px !important;
-  margin: 0 !important;
+  width: -200%;
   opacity: 0;
-  /* position: absolute !important; */
-  /* display: none !important; */
 }

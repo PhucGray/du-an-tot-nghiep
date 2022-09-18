@@ -1,4 +1,4 @@
-import "./styles.css";
+import "./style.css";
 
 import React, { useState, useRef } from "react";
 import { Button, Slider } from "antd";
@@ -33,13 +33,13 @@ const ModalUpdateImage = ({
   };
 
   return (
-    <div className="c-container" onClick={onClose}>
+    <div className="c-modal-container" onClick={onClose}>
       <div
-        className="c-main"
+        className="c-modal-main"
         onClick={(e) => {
           e.stopPropagation();
         }}>
-        <div className="c-title">Thay đổi ảnh đại diện</div>
+        <div className="c-modal-title">Thay đổi ảnh đại diện</div>
         <AvatarEditor
           ref={avatarEditorRef}
           image={image?.data}
@@ -51,9 +51,9 @@ const ModalUpdateImage = ({
         />
 
         <div className="w-100">
-          <div className="tools">
-            <div className="tool">
-              <div className="tool-label">Thu/phóng:</div>
+          <div className="modal-tools">
+            <div className="modal-tool">
+              <div className="modal-tool-label">Thu/phóng:</div>
               <Slider
                 value={scale}
                 onChange={(value) => setScale(value)}
@@ -61,12 +61,12 @@ const ModalUpdateImage = ({
                 max={5}
                 step={0.1}
                 defaultValue={1}
-                className="tool-item"
+                className="modal-tool-item"
               />
             </div>
 
-            <div className="tool">
-              <div className="tool-label">Xoay:</div>
+            <div className="modal-tool">
+              <div className="modal-tool-label">Xoay:</div>
               <Slider
                 value={rotation}
                 onChange={(value) => setRotation(value)}
@@ -74,17 +74,17 @@ const ModalUpdateImage = ({
                 max={360}
                 step={5}
                 defaultValue={0}
-                className="tool-item"
+                className="modal-tool-item"
               />
             </div>
           </div>
 
-          <div className="buttons">
+          <div className="modal-buttons">
             <Button
               onClick={onClose}
               type="ghost"
               size="large"
-              className="c-btn">
+              className="c-modal-btn">
               Thoát
             </Button>
             <Button

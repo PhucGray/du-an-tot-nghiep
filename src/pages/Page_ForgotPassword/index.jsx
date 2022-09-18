@@ -3,7 +3,6 @@ import "../../styles/auth.css";
 import React, { useRef } from "react";
 import { Button, Checkbox, Form, Input } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import ReCAPTCHA from "react-google-recaptcha";
 import axios from "axios";
 import { useState } from "react";
 import Reaptcha from "reaptcha";
@@ -66,7 +65,7 @@ const ForgotPassword = () => {
           ]}>
           <Input size="large" placeholder="Nhập email" />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           label="Tên đăng nhập"
           name="username"
           rules={[
@@ -76,7 +75,7 @@ const ForgotPassword = () => {
             },
           ]}>
           <Input size="large" placeholder="Nhập tên đăng nhập" />
-        </Form.Item>
+        </Form.Item> */}
 
         <Reaptcha sitekey={SECRET_KEY} ref={captchaRef} onVerify={onVerify} />
 

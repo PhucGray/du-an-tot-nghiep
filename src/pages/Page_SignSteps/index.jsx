@@ -6,23 +6,28 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 const titles = [
   {
     id: 11,
-    name: "Gary Goodspeed",
+    name: "Son",
+    order: 1,
   },
   {
     id: 12,
-    name: "Little Cato",
+    name: "Chien",
+    order: 2,
   },
   {
     id: 13,
-    name: "KVN",
+    name: "Duy",
+    order: 3,
   },
   {
     id: 14,
-    name: "Mooncake",
+    name: "Vi",
+    order: 4,
   },
   {
     id: 15,
-    name: "Quinn Ergon",
+    name: "Phucs",
+    order: 5,
   },
 ];
 
@@ -39,6 +44,8 @@ function App() {
     setListTitle(items);
   }
 
+  console.log(listTitle);
+
   return (
     <div className="">
       <div className="">
@@ -53,8 +60,9 @@ function App() {
                   <div className="c-stt">STT</div>
                   <div className="c-name">Ten chuc vu</div>
                   <div className="c-id">Id</div>
+                  <div className="c-order">Order</div>
                 </div>
-                {listTitle.map(({ id, name }, index) => {
+                {listTitle.map(({ id, name, order }, index) => {
                   return (
                     <Draggable
                       key={id}
@@ -69,6 +77,7 @@ function App() {
                           <div className="c-stt">{index + 1}</div>
                           <div className="c-name">{name}</div>
                           <div className="c-id">{id}</div>
+                          <div className="c-order">{index + 1}</div>
                         </div>
                       )}
                     </Draggable>

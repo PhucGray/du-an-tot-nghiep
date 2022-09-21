@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { Image, Layer, Stage, Star, Text } from "react-konva";
+import { Image, Layer, Stage, Text } from "react-konva";
 import { Pagination } from "semantic-ui-react";
+import { Select, Input } from "antd";
 import useImage from "use-image";
 import Empty from "../../lib/react-pdf-editor/components/Empty";
-import MenuBar from "../../lib/react-pdf-editor/components/MenuBar";
+// import MenuBar from "../../lib/react-pdf-editor/components/MenuBar";
 import Page from "../../lib/react-pdf-editor/components/Page";
 import { AttachmentTypes } from "../../lib/react-pdf-editor/entities";
 import useAttachments from "../../lib/react-pdf-editor/hooks/useAttachments";
@@ -13,31 +14,104 @@ import useUploader, {
   UploadTypes,
 } from "../../lib/react-pdf-editor/hooks/useUploader";
 import { ggID } from "../../lib/react-pdf-editor/utils/helpers";
+import Portal from "../../components/Portal";
+import ContextMenu from "../../components/ContextMenu";
+import { useRef } from "react";
+
+const { Option } = Select;
+const { TextArea } = Input;
 
 const LionImage = (props) => {
-  const [image] = useImage("https://konvajs.org/assets/lion.png");
+  const [image] = useImage(props?.src);
   return <Image {...props} image={image} />;
 };
 
 const TestPdf = () => {
-  const [pdfSize, setPdfSize] = useState({ width: 0, height: 0 });
-  const [texts, setTexts] = useState([
-    {
-      id: 1,
-      x: 0,
-      y: 0,
-      isDragging: false,
-    },
-  ]);
+  const headRef = useRef();
 
-  const [images, setImages] = useState([
+  const signs = [
     {
       id: 1,
-      x: 0,
-      y: 0,
-      isDragging: false,
+      value:
+        "https://firebasestorage.googleapis.com/v0/b/tot-nghiep-csharp.appspot.com/o/ck1.png?alt=media&token=a7200610-5600-43cd-a14c-a43fe17ce612",
+      text: "chuky1.png",
     },
-  ]);
+    {
+      id: 2,
+      value:
+        "https://firebasestorage.googleapis.com/v0/b/tot-nghiep-csharp.appspot.com/o/ck2.png?alt=media&token=263c4d5d-72db-40f6-8603-0008226e1ee8",
+      text: "chuky2.png",
+    },
+    {
+      id: 3,
+      value:
+        "https://firebasestorage.googleapis.com/v0/b/tot-nghiep-csharp.appspot.com/o/ck3.png?alt=media&token=80ebc8e0-49ae-4677-932d-91a336ad3637",
+      text: "chuky3.png",
+    },
+    {
+      id: 4,
+      value:
+        "https://firebasestorage.googleapis.com/v0/b/tot-nghiep-csharp.appspot.com/o/ck4.png?alt=media&token=568c3b1b-88ec-49b5-afb9-6ed067512bff",
+      text: "chuky4.png",
+    },
+  ];
+
+  const [pdfSize, setPdfSize] = useState({ width: 0, height: 0 });
+  const [texts, setTexts] = useState([]);
+
+  const [images, setImages] = useState([]);
+  const [contextMenuData, setContextMenuData] = useState(null);
+  const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const [textarea, setTextarea] = useState("");
+
+  const [headHeight, setHeadHeight] = useState(0);
+
+  const handleSignChange = (value, option) => {
+    const key = option?.key;
+
+    if (key) {
+      setImages([
+        ...images,
+        {
+          ...option,
+          id: key?.toString(),
+          x: 0,
+          y: 0,
+          isDragging: false,
+          src: option?.value,
+        },
+      ]);
+    }
+  };
+
+  const handleContextMenu = (e, data, type) => {
+    e.evt.preventDefault(true);
+
+    const mousePosition = e.target.getStage().getPointerPosition();
+    setContextMenuData({ position: mousePosition, data, type });
+  };
+
+  const handleDeleteImage = (id) => {
+    setImages([...images].filter((image) => image.id != id));
+  };
+
+  const handleAddText = () => {
+    setTexts([
+      ...texts,
+      {
+        id: texts.length.toString(),
+        x: 0,
+        y: 0,
+        isDragging: false,
+        content: textarea,
+      },
+    ]);
+    setTextarea("");
+  };
+
+  const handleDeleteText = (id) => {
+    setTexts([...texts].filter((text) => text.id != id));
+  };
 
   const {
     file,
@@ -158,17 +232,48 @@ const TestPdf = () => {
     );
   };
 
+  useEffect(() => {
+    // console.log(headRef.current.clientHeight);
+    if (headRef.current) {
+      setHeadHeight(headRef.current.clientHeight);
+    }
+  }, [headRef]);
+
   return (
-    <div className="mx-auto" style={{ margin: 30, width: "90%" }}>
+    <div className="mx-auto" style={{ width: "100%", minHeight: "100vh" }}>
+      <div>
+        <div ref={headRef}>
+          <Select
+            style={{
+              width: 120,
+            }}
+            onChange={handleSignChange}>
+            {signs.map((sign) => (
+              <Option key={sign.id} value={sign.value}>
+                {sign.text}
+              </Option>
+            ))}
+          </Select>
+
+          <div style={{ width: 300 }}>
+            <button onClick={handleAddText}>Thêm text</button>
+            <TextArea
+              rows={4}
+              value={textarea}
+              onChange={(e) => setTextarea(e.currentTarget.value)}
+            />
+          </div>
+        </div>
+      </div>
       {hiddenInputs}
-      <MenuBar
+      {/* <MenuBar
         savePdf={handleSavePdf}
         addText={addText}
         addImage={handleImageClick}
         savingPdfStatus={isSaving}
         uploadNewPdf={handlePdfClick}
         isPdfLoaded={!!file}
-      />
+      /> */}
       {!file ? (
         <div>
           <Empty loading={isUploading} uploadPdf={handlePdfClick} />
@@ -206,23 +311,59 @@ const TestPdf = () => {
                 page={currentPage}
               />
               <Stage
+                onClick={() => setContextMenuVisible(false)}
                 height={pdfSize.height}
                 width={pdfSize.width}
-                style={{ position: "absolute", top: 0, left: 0 }}>
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  boxShadow: "0 0 1px #000",
+                }}>
                 <Layer>
-                  {/* <Text text="Try to drag a star" /> */}
-                  {/* <LionImage /> */}
-                  {images.map((images) => (
+                  {images.map((image) => (
                     <LionImage
-                      key={images.id}
-                      id={images.id}
-                      x={images.x}
-                      y={images.y}
+                      src={image.src}
+                      key={image.id}
+                      id={image.id?.toString()}
+                      x={image.x}
+                      y={image.y}
                       draggable
                       onDragStart={handleDragStart}
                       onDragEnd={handleDragEnd}
+                      onContextMenu={(e) => {
+                        setContextMenuVisible(true);
+                        handleContextMenu(e, image, "image");
+                      }}
                     />
                   ))}
+                  {contextMenuVisible && (
+                    <Portal>
+                      <ContextMenu
+                        x={contextMenuData?.position?.x || 0}
+                        y={contextMenuData?.position?.y + headHeight || 0}
+                        onSelectMenuOption={(option) => {
+                          setContextMenuVisible(false);
+
+                          if (option === "edit") {
+                            if (contextMenuData?.type === "text") {
+                              setTextarea(contextMenuData?.data?.content);
+                            }
+                          }
+
+                          if (option === "delete") {
+                            if (contextMenuData?.type === "image") {
+                              handleDeleteImage(contextMenuData?.data?.id);
+                            }
+
+                            if (contextMenuData?.type === "text") {
+                              handleDeleteText(contextMenuData?.data?.id);
+                            }
+                          }
+                        }}
+                      />
+                    </Portal>
+                  )}
                   {texts.map((text) => (
                     <Text
                       key={text.id}
@@ -232,9 +373,14 @@ const TestPdf = () => {
                       draggable
                       onDragStart={handleDragStart}
                       onDragEnd={handleDragEnd}
-                      text="afawjf"
+                      text={text.content}
+                      onContextMenu={(e) => {
+                        setContextMenuVisible(true);
+                        handleContextMenu(e, text, "text");
+                      }}
                     />
                   ))}
+
                   {/* {stars.map((star) => (
                     <Star
                       key={star.id}
@@ -273,45 +419,6 @@ const TestPdf = () => {
             </div>
           )}
         </div>
-        // <Grid>
-        //   <Grid.Row>
-        //     <Grid.Column width={3} verticalAlign="middle" textAlign="left">
-        //       {isMultiPage && !isFirstPage && (
-        //         <Button circular icon="angle left" onClick={previousPage} />
-        //       )}
-        //     </Grid.Column>
-        //     <Grid.Column width={10}>
-        //       {currentPage && (
-        //         <Segment
-        //           data-testid="page"
-        //           compact
-        //           stacked={isMultiPage && !isLastPage}>
-        //           <div style={{ position: "relative" }}>
-        //             <Page
-        //               dimensions={dimensions}
-        //               updateDimensions={setDimensions}
-        //               page={currentPage}
-        //             />
-        //             {dimensions && (
-        //               <Attachments
-        //                 pdfName={name}
-        //                 removeAttachment={remove}
-        //                 updateAttachment={update}
-        //                 pageDimensions={dimensions}
-        //                 attachments={pageAttachments}
-        //               />
-        //             )}
-        //           </div>
-        //         </Segment>
-        //       )}
-        //     </Grid.Column>
-        //     <Grid.Column width={3} verticalAlign="middle" textAlign="right">
-        //       {isMultiPage && !isLastPage && (
-        //         <Button circular icon="angle right" onClick={nextPage} />
-        //       )}
-        //     </Grid.Column>
-        //   </Grid.Row>
-        // </Grid>
       )}
     </div>
   );

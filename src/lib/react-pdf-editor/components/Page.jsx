@@ -18,6 +18,9 @@ export default ({ page, dimensions, updateDimensions, setPdfSize }) => {
         const context = canvasRef.current?.getContext("2d");
         const viewport = _page.getViewport({ scale: 1 });
 
+        console.log("viewport: ");
+        console.log(viewport);
+
         setWidth(viewport.width);
         setHeight(viewport.height);
         setPdfSize({ width: viewport.width, height: viewport.height });

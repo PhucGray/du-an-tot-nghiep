@@ -1,0 +1,19 @@
+.context-menu {
+  position: absolute;
+  background-color: #fff;
+  width: 60px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 1px #000;
+
+  .context-menu-option {
+    height: 30px;
+    font-size: 17px;
+    padding-inline: 10px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgb(233, 233, 233);
+    }
+  }
+}

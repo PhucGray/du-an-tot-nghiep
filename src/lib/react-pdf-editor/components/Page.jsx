@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 //   updateDimensions: ({ width, height }: Dimensions) => void;
 // }
 
-export default ({ page, dimensions, updateDimensions }) => {
+export default ({ page, dimensions, updateDimensions, setPdfSize }) => {
   const canvasRef = useRef();
   const [width, setWidth] = useState((dimensions && dimensions.width) || 0);
   const [height, setHeight] = useState((dimensions && dimensions.height) || 0);
@@ -20,6 +20,7 @@ export default ({ page, dimensions, updateDimensions }) => {
 
         setWidth(viewport.width);
         setHeight(viewport.height);
+        setPdfSize({ width: viewport.width, height: viewport.height });
 
         if (context) {
           await _page.render({

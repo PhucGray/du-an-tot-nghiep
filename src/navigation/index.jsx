@@ -10,11 +10,12 @@ import Page_Profile from "../pages/Page_Profile";
 import Page_SignSteps from "../pages/Page_SignSteps";
 import Page_ManageUser from "../pages/Page_ManageUser";
 import Page_TestPdf from "../pages/Page_TestPdf";
+import Page_SignPdf from "../pages/Page_SignPdf";
 
 const Navigation = () => {
   return (
     <Routes>
-      <Route path="/" element={<Page_SignSteps />} />
+      {/* <Route path="/" element={<Page_SignSteps />} /> */}
 
       {/* <Route path="/" element={<Page_SignIn />} /> */}
       {/* <Route path="/forgot-password" element={<Page_ForgotPassword />} /> */}

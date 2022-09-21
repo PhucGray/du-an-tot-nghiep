@@ -17,6 +17,7 @@ export default () => {
   const [isFirstPage, setIsFirstPage] = useState(false);
   const [isLastPage, setIsLastPage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [totalPages, setTotalPages] = useState(0);
   const currentPage = pages[pageIndex];
 
   const setDimensionsHandler = useCallback(setDimensions, [setDimensions]);
@@ -35,8 +36,28 @@ export default () => {
     setIsLastPage(newPageIndex === pages.length - 1);
   };
 
+  const setActivePage = (number) => {
+    const index = number - 1;
+
+    if (index === 0) {
+      setPageIndex(0);
+      setIsFirstPage(true);
+      setIsLastPage(false);
+    } else if (index === pages.length - 1) {
+      setPageIndex(index);
+      setIsFirstPage(false);
+      setIsLastPage(true);
+    } else {
+      setPageIndex(index);
+      setIsFirstPage(false);
+      setIsLastPage(false);
+    }
+    // setPageIndex(number - 1)
+  };
+
   const initialize = ({ name, file, pages: _pages }) => {
     const multi = _pages.length > 1;
+    setTotalPages(_pages.length);
     setName(name);
     setFile(file);
     setPages(_pages);
@@ -79,5 +100,7 @@ export default () => {
     isFirstPage,
     isLastPage,
     isSaving,
+    totalPages,
+    setActivePage,
   };
 };

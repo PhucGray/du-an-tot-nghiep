@@ -68,15 +68,16 @@ export default ({ use, afterUploadPdf, afterUploadAttachment }) => {
     const input = inputRef.current;
 
     if (input) {
-      setIsUploading(true);
       input.click();
     }
   };
 
   const upload = async (event) => {
-    if (!isUploading) {
-      return;
-    }
+    setIsUploading(true);
+
+    // if (!isUploading) {
+    // return;
+    // }
 
     const files =
       event.currentTarget.files ||

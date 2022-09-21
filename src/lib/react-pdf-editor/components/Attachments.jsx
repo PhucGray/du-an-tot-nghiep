@@ -3,6 +3,7 @@ import { AttachmentTypes } from "../entities";
 import { Image } from "../containers/Image";
 import Drawing from "../containers/Drawing";
 import { Text } from "../containers/Text";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 export default ({
   attachments,
@@ -28,19 +29,6 @@ export default ({
                   pageHeight={pageDimensions.height}
                   removeImage={() => removeAttachment(index)}
                   updateImageAttachment={handleAttachmentUpdate(index)}
-                  {...attachment}
-                />
-              );
-            }
-
-            if (attachment.type === AttachmentTypes.DRAWING) {
-              return (
-                <Drawing
-                  key={key}
-                  pageWidth={pageDimensions.width}
-                  pageHeight={pageDimensions.height}
-                  removeDrawing={() => removeAttachment(index)}
-                  updateDrawingAttachment={handleAttachmentUpdate(index)}
                   {...attachment}
                 />
               );

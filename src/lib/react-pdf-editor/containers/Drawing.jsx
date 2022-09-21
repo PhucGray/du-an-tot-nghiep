@@ -1,5 +1,5 @@
 import React, { createRef, useEffect, useState } from "react";
-import { DragActions } from "../entities";
+import { DRAG_ACTIONS } from "../entities";
 import { getMovePosition } from "../utils/helpers";
 import { Drawing as DrawingComponent } from "../components/Drawing";
 
@@ -28,7 +28,7 @@ export default ({
   const [positionTop, setPositionTop] = useState(y);
   const [positionLeft, setPositionLeft] = useState(x);
   const [operation, setOperation] =
-    useState < DragActions > DragActions.NO_MOVEMENT;
+    useState < DRAG_ACTIONS > DRAG_ACTIONS.NO_MOVEMENT;
   const [dimmerActive, setDimmerActive] = useState(false);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default ({
 
   const handleMousedown = (event) => {
     setMouseDown(true);
-    setOperation(DragActions.MOVE);
+    setOperation(DRAG_ACTIONS.MOVE);
   };
 
   const handleMouseMove = (event) => {
@@ -67,7 +67,7 @@ export default ({
     event.preventDefault();
     setMouseDown(false);
 
-    if (operation === DragActions.MOVE) {
+    if (operation === DRAG_ACTIONS.MOVE) {
       const { top, left } = getMovePosition(
         positionLeft,
         positionTop,
@@ -85,18 +85,18 @@ export default ({
       });
     }
 
-    if (operation === DragActions.SCALE) {
+    if (operation === DRAG_ACTIONS.SCALE) {
       updateDrawingAttachment({
         x: positionLeft,
         y: positionTop,
       });
     }
 
-    setOperation(DragActions.NO_MOVEMENT);
+    setOperation(DRAG_ACTIONS.NO_MOVEMENT);
   };
 
   const handleMouseOut = (event) => {
-    if (operation === DragActions.MOVE) {
+    if (operation === DRAG_ACTIONS.MOVE) {
       handleMouseUp(event);
     }
   };

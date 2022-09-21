@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { DragActions } from "../entities";
+import { DRAG_ACTIONS } from "../entities";
 import { getMovePosition } from "../utils/helpers";
 import { Image as ImageComponent } from "../components/Image";
 
@@ -30,18 +30,18 @@ export const Image = ({
   const [positionTop, setPositionTop] = useState(y);
   const [positionLeft, setPositionLeft] = useState(x);
   const [direction, setDirection] = useState([]);
-  const [operation, setOperation] = useState(DragActions.NO_MOVEMENT);
+  const [operation, setOperation] = useState(DRAG_ACTIONS.NO_MOVEMENT);
 
   const [dimmerActive, setDimmerActive] = useState(false);
 
   const handleMouseDown = (event) => {
     event.preventDefault();
     setMouseDown(true);
-    setOperation(DragActions.MOVE);
+    setOperation(DRAG_ACTIONS.MOVE);
     const directions = event.currentTarget.dataset.direction;
     if (directions) {
       setDirection(directions.split("-"));
-      setOperation(DragActions.SCALE);
+      setOperation(DRAG_ACTIONS.SCALE);
     }
   };
 
@@ -69,7 +69,7 @@ export const Image = ({
     event.preventDefault();
     setMouseDown(false);
 
-    if (operation === DragActions.MOVE) {
+    if (operation === DRAG_ACTIONS.MOVE) {
       const { top, left } = getMovePosition(
         positionLeft,
         positionTop,
@@ -87,18 +87,18 @@ export const Image = ({
       });
     }
 
-    if (operation === DragActions.SCALE) {
+    if (operation === DRAG_ACTIONS.SCALE) {
       updateImageAttachment({
         x: positionLeft,
         y: positionTop,
       });
     }
 
-    setOperation(DragActions.NO_MOVEMENT);
+    setOperation(DRAG_ACTIONS.NO_MOVEMENT);
   };
 
   const handleMouseOut = (event) => {
-    if (operation === DragActions.MOVE) {
+    if (operation === DRAG_ACTIONS.MOVE) {
       handleMouseUp(event);
     }
   };

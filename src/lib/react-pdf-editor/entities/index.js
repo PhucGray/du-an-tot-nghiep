@@ -1,4 +1,4 @@
-export const DragActions = {
+export const DRAG_ACTIONS = {
   MOVE: "MOVE",
   SCALE: "SCALE",
   NO_MOVEMENT: "NO_MOVEMENT",
@@ -25,7 +25,7 @@ export const AttachmentTypes = {
   TEXT: "text",
 };
 
-export const TextMode = {
+export const TEXT_MODE = {
   INSERT: "insert",
   COMMAND: "command",
 };

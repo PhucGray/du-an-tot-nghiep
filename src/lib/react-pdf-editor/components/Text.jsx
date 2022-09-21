@@ -1,5 +1,6 @@
-import React, { RefObject } from "react";
-import { TextMode } from "../entities";
+import React, { RefObject, useEffect } from "react";
+import { Draggable } from "react-beautiful-dnd";
+import { TEXT_MODE } from "../entities";
 
 // interface Props {
 //   inputRef: RefObject<HTMLInputElement>;
@@ -37,52 +38,61 @@ export const Text = ({
   handleMouseOut,
   handleMouseUp,
   lineHeight,
+  setWidth,
 }) => {
+  useEffect(() => {
+    setWidth(text?.length * 10 + 50);
+  }, [text]);
+
   return (
-    <div
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseOut={handleMouseOut}
-      onDoubleClick={toggleEditMode}
-      style={{
-        width,
-        border: 1,
-        height,
-        fontFamily,
-        fontSize: size,
-        lineHeight,
-        cursor: mode === TextMode.COMMAND ? "move" : "default",
-        top: positionTop,
-        left: positionLeft,
-        borderColor: "gray",
-        borderStyle: "solid",
-        wordWrap: "break-word",
-        padding: 0,
-        position: "absolute",
-      }}>
-      <input
-        type="text"
-        ref={inputRef}
-        onChange={onChangeText}
-        readOnly={mode === TextMode.COMMAND}
+    <>
+      <div
+        onMouseMove={handleMouseMove}
+        onMouseOut={handleMouseOut}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        // onDoubleClick={toggleEditMode}
         style={{
-          width: "100%",
-          borderStyle: "none",
-          borderWidth: 0,
+          width,
+          border: 1,
+          height,
           fontFamily,
           fontSize: size,
-          outline: "none",
-          padding: 0,
-          boxSizing: "border-box",
           lineHeight,
-          height,
-          margin: 0,
-          backgroundColor: "transparent",
-          cursor: mode === TextMode.COMMAND ? "move" : "text",
-        }}
-        value={text}
-      />
-    </div>
+          cursor: mode === TEXT_MODE.COMMAND ? "move" : "default",
+          top: positionTop,
+          left: positionLeft,
+          borderColor: "gray",
+          borderStyle: "solid",
+          // wordWrap: "break-word",
+          position: "absolute",
+        }}>
+        <input
+          onClick={toggleEditMode}
+          type="text"
+          ref={inputRef}
+          onChange={(e) => {
+            onChangeText(e);
+          }}
+          readOnly={mode === TEXT_MODE.COMMAND}
+          style={{
+            width: "100%",
+            borderStyle: "none",
+            borderWidth: 0,
+            fontFamily,
+            fontSize: size,
+            outline: "none",
+            padding: 0,
+            // boxSizing: "border-box",
+            lineHeight,
+            height,
+            margin: 0,
+            backgroundColor: "transparent",
+            cursor: mode === TEXT_MODE.COMMAND ? "move" : "text",
+          }}
+          value={text}
+        />
+      </div>
+    </>
   );
 };

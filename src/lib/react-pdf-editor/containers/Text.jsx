@@ -1,7 +1,8 @@
 import React, { useState, useRef } from "react";
 import { Text as Component } from "../components/Text";
 import { getMovePosition } from "../utils/helpers";
-import { DragActions, TextMode } from "../entities";
+import { DRAG_ACTIONS, TEXT_MODE } from "../entities";
+import Draggable from "react-draggable";
 
 // interface Props {
 //   pageWidth: number;
@@ -13,7 +14,7 @@ export const Text = ({
   x,
   y,
   text,
-  width,
+  width: defaultWidth,
   height,
   lineHeight,
   size,
@@ -22,13 +23,14 @@ export const Text = ({
   pageWidth,
   updateTextAttachment,
 }) => {
+  const [width, setWidth] = useState(defaultWidth);
   const inputRef = useRef();
   const [content, setContent] = useState(text || "");
   const [mouseDown, setMouseDown] = useState(false);
   const [positionTop, setPositionTop] = useState(y);
   const [positionLeft, setPositionLeft] = useState(x);
-  const [operation, setOperation] = useState(DragActions.NO_MOVEMENT);
-  const [textMode, setTextMode] = useState(TextMode.COMMAND);
+  const [dragActions, setDragActions] = useState(DRAG_ACTIONS.NO_MOVEMENT);
+  const [textMode, setTextMode] = useState(TEXT_MODE.COMMAND);
 
   const handleMouseMove = (event) => {
     event.preventDefault();
@@ -51,24 +53,24 @@ export const Text = ({
   };
 
   const handleMousedown = (event) => {
-    if (textMode !== TextMode.COMMAND) {
+    if (textMode !== TEXT_MODE.COMMAND) {
       return;
     }
 
     setMouseDown(true);
-    setOperation(DragActions.MOVE);
+    setDragActions(DRAG_ACTIONS.MOVE);
   };
 
   const handleMouseUp = (event) => {
     event.preventDefault();
 
-    if (textMode !== TextMode.COMMAND) {
+    if (textMode !== TEXT_MODE.COMMAND) {
       return;
     }
 
     setMouseDown(false);
 
-    if (operation === DragActions.MOVE) {
+    if (dragActions === DRAG_ACTIONS.MOVE) {
       const { top, left } = getMovePosition(
         positionLeft,
         positionTop,
@@ -86,17 +88,17 @@ export const Text = ({
       });
     }
 
-    setOperation(DragActions.NO_MOVEMENT);
+    setDragActions(DRAG_ACTIONS.NO_MOVEMENT);
   };
 
   const handleMouseOut = (event) => {
-    if (operation === DragActions.MOVE) {
+    if (dragActions === DRAG_ACTIONS.MOVE) {
       handleMouseUp(event);
     }
 
-    if (textMode === TextMode.INSERT) {
-      setTextMode(TextMode.COMMAND);
-      prepareTextAndUpdate();
+    if (textMode === TEXT_MODE.INSERT) {
+      // setTextMode(TEXT_MODE.COMMAND);
+      // prepareTextAndUpdate();
     }
   };
 
@@ -114,11 +116,11 @@ export const Text = ({
   const toggleEditMode = () => {
     const input = inputRef.current;
     const mode =
-      textMode === TextMode.COMMAND ? TextMode.INSERT : TextMode.COMMAND;
+      textMode === TEXT_MODE.COMMAND ? TEXT_MODE.INSERT : TEXT_MODE.COMMAND;
 
     setTextMode(mode);
 
-    if (input && mode === TextMode.INSERT) {
+    if (input && mode === TEXT_MODE.INSERT) {
       input.focus();
       input.select();
     } else {
@@ -131,24 +133,75 @@ export const Text = ({
     setContent(value);
   };
 
+  // const [pos, setPos] = useState({
+  //   x: 0,
+  //   y: 0,
+  // });
+
   return (
-    <Component
-      text={content}
-      width={width}
-      height={height}
-      mode={textMode}
-      size={size}
-      lineHeight={lineHeight}
-      inputRef={inputRef}
-      fontFamily={fontFamily}
-      positionTop={positionTop}
-      onChangeText={onChangeText}
-      positionLeft={positionLeft}
-      handleMouseUp={handleMouseUp}
-      toggleEditMode={toggleEditMode}
-      handleMouseOut={handleMouseOut}
-      handleMouseDown={handleMousedown}
-      handleMouseMove={handleMouseMove}
-    />
+    <>
+      <Component
+        text={content}
+        width={width}
+        height={height}
+        mode={textMode}
+        size={size}
+        lineHeight={lineHeight}
+        inputRef={inputRef}
+        fontFamily={fontFamily}
+        positionTop={positionTop}
+        onChangeText={onChangeText}
+        positionLeft={positionLeft}
+        handleMouseUp={handleMouseUp}
+        toggleEditMode={toggleEditMode}
+        handleMouseOut={handleMouseOut}
+        handleMouseDown={handleMousedown}
+        handleMouseMove={handleMouseMove}
+        setWidth={setWidth}
+      />
+      {/* <Component
+        text={content}
+        width={width}
+        height={height}
+        mode={textMode}
+        size={size}
+        lineHeight={lineHeight}
+        inputRef={inputRef}
+        fontFamily={fontFamily}
+        positionTop={positionTop}
+        onChangeText={onChangeText}
+        positionLeft={positionLeft}
+        handleMouseUp={handleMouseUp}
+        toggleEditMode={toggleEditMode}
+        handleMouseOut={handleMouseOut}
+        handleMouseDown={handleMousedown}
+        handleMouseMove={handleMouseMove}
+        handleDrag={handleDrag}
+        handleDragStart={handleDragStart}
+        handleDragEnd={handleDragEnd}
+      /> */}
+    </>
   );
 };
+
+// <Component
+//   text={content}
+//   width={width}
+//   height={height}
+//   mode={textMode}
+//   size={size}
+//   lineHeight={lineHeight}
+//   inputRef={inputRef}
+//   fontFamily={fontFamily}
+//   positionTop={positionTop}
+//   onChangeText={onChangeText}
+//   positionLeft={positionLeft}
+//   handleMouseUp={handleMouseUp}
+//   toggleEditMode={toggleEditMode}
+//   handleMouseOut={handleMouseOut}
+//   handleMouseDown={handleMousedown}
+//   handleMouseMove={handleMouseMove}
+//   handleDrag={handleDrag}
+//   handleDragStart={handleDragStart}
+//   handleDragEnd={handleDragEnd}
+// />;

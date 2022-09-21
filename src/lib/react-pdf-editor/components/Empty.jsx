@@ -16,14 +16,15 @@ export default ({ loading, uploadPdf }) => (
   >
     <Header icon>
       <Icon name="file pdf outline" />
-      Upload your PDF to start editing!
+      {/* Upload your PDF to start editing! */}
+      Tải lên file pdf của bạn để bắt đầu chỉnh sửa
     </Header>
     <div>
       <Button
         primary
         data-testid="empty-screen-upload-pdf-btn"
         onClick={uploadPdf}>
-        Load PDF
+        Tải PDF
       </Button>
     </div>
   </Segment>

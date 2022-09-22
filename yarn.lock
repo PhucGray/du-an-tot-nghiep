@@ -2712,7 +2712,15 @@ react-is@^17.0.2:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react-konva@^18.2.1:
+react-konva-utils@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/react-konva-utils/-/react-konva-utils-0.3.0.tgz#d9099ad1a767286b24fb1b08377af2dfa5c9f176"
+  integrity sha512-yH5FVpDGQ8gHeClyHY533M4oSLjEfYuvn+Z29zXm9osjhuulhtJrh5k+wtyY6QSC0MG0ioqE0cjiudGl1WGB9A==
+  dependencies:
+    react-konva "^18.0.0-0"
+    use-image "^1.0.12"
+
+react-konva@^18.0.0-0, react-konva@^18.2.1:
   version "18.2.1"
   resolved "https://registry.yarnpkg.com/react-konva/-/react-konva-18.2.1.tgz#389cd55c3fc4d18616f8564e0bfc098c473da78c"
   integrity sha512-JqNMqxAMg1JC8GLs+ZtPoXMVPzQw6XQCxxiFpw01A5HVoglTJQk6Ih+VO2DUD+VAh8ic7GVNE7YeeW+IexBg7g==
@@ -3157,7 +3165,7 @@ update-browserslist-db@^1.0.5:
     escalade "^3.1.1"
     picocolors "^1.0.0"
 
-use-image@^1.1.0:
+use-image@^1.0.12, use-image@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/use-image/-/use-image-1.1.0.tgz#dc244c34506d3cf3a8177c1f0bbfb158b9beefe5"
   integrity sha512-+cBHRR/44ZyMUS873O0vbVylgMM0AbdTunEplAWXvIQ2p69h2sIo2Qq74zeUsq6AMo+27e5lERQvXzd1crGiMg==

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Image, Layer, Stage, Text } from "react-konva";
+import { Image, Layer, Rect, Stage, Text } from "react-konva";
 import { Pagination } from "semantic-ui-react";
 import { Select, Input } from "antd";
 import useImage from "use-image";
@@ -14,10 +14,11 @@ import useUploader, {
   UploadTypes,
 } from "../../lib/react-pdf-editor/hooks/useUploader";
 import { ggID } from "../../lib/react-pdf-editor/utils/helpers";
-import Portal from "../../components/Portal";
+// import Portal from "../../components/Portal";
 import ContextMenu from "../../components/ContextMenu";
 import { useRef } from "react";
-
+import { Portal } from "react-konva-utils";
+import C_ContextMenu from "../../components/C_ContextMenu";
 const { Option } = Select;
 const { TextArea } = Input;
 
@@ -27,8 +28,6 @@ const LionImage = (props) => {
 };
 
 const TestPdf = () => {
-  const headRef = useRef();
-
   const signs = [
     {
       id: 1,
@@ -64,7 +63,7 @@ const TestPdf = () => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [textarea, setTextarea] = useState("");
 
-  const [headHeight, setHeadHeight] = useState(0);
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleSignChange = (value, option) => {
     const key = option?.key;
@@ -84,7 +83,7 @@ const TestPdf = () => {
     }
   };
 
-  const handleContextMenu = (e, data, type) => {
+  const changeContextMenuData = (e, data, type) => {
     e.evt.preventDefault(true);
 
     const mousePosition = e.target.getStage().getPointerPosition();
@@ -106,6 +105,27 @@ const TestPdf = () => {
         content: textarea,
       },
     ]);
+    setTextarea("");
+  };
+
+  const handleEditText = () => {
+    setTexts(
+      [
+        ...texts,
+        // {
+        //   id: texts.length.toString(),
+        //   x: 0,
+        //   y: 0,
+        //   isDragging: false,
+        //   content: textarea,
+        // },
+      ].map((i) => {
+        if (i?.id == contextMenuData?.data?.id) {
+          i.content = textarea;
+        }
+        return i;
+      }),
+    );
     setTextarea("");
   };
 
@@ -233,19 +253,20 @@ const TestPdf = () => {
   };
 
   useEffect(() => {
-    // console.log(headRef.current.clientHeight);
-    if (headRef.current) {
-      setHeadHeight(headRef.current.clientHeight);
+    if (!contextMenuVisible) {
+      document.body.style.cursor = "default";
     }
-  }, [headRef]);
+  }, [contextMenuVisible]);
 
   return (
     <div className="mx-auto" style={{ width: "100%", minHeight: "100vh" }}>
       <div>
-        <div ref={headRef}>
+        <div>
+          {isEditing.toString()}
           <Select
+            placeholder="Chọn chữ ký"
             style={{
-              width: 120,
+              width: 150,
             }}
             onChange={handleSignChange}>
             {signs.map((sign) => (
@@ -256,7 +277,9 @@ const TestPdf = () => {
           </Select>
 
           <div style={{ width: 300 }}>
-            <button onClick={handleAddText}>Thêm text</button>
+            <button onClick={isEditing ? handleEditText : handleAddText}>
+              {isEditing ? "Sửa" : "Thêm"} text
+            </button>
             <TextArea
               rows={4}
               value={textarea}
@@ -311,7 +334,6 @@ const TestPdf = () => {
                 page={currentPage}
               />
               <Stage
-                onClick={() => setContextMenuVisible(false)}
                 height={pdfSize.height}
                 width={pdfSize.width}
                 style={{
@@ -321,6 +343,14 @@ const TestPdf = () => {
                   boxShadow: "0 0 1px #000",
                 }}>
                 <Layer>
+                  <Rect
+                    onClick={() => setContextMenuVisible(false)}
+                    fill="transparent"
+                    x={0}
+                    y={0}
+                    height={pdfSize.height}
+                    width={pdfSize.width}
+                  />
                   {images.map((image) => (
                     <LionImage
                       src={image.src}
@@ -333,15 +363,86 @@ const TestPdf = () => {
                       onDragEnd={handleDragEnd}
                       onContextMenu={(e) => {
                         setContextMenuVisible(true);
-                        handleContextMenu(e, image, "image");
+                        changeContextMenuData(e, image, "image");
                       }}
                     />
                   ))}
+
                   {contextMenuVisible && (
+                    <C_ContextMenu
+                      contextMenuData={contextMenuData}
+                      onSelectMenuOption={(option) => {
+                        setContextMenuVisible(false);
+
+                        if (option === "edit") {
+                          setIsEditing(true);
+                          if (contextMenuData?.type === "text") {
+                            setTextarea(contextMenuData?.data?.content);
+                          }
+                        }
+
+                        if (option === "delete") {
+                          if (contextMenuData?.type === "image") {
+                            handleDeleteImage(contextMenuData?.data?.id);
+                          }
+
+                          if (contextMenuData?.type === "text") {
+                            handleDeleteText(contextMenuData?.data?.id);
+                          }
+                        }
+                      }}
+                    />
+                  )}
+                  {/* <Portal>
+                    <Rect
+                      x={0}
+                      y={0}
+                      height={30}
+                      width={150}
+                      fill={option1Hover ? "#d6d6d6" : "#fff"}
+                      onMouseEnter={() => {
+                        document.body.style.cursor = "pointer";
+                        setOption1Hover(true);
+                      }}
+                      onMouseLeave={() => {
+                        document.body.style.cursor = "default";
+                        setOption1Hover(false);
+                      }}
+                    />
+                    <Text
+                      text="Sửa"
+                      x={contextMenuData?.position?.x || 10}
+                      y={contextMenuData?.position?.y || 8}
+                      height={30}
+                    />
+                    <Rect
+                      x={0}
+                      y={30}
+                      height={30}
+                      width={150}
+                      fill={option2Hover ? "#d6d6d6" : "#fff"}
+                      onMouseEnter={() => {
+                        document.body.style.cursor = "pointer";
+                        setOption2Hover(true);
+                      }}
+                      onMouseLeave={() => {
+                        document.body.style.cursor = "default";
+                        setOption2Hover(false);
+                      }}
+                    />
+                    <Text
+                      text="Xoá"
+                      height={30}
+                      x={contextMenuData?.position?.x + 10 || 10}
+                      y={contextMenuData?.position?.y + 8 || 38}
+                    />
+                  </Portal> */}
+
+                  {/* {contextMenuVisible && (
                     <Portal>
                       <ContextMenu
                         x={contextMenuData?.position?.x || 0}
-                        y={contextMenuData?.position?.y + headHeight || 0}
+                        y={contextMenuData?.position?.y || 0}
                         onSelectMenuOption={(option) => {
                           setContextMenuVisible(false);
 
@@ -363,7 +464,7 @@ const TestPdf = () => {
                         }}
                       />
                     </Portal>
-                  )}
+                  )} */}
                   {texts.map((text) => (
                     <Text
                       key={text.id}
@@ -376,7 +477,7 @@ const TestPdf = () => {
                       text={text.content}
                       onContextMenu={(e) => {
                         setContextMenuVisible(true);
-                        handleContextMenu(e, text, "text");
+                        changeContextMenuData(e, text, "text");
                       }}
                     />
                   ))}

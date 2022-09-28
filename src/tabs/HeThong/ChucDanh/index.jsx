@@ -1,37 +1,38 @@
-import "./styles.scss";
+import "../../../styles/tabs.scss";
 
 import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { Button } from "antd";
 
 const titles = [
   {
     id: 11,
-    name: "Son",
+    name: "Tổng giám đốc",
     order: 1,
   },
   {
     id: 12,
-    name: "Chien",
+    name: "Giám đốc chi nhánh",
     order: 2,
   },
   {
     id: 13,
-    name: "Duy",
+    name: "Giám đốc",
     order: 3,
   },
   {
     id: 14,
-    name: "Vi",
+    name: "Trưởng phòng",
     order: 4,
   },
   {
     id: 15,
-    name: "Phucs",
+    name: "Phó phòng",
     order: 5,
   },
 ];
 
-function App() {
+function ChucDanh() {
   const [listTitle, setListTitle] = useState(titles);
 
   function onDragEnd(result) {
@@ -44,10 +45,8 @@ function App() {
     setListTitle(items);
   }
 
-  console.log(listTitle);
-
   return (
-    <>
+    <div className="chuc-danh">
       <div className="sign-steps-container">
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="listTitle">
@@ -58,7 +57,7 @@ function App() {
                 ref={provided.innerRef}>
                 <div className="c-row">
                   <div className="c-stt">STT</div>
-                  <div className="c-name">Ten chuc vu</div>
+                  <div className="c-name">Tiêu đề</div>
                   <div className="c-id">Id</div>
                   <div className="c-order">Order</div>
                 </div>
@@ -70,7 +69,7 @@ function App() {
                       index={index}>
                       {(provided) => (
                         <div
-                          className="c-row"
+                          className={`c-row ${index % 2 === 0 && "c-row-even"}`}
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}>
@@ -89,8 +88,12 @@ function App() {
           </Droppable>
         </DragDropContext>
       </div>
-    </>
+
+      <Button type="primary" className="mx-auto mt-4 w-25 d-block" size="large">
+        Lưu
+      </Button>
+    </div>
   );
 }
 
-export default App;
+export default ChucDanh;

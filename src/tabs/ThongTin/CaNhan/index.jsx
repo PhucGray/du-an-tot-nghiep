@@ -1,12 +1,12 @@
-import "../../styles/common.scss";
-import "./styles.scss";
+import "../../../styles/common.scss";
+import "../../../styles/tabs.scss";
 
 import React, { useState, useRef, useEffect } from "react";
-import ModalUpdateImage from "../../components/Modal/ModalUpdateImage";
-import { handleUploadImage } from "../../utils/images";
+import ModalUpdateImage from "../../../components/Modal/ModalUpdateImage";
+import { handleUploadImage } from "../../../utils/images";
 import { Button, Checkbox, Form, Input, Radio } from "antd";
 
-const Profile = () => {
+const CaNhan = () => {
   const editorRef = useRef();
   const inputFileRef = useRef();
   const [modalVisible, setModalVisible] = useState(false);
@@ -22,7 +22,7 @@ const Profile = () => {
   };
 
   return (
-    <>
+    <div className="ca-nhan">
       {modalVisible && (
         <ModalUpdateImage
           setUrl={setUrl}
@@ -47,7 +47,7 @@ const Profile = () => {
         }
       />
 
-      <div className="avatar-wrapper">
+      <div className="avatar-wrapper mt-3">
         <img
           onClick={() => inputFileRef.current?.click()}
           src={
@@ -108,7 +108,7 @@ const Profile = () => {
           <Input />
         </Form.Item>
 
-        <Form.Item label="Radio">
+        <Form.Item label="Giới tính">
           <Radio.Group>
             <Radio value="nam">Nam</Radio>
             <Radio value="nu">Nữ</Radio>
@@ -177,8 +177,8 @@ const Profile = () => {
           Cập nhật
         </Button>
       </Form>
-    </>
+    </div>
   );
 };
 
-export default Profile;
+export default CaNhan;

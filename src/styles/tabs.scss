@@ -1,0 +1,70 @@
+.ca-nhan {
+  .upload-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .avatar-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .avatar {
+    cursor: pointer;
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+  }
+
+  .input-file {
+    position: absolute;
+    width: -200%;
+    opacity: 0;
+  }
+}
+
+.chuc-danh {
+  .sign-steps-container {
+    background-color: #fff;
+
+    .c-table {
+      max-width: 90%;
+      margin-inline: auto;
+      margin-top: 30px;
+      border: 1px solid rgb(151, 151, 151);
+    }
+
+    .c-row {
+      display: flex;
+      border: 1px solid rgb(151, 151, 151);
+      height: 40px;
+      align-items: center;
+      user-select: none;
+    }
+
+    .c-row-even {
+      background-color: rgb(247, 247, 247);
+    }
+
+    .c-stt {
+      width: 10%;
+      text-align: center;
+    }
+
+    .c-name {
+      flex: 1;
+    }
+
+    .c-id {
+      width: 10%;
+      text-align: center;
+    }
+
+    .c-order {
+      width: 10%;
+      text-align: center;
+    }
+  }
+}

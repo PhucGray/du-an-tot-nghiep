@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Image, Layer, Stage, Text } from "react-konva";
+import { Image as KonvaImage, Layer, Stage, Text } from "react-konva";
 import { Pagination } from "semantic-ui-react";
 import { Select, Input } from "antd";
 import useImage from "use-image";
@@ -17,13 +17,27 @@ import { ggID } from "../../lib/react-pdf-editor/utils/helpers";
 import Portal from "../../components/Portal";
 import ContextMenu from "../../components/ContextMenu";
 import { useRef } from "react";
+import getImageSize from "image-size-from-url";
+import axios from "axios";
 
 const { Option } = Select;
 const { TextArea } = Input;
 
-const LionImage = (props) => {
+const LionImage = ({ onDragEnd, onChangePos, ...props }) => {
   const [image] = useImage(props?.src);
-  return <Image {...props} image={image} />;
+  return (
+    <KonvaImage
+      onDragEnd={(e) => {
+        const offset = { x: e.target.attrs.x, y: e.target.attrs.y };
+        const { x, y } = offset;
+        const { width, height } = e.currentTarget.getSize();
+        onDragEnd(e);
+        onChangePos({ x, y, id: props?.id, width, height });
+      }}
+      {...props}
+      image={image}
+    />
+  );
 };
 
 const TestPdf = () => {
@@ -55,6 +69,11 @@ const TestPdf = () => {
       text: "chuky4.png",
     },
   ];
+
+  const pdfUrl = "https://www.orimi.com/pdf-test.pdf";
+  const signUrl =
+    "https://firebasestorage.googleapis.com/v0/b/tot-nghiep-csharp.appspot.com/o/ck1.png?alt=media&token=a7200610-5600-43cd-a14c-a43fe17ce612";
+  const pageSign = 1;
 
   const [pdfSize, setPdfSize] = useState({ width: 0, height: 0 });
   const [texts, setTexts] = useState([]);
@@ -208,7 +227,7 @@ const TestPdf = () => {
     </>
   );
 
-  const handleSavePdf = () => savePdf(allPageAttachments);
+  // const handleSavePdf = () => savePdf(allPageAttachments);
 
   const handleDragStart = (e) => {
     const id = e.target.id();
@@ -233,7 +252,6 @@ const TestPdf = () => {
   };
 
   useEffect(() => {
-    // console.log(headRef.current.clientHeight);
     if (headRef.current) {
       setHeadHeight(headRef.current.clientHeight);
     }
@@ -263,6 +281,40 @@ const TestPdf = () => {
               onChange={(e) => setTextarea(e.currentTarget.value)}
             />
           </div>
+          <button
+            onClick={async () => {
+              // console.log(images);
+              const image = images[0];
+
+              const y = pdfSize.height - image.y - image.height;
+              const x = image.x;
+              const img_w = image.width;
+              const img_h = image.height;
+              const inputFile = pdfUrl;
+              const imgSign = image.src;
+              const pageSign = 1;
+
+              try {
+                const res = await axios.post(
+                  "https://localhost:44373/api/home",
+                  {
+                    x,
+                    y,
+                    img_w,
+                    img_h,
+                    inputFile,
+                    imgSign,
+                    pageSign,
+                  },
+                );
+                console.log(res);
+              } catch (error) {
+                console.log("error");
+                console.log(error);
+              }
+            }}>
+            Xuat
+          </button>
         </div>
       </div>
       {hiddenInputs}
@@ -334,6 +386,21 @@ const TestPdf = () => {
                       onContextMenu={(e) => {
                         setContextMenuVisible(true);
                         handleContextMenu(e, image, "image");
+                      }}
+                      onChangePos={(data) => {
+                        setImages(
+                          [...images].map((image) => {
+                            if (image?.id == data?.id) {
+                              image.x = data?.x;
+                              image.y = data?.y;
+                            }
+                            return {
+                              ...image,
+                              width: data?.width,
+                              height: data?.height,
+                            };
+                          }),
+                        );
                       }}
                     />
                   ))}

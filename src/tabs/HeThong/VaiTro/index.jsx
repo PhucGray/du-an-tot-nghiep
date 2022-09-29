@@ -1,5 +1,8 @@
-import { Space, Table, Tag } from "antd";
+import "../../../styles/tabs.scss";
+
+import { Table, Tabs, Button } from "antd";
 import React, { useState } from "react";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
@@ -17,88 +20,192 @@ const rowSelection = {
 };
 
 const columns = [
-  // {
-  //   title: "Chọn",
-  //   dataIndex: "chon",
-  //   key: "chon",
-  //   render: (text) => <a>{text}</a>,
-  // },
   {
     title: "Mã số",
-    dataIndex: "ma-so",
-    key: "ma-so",
+    dataIndex: "maSo",
+    key: "maSo",
   },
   {
     title: "Tên vai trò",
-    dataIndex: "vai-tro",
-    key: "vai-tro",
+    dataIndex: "vaiTro",
+    key: "vaiTro",
   },
   {
     title: "Phân hệ",
-    dataIndex: "phan-he",
-    key: "phan-he",
+    dataIndex: "phanHe",
+    key: "phanHe",
   },
   {
     title: "Ghi chú",
-    dataIndex: "ghi-chu",
-    key: "ghi-chu",
+    dataIndex: "ghiChu",
+    key: "ghiChu",
   },
-  // {
-  //   title: "Action",
-  //   key: "action",
-  //   render: (_, record) => (
-  //     <Space size="middle">
-  //       <a>Invite {record.name}</a>
-  //       <a>Delete</a>
-  //     </Space>
-  //   ),
-  // },
+  {
+    title: "Hành động",
+    key: "hanhDong",
+    render: (_, record) => (
+      // <Space size="middle">
+      //   <a>Invite {record.name}</a>
+      //   <a>Delete</a>
+      // </Space>
+      <div>
+        <div>
+          <Button type="link">Sửa</Button>
+          <Button type="link">Chi tiết</Button>
+        </div>
+        <div>
+          <Button type="link">Xoá</Button>
+          <Button type="link">Phân quyền</Button>
+        </div>
+      </div>
+    ),
+  },
 ];
-const data = [
+
+const titles = [
   {
-    key: 1,
-    "ma-so": "CR016",
-    "vai-tro": "Quản lý - Toàn quyền",
-    "phan-he": "CRM",
-    "ghi-chu": "",
+    id: 11,
+    name: "Tổng giám đốc",
+    order: 1,
   },
   {
-    key: 2,
-    "ma-so": "CR017",
-    "vai-tro": "Trưởng phòng kinh doanh",
-    "phan-he": "CRM",
-    "ghi-chu": "",
+    id: 12,
+    name: "Giám đốc chi nhánh",
+    order: 2,
   },
   {
-    key: 3,
-    "ma-so": "CR018",
-    "vai-tro": "TGD tham khảo",
-    "phan-he": "CRM",
-    "ghi-chu": "Toàn quyền trên hệ thống",
+    id: 13,
+    name: "Giám đốc",
+    order: 3,
   },
   {
-    key: 4,
-    "ma-so": "CR019",
-    "vai-tro": "Ban giám đốc",
-    "phan-he": "CRM",
-    "ghi-chu": "",
+    id: 14,
+    name: "Trưởng phòng",
+    order: 4,
+  },
+  {
+    id: 15,
+    name: "Phó phòng",
+    order: 5,
+  },
+];
+
+const mockData = [
+  {
+    id: 1,
+    maSo: "CR016",
+    vaiTro: "Quản lý - Toàn quyền",
+    phanHe: "CRM",
+    ghiChu: "",
+  },
+  {
+    id: 2,
+    maSo: "CR017",
+    vaiTro: "Trưởng phòng kinh doanh",
+    phanHe: "CRM",
+    ghiChu: "",
+  },
+  {
+    id: 3,
+    maSo: "CR018",
+    vaiTro: "TGD tham khảo",
+    phanHe: "CRM",
+    ghiChu: "",
+  },
+  {
+    id: 4,
+    maSo: "CR019",
+    vaiTro: "Nhân sự",
+    phanHe: "CRM",
+    ghiChu: "",
   },
 ];
 
 const VaiTro = () => {
   const [selectionType, setSelectionType] = useState("checkbox");
+  const [dsVaiTro, setDsVaiTro] = useState(mockData);
+
+  function onDragEnd(result) {
+    if (!result.destination) return;
+    const items = Array.from(dsVaiTro);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    setDsVaiTro(items);
+  }
+
+  const data = mockData.map((i) => {
+    return { ...i, key: i.id };
+  });
+
   return (
-    <div>
-      <div style={{ width: "95%", marginInline: "auto", marginTop: 20 }}>
-        <Table
-          rowSelection={{
-            type: selectionType,
-            ...rowSelection,
-          }}
-          columns={columns}
-          dataSource={data}
-        />
-      </div>
+    <div className="vai-tro">
+      {/* <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          padding: "10px 40px 20px",
+        }}>
+        <Button type="primary">Sắp xếp</Button>
+      </div> */}
+      <Tabs defaultActiveKey="1" style={{ width: "95%", marginInline: "auto" }}>
+        <Tabs.TabPane tab="Danh sách" key="1">
+          <div style={{}}>
+            <Table
+              rowSelection={{
+                type: selectionType,
+                ...rowSelection,
+              }}
+              columns={columns}
+              dataSource={data}
+            />
+          </div>
+        </Tabs.TabPane>
+        <Tabs.TabPane tab="Sắp xếp" key="2">
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="listTitle">
+              {(provided) => (
+                <div
+                  className="c-table"
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}>
+                  <div className="c-row">
+                    <div className="c-data">STT</div>
+                    <div className="flex-grow-1">Tiêu đề</div>
+                    <div className="c-data">Id</div>
+                    <div className="c-data">Order</div>
+                  </div>
+                  {dsVaiTro.map(
+                    ({ id, maSo, vaiTro, phanHe, ghiChu }, index) => {
+                      return (
+                        <Draggable
+                          key={id}
+                          draggableId={id.toString()}
+                          index={index}>
+                          {(provided) => (
+                            <div
+                              className={`c-row ${
+                                index % 2 === 0 && "c-row-even"
+                              }`}
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}>
+                              <div className="c-data">{index + 1}</div>
+                              <div className="flex-grow-1">{vaiTro}</div>
+                              <div className="c-data">{id}</div>
+                              <div className="c-data">{index + 1}</div>
+                            </div>
+                          )}
+                        </Draggable>
+                      );
+                    },
+                  )}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </Tabs.TabPane>
+      </Tabs>
     </div>
   );
 };

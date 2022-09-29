@@ -4,6 +4,7 @@ import App from "./App";
 
 // @styles
 import "semantic-ui-css/semantic.min.css";
+import "react-perfect-scrollbar/dist/css/styles.css";
 import "antd/dist/antd.css";
 import "./styles/bootstrap.css";
 import "./styles/index.css";

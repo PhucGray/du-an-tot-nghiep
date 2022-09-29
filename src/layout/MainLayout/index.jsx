@@ -6,6 +6,7 @@ import {
 } from "@ant-design/icons";
 import { Menu, Modal } from "antd";
 import React, { Fragment } from "react";
+import PerfectScrollbar from "react-perfect-scrollbar";
 import * as TABS from "../../constants/tab";
 
 import ChucDanhTab from "../../tabs/HeThong/ChucDanh";
@@ -42,7 +43,7 @@ const items = [
     getItem("Người dùng", TABS.NGUOI_DUNG),
     getItem("Phân nhóm @", TABS.PHAN_NHOM),
     getItem("Chức danh @", TABS.CHUC_DANH),
-    getItem("Vai trò", TABS.VAI_TRO),
+    getItem("Vai trò @", TABS.VAI_TRO),
   ]),
   getItem("Thông tin", "thong-tin", <SolutionOutlined />, [
     getItem("Cá nhân @", TABS.CA_NHAN),
@@ -128,10 +129,10 @@ const MainLayout = () => {
           position: "relative",
           paddingLeft: 256,
         }}>
-        <div
+        <PerfectScrollbar
           style={{
             width: 256,
-            height: "100vh",
+            minHeight: "100vh",
             position: "fixed",
             top: 0,
             left: 0,
@@ -147,7 +148,7 @@ const MainLayout = () => {
             mode="inline"
             items={items}
           />
-        </div>
+        </PerfectScrollbar>
 
         <div
           style={{

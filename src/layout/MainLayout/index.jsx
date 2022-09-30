@@ -1,23 +1,23 @@
 import { Modal } from "antd";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import * as TAB from "../../constants/tab";
 import tabs from "../../tabs";
 
 const MainLayout = () => {
-  const [currentTabKey, setCurrentTabKey] = useState(null);
-  const [currentTitle, setCurrentTitle] = useState(null);
+  const [currentTabKey, setCurrentTabKey] = useState(() => {
+    return localStorage.getItem("currentTabKey") || null;
+  });
+  const [currentTitle, setCurrentTitle] = useState(() => {
+    return localStorage.getItem("currentTitle") || null;
+  });
+
   const [modalLogoutVisible, setModalLogoutVisible] = useState(false);
 
   const currentTab = tabs.find((tab) => tab.key === currentTabKey);
 
-  const showModalLogout = () => {
-    setModalLogoutVisible(true);
-  };
-
-  const hideModalLogout = () => {
-    setModalLogoutVisible(false);
-  };
+  const showModalLogout = () => setModalLogoutVisible(true);
+  const hideModalLogout = () => setModalLogoutVisible(false);
 
   const handleLogout = () => {
     setModalLogoutVisible(false);
@@ -29,8 +29,12 @@ const MainLayout = () => {
       return;
     }
 
-    setCurrentTabKey(e.key);
-    setCurrentTitle(e.item.props.title);
+    const currentTabKey = e.key;
+    const currentTitle = e.item.props.title;
+    setCurrentTabKey(currentTabKey);
+    setCurrentTitle(currentTitle);
+    localStorage.setItem("currentTabKey", currentTabKey);
+    localStorage.setItem("currentTitle", currentTitle);
   };
 
   return (
@@ -42,7 +46,7 @@ const MainLayout = () => {
           position: "relative",
           paddingLeft: 280,
         }}>
-        <Sidebar onTabClick={onTabClick} />
+        <Sidebar currentTabKey={currentTabKey} onTabClick={onTabClick} />
 
         <div
           style={{

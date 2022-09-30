@@ -123,14 +123,14 @@ const mockData = [
 
 const VaiTro = () => {
   const [selectionType, setSelectionType] = useState("checkbox");
-  const [dsVaiTro, setDsVaiTro] = useState(mockData);
+  const [list, setList] = useState(mockData);
 
   function onDragEnd(result) {
     if (!result.destination) return;
-    const items = Array.from(dsVaiTro);
+    const items = Array.from(list);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
-    setDsVaiTro(items);
+    setList(items);
   }
 
   const data = mockData.map((i) => {
@@ -139,14 +139,6 @@ const VaiTro = () => {
 
   return (
     <div className="vai-tro">
-      {/* <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          padding: "10px 40px 20px",
-        }}>
-        <Button type="primary">Sắp xếp</Button>
-      </div> */}
       <Tabs defaultActiveKey="1" style={{ width: "95%", marginInline: "auto" }}>
         <Tabs.TabPane tab="Danh sách" key="1">
           <div style={{}}>
@@ -174,31 +166,29 @@ const VaiTro = () => {
                     <div className="c-data">Id</div>
                     <div className="c-data">Order</div>
                   </div>
-                  {dsVaiTro.map(
-                    ({ id, maSo, vaiTro, phanHe, ghiChu }, index) => {
-                      return (
-                        <Draggable
-                          key={id}
-                          draggableId={id.toString()}
-                          index={index}>
-                          {(provided) => (
-                            <div
-                              className={`c-row ${
-                                index % 2 === 0 && "c-row-even"
-                              }`}
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}>
-                              <div className="c-data">{index + 1}</div>
-                              <div className="flex-grow-1">{vaiTro}</div>
-                              <div className="c-data">{id}</div>
-                              <div className="c-data">{index + 1}</div>
-                            </div>
-                          )}
-                        </Draggable>
-                      );
-                    },
-                  )}
+                  {list.map(({ id, vaiTro }, index) => {
+                    return (
+                      <Draggable
+                        key={id}
+                        draggableId={id.toString()}
+                        index={index}>
+                        {(provided) => (
+                          <div
+                            className={`c-row ${
+                              index % 2 === 0 && "c-row-even"
+                            }`}
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}>
+                            <div className="c-data">{index + 1}</div>
+                            <div className="flex-grow-1">{vaiTro}</div>
+                            <div className="c-data">{id}</div>
+                            <div className="c-data">{index + 1}</div>
+                          </div>
+                        )}
+                      </Draggable>
+                    );
+                  })}
                   {provided.placeholder}
                 </div>
               )}

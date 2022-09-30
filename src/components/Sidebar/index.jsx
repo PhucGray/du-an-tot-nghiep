@@ -44,7 +44,7 @@ const items = [
   getItem("Đăng xuất", TAB.DANG_XUAT, <LoginOutlined />),
 ];
 
-const Sidebar = ({ onTabClick }) => {
+const Sidebar = ({ onTabClick, currentTabKey }) => {
   return (
     <PerfectScrollbar
       style={{
@@ -60,7 +60,7 @@ const Sidebar = ({ onTabClick }) => {
         style={{
           height: "100%",
         }}
-        defaultSelectedKeys={["1"]}
+        defaultSelectedKeys={[currentTabKey]}
         defaultOpenKeys={["ki-so", "he-thong", "thong-tin"]}
         mode="inline"
         items={items}

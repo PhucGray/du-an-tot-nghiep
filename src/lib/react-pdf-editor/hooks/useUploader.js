@@ -59,6 +59,7 @@ const handlers = {
 export default ({ use, afterUploadPdf, afterUploadAttachment }) => {
   const [isUploading, setIsUploading] = useState(false);
   const inputRef = createRef();
+  const [file, setFile] = useState(null);
 
   const onClick = (event) => {
     event.currentTarget.value = "";
@@ -75,10 +76,6 @@ export default ({ use, afterUploadPdf, afterUploadAttachment }) => {
   const upload = async (event) => {
     setIsUploading(true);
 
-    // if (!isUploading) {
-    // return;
-    // }
-
     const files =
       event.currentTarget.files ||
       (event.dataTransfer && event.dataTransfer.files);
@@ -88,6 +85,8 @@ export default ({ use, afterUploadPdf, afterUploadAttachment }) => {
     }
 
     const file = files[0];
+
+    setFile(file);
 
     const result = await handlers[use](file);
 
@@ -109,5 +108,6 @@ export default ({ use, afterUploadPdf, afterUploadAttachment }) => {
     inputRef,
     isUploading,
     handleClick,
+    file,
   };
 };

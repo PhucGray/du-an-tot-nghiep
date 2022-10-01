@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { Image as KonvaImage, Layer, Stage, Text } from "react-konva";
 import { Pagination } from "semantic-ui-react";
-import { Select, Input } from "antd";
+import { Select, Input, message, Button } from "antd";
 import useImage from "use-image";
 import Empty from "../../../lib/react-pdf-editor/components/Empty";
 // import MenuBar from "../../../lib/react-pdf-editor/components/MenuBar";
@@ -20,7 +20,14 @@ import { useRef } from "react";
 import getImageSize from "image-size-from-url";
 import axios from "axios";
 import { API_DOMAIN, API_URL } from "../../../configs/api";
-import { SUCCESS, RETCODE_SUCCESS } from "../../../constants/api";
+import {
+  SUCCESS,
+  RETCODE_SUCCESS,
+  LOI,
+  LOI_HE_THONG,
+} from "../../../constants/api";
+import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
+import C_ContextMenu from "../../../components/C_ContextMenu";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -43,8 +50,6 @@ const LionImage = ({ onDragEnd, onChangePos, ...props }) => {
 };
 
 const TestPdf = () => {
-  const headRef = useRef();
-
   const signs = [
     {
       id: 1,
@@ -72,7 +77,7 @@ const TestPdf = () => {
     },
   ];
 
-  const pdfUrl = "https://www.orimi.com/pdf-test.pdf";
+  // const pdfUrl = "https://www.orimi.com/pdf-test.pdf";
   const signUrl =
     "https://firebasestorage.googleapis.com/v0/b/tot-nghiep-csharp.appspot.com/o/ck1.png?alt=media&token=a7200610-5600-43cd-a14c-a43fe17ce612";
   const pageSign = 1;
@@ -80,13 +85,76 @@ const TestPdf = () => {
   const [pdfSize, setPdfSize] = useState({ width: 0, height: 0 });
   const [texts, setTexts] = useState([]);
   const [resFile, setResFile] = useState(null);
+  const [pdfUrl, setPdfUrl] = useState("https://www.orimi.com/pdf-test.pdf");
 
   const [images, setImages] = useState([]);
   const [contextMenuData, setContextMenuData] = useState(null);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [textarea, setTextarea] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
 
-  const [headHeight, setHeadHeight] = useState(0);
+  const initializePageAndAttachments = (pdfDetails) => {
+    initialize(pdfDetails);
+    const numberOfPages = pdfDetails.pages.length;
+    resetAttachments(numberOfPages);
+  };
+
+  const {
+    inputRef: pdfInput,
+    handleClick: handlePdfClick,
+    isUploading,
+    onClick,
+    upload: uploadPdf,
+    file: pdfFile,
+  } = useUploader({
+    use: UploadTypes.PDF,
+    afterUploadPdf: initializePageAndAttachments,
+  });
+
+  const {
+    file,
+    initialize,
+    pageIndex,
+    isMultiPage,
+    isFirstPage,
+    isLastPage,
+    currentPage,
+    isSaving,
+    savePdf,
+    previousPage,
+    nextPage,
+    setDimensions,
+    name,
+    dimensions,
+    totalPages,
+    setActivePage,
+  } = usePdf();
+
+  const {
+    add: addAttachment,
+    allPageAttachments,
+    pageAttachments,
+    reset: resetAttachments,
+    update,
+    remove,
+  } = useAttachments();
+
+  const {
+    percent,
+    uploading,
+    uploadFile: uploadToFireBase,
+    url,
+  } = useUploadFileToFireBase({ file: pdfFile });
+
+  const {
+    inputRef: imageInput,
+    handleClick: handleImageClick,
+    onClick: onImageClick,
+    upload: uploadImage,
+  } = useUploader({
+    use: UploadTypes.IMAGE,
+    afterUploadAttachment: addAttachment,
+  });
 
   const handleSignChange = (value, option) => {
     const key = option?.key;
@@ -135,73 +203,80 @@ const TestPdf = () => {
     setTexts([...texts].filter((text) => text.id != id));
   };
 
-  const {
-    file,
-    initialize,
-    pageIndex,
-    isMultiPage,
-    isFirstPage,
-    isLastPage,
-    currentPage,
-    isSaving,
-    savePdf,
-    previousPage,
-    nextPage,
-    setDimensions,
-    name,
-    dimensions,
-    totalPages,
-    setActivePage,
-  } = usePdf();
-  const {
-    add: addAttachment,
-    allPageAttachments,
-    pageAttachments,
-    reset: resetAttachments,
-    update,
-    remove,
-  } = useAttachments();
+  // const addText = () => {
+  //   const newTextAttachment = {
+  //     id: ggID(),
+  //     type: AttachmentTypes.TEXT,
+  //     x: 0,
+  //     y: 0,
+  //     width: 120,
+  //     height: 25,
+  //     size: 16,
+  //     lineHeight: 1.4,
+  //     fontFamily: "Times-Roman",
+  //     text: "Enter Text Here",
+  //   };
+  //   addAttachment(newTextAttachment);
+  // };
 
-  const initializePageAndAttachments = (pdfDetails) => {
-    initialize(pdfDetails);
-    const numberOfPages = pdfDetails.pages.length;
-    resetAttachments(numberOfPages);
+  const handleDragStart = (e) => {
+    const id = e.target.id();
+    setTexts(
+      texts.map((text) => {
+        return {
+          ...text,
+          isDragging: text.id === id,
+        };
+      }),
+    );
+  };
+  const handleDragEnd = (e) => {
+    setTexts(
+      texts.map((text) => {
+        return {
+          ...text,
+          isDragging: false,
+        };
+      }),
+    );
   };
 
-  const {
-    inputRef: pdfInput,
-    handleClick: handlePdfClick,
-    isUploading,
-    onClick,
-    upload: uploadPdf,
-  } = useUploader({
-    use: UploadTypes.PDF,
-    afterUploadPdf: initializePageAndAttachments,
-  });
-  const {
-    inputRef: imageInput,
-    handleClick: handleImageClick,
-    onClick: onImageClick,
-    upload: uploadImage,
-  } = useUploader({
-    use: UploadTypes.IMAGE,
-    afterUploadAttachment: addAttachment,
-  });
+  const handleXuatFile = async () => {
+    try {
+      if (!url) {
+        message.error(LOI);
+        return;
+      }
 
-  const addText = () => {
-    const newTextAttachment = {
-      id: ggID(),
-      type: AttachmentTypes.TEXT,
-      x: 0,
-      y: 0,
-      width: 120,
-      height: 25,
-      size: 16,
-      lineHeight: 1.4,
-      fontFamily: "Times-Roman",
-      text: "Enter Text Here",
-    };
-    addAttachment(newTextAttachment);
+      const image = images[0];
+
+      const y = pdfSize.height - image.y - image.height;
+      const x = image.x;
+      const img_w = image.width;
+      const img_h = image.height;
+      const imgSign = image.src;
+      const pageSign = 1;
+
+      const res = await axios.post(`${API_URL}kysos`, {
+        x,
+        y,
+        img_w,
+        img_h,
+        inputFile: url,
+        imgSign,
+        pageSign,
+        Id_NguoiDung: 1,
+      });
+
+      if (res.status === SUCCESS && res.data.retCode === RETCODE_SUCCESS) {
+        const file = res.data.data;
+        setResFile(file);
+      }
+    } catch (error) {
+      console.log("error");
+      console.log(error);
+      message.error(LOI_HE_THONG);
+    }
   };
 
   const hiddenInputs = (
@@ -230,40 +305,26 @@ const TestPdf = () => {
     </>
   );
 
-  // const handleSavePdf = () => savePdf(allPageAttachments);
-
-  const handleDragStart = (e) => {
-    const id = e.target.id();
-    setTexts(
-      texts.map((text) => {
-        return {
-          ...text,
-          isDragging: text.id === id,
-        };
-      }),
-    );
-  };
-  const handleDragEnd = (e) => {
-    setTexts(
-      texts.map((text) => {
-        return {
-          ...text,
-          isDragging: false,
-        };
-      }),
-    );
-  };
-
   useEffect(() => {
-    if (headRef.current) {
-      setHeadHeight(headRef.current.clientHeight);
+    if (url) {
+      handleXuatFile();
     }
-  }, [headRef]);
+  }, [url]);
 
   return (
     <div className="mx-auto" style={{ width: "100%", minHeight: "100vh" }}>
       <div>
-        <div ref={headRef}>
+        <div>
+          <div>
+            <Button
+              type="primary"
+              onClick={() => {
+                uploadToFireBase();
+              }}>
+              Xuat
+            </Button>
+          </div>
+
           <Select
             style={{
               width: 120,
@@ -284,48 +345,6 @@ const TestPdf = () => {
               onChange={(e) => setTextarea(e.currentTarget.value)}
             />
           </div>
-          <button
-            onClick={async () => {
-              const image = images[0];
-
-              const y = pdfSize.height - image.y - image.height;
-              const x = image.x;
-              const img_w = image.width;
-              const img_h = image.height;
-              const inputFile = pdfUrl;
-              const imgSign = image.src;
-              const pageSign = 1;
-
-              try {
-                const res = await axios.post(
-                  // "https://localhost:44373/api/home",
-                  `${API_URL}kysos`,
-                  {
-                    x,
-                    y,
-                    img_w,
-                    img_h,
-                    inputFile,
-                    imgSign,
-                    pageSign,
-                    Id_NguoiDung: 1,
-                  },
-                );
-
-                if (
-                  res.status === SUCCESS &&
-                  res.data.retCode === RETCODE_SUCCESS
-                ) {
-                  const file = res.data.data;
-                  setResFile(file);
-                }
-              } catch (error) {
-                console.log("error");
-                console.log(error);
-              }
-            }}>
-            Xuat
-          </button>
 
           {!!resFile && (
             <button
@@ -419,31 +438,29 @@ const TestPdf = () => {
                     />
                   ))}
                   {contextMenuVisible && (
-                    <Portal>
-                      <ContextMenu
-                        x={contextMenuData?.position?.x || 0}
-                        y={contextMenuData?.position?.y + headHeight || 0}
-                        onSelectMenuOption={(option) => {
-                          setContextMenuVisible(false);
+                    <C_ContextMenu
+                      contextMenuData={contextMenuData}
+                      onSelectMenuOption={(option) => {
+                        setContextMenuVisible(false);
 
-                          if (option === "edit") {
-                            if (contextMenuData?.type === "text") {
-                              setTextarea(contextMenuData?.data?.content);
-                            }
+                        if (option === "edit") {
+                          setIsEditing(true);
+                          if (contextMenuData?.type === "text") {
+                            setTextarea(contextMenuData?.data?.content);
+                          }
+                        }
+
+                        if (option === "delete") {
+                          if (contextMenuData?.type === "image") {
+                            handleDeleteImage(contextMenuData?.data?.id);
                           }
 
-                          if (option === "delete") {
-                            if (contextMenuData?.type === "image") {
-                              handleDeleteImage(contextMenuData?.data?.id);
-                            }
-
-                            if (contextMenuData?.type === "text") {
-                              handleDeleteText(contextMenuData?.data?.id);
-                            }
+                          if (contextMenuData?.type === "text") {
+                            handleDeleteText(contextMenuData?.data?.id);
                           }
-                        }}
-                      />
-                    </Portal>
+                        }
+                      }}
+                    />
                   )}
                   {texts.map((text) => (
                     <Text

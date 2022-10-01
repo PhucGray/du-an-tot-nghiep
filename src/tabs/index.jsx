@@ -12,12 +12,16 @@ import ChucDanh from "./HeThong/ChucDanh";
 import VaiTro from "./HeThong/VaiTro";
 import Quyen from "./HeThong/Quyen";
 
-// import KiThu from "./HeThong/KiThu";
+import KiThu from "./HeThong/KiThu";
 // import PhanNhom from "./HeThong/PhanNhom";
 import CaNhan from "./ThongTin/CaNhan";
 import MatKhau from "./ThongTin/MatKhau";
 
 export default [
+  {
+    key: TAB.KI_THU,
+    component: <KiThu />,
+  },
   {
     key: TAB.VAN_BAN,
     component: <VanBan />,

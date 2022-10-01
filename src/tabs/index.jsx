@@ -1,15 +1,19 @@
 import * as TAB from "../constants/tab";
 
-import ChucDanh from "./HeThong/ChucDanh";
-import NguoiDung from "./HeThong/DSNguoiDung";
-import KiThu from "./HeThong/KiThu";
-import PhanNhom from "./HeThong/PhanNhom";
-import PhongBan from "./HeThong/PhongBan";
-import Quyen from "./HeThong/Quyen";
-import VaiTro from "./HeThong/VaiTro";
+import VanBan from "./KiSo/VanBan";
 import KiChoDuyet from "./KiSo/KiChoDuyet";
 import KiDeXuat from "./KiSo/KiDeXuat";
-import VanBan from "./KiSo/VanBan";
+import ThongSoNguoiDung from "./KiSo/ThongSoNguoiDung";
+import ThongSoDonVi from "./KiSo/ThongSoDonVi";
+
+import DSNguoiDung from "./HeThong/DSNguoiDung";
+import PhongBan from "./HeThong/PhongBan";
+import ChucDanh from "./HeThong/ChucDanh";
+import VaiTro from "./HeThong/VaiTro";
+import Quyen from "./HeThong/Quyen";
+
+// import KiThu from "./HeThong/KiThu";
+// import PhanNhom from "./HeThong/PhanNhom";
 import CaNhan from "./ThongTin/CaNhan";
 import MatKhau from "./ThongTin/MatKhau";
 
@@ -27,17 +31,25 @@ export default [
     component: <KiDeXuat />,
   },
   {
-    key: TAB.KI_THU,
-    component: <KiThu />,
+    key: TAB.THONG_SO_NGUOI_DUNG,
+    component: <ThongSoNguoiDung />,
   },
+  {
+    key: TAB.THONG_SO_DON_VI,
+    component: <ThongSoDonVi />,
+  },
+  // {
+  //   key: TAB.KI_THU,
+  //   component: <KiThu />,
+  // },
   {
     key: TAB.DANH_SACH_NGUOI_DUNG,
-    component: <NguoiDung />,
+    component: <DSNguoiDung />,
   },
-  {
-    key: TAB.PHAN_NHOM,
-    component: <PhanNhom />,
-  },
+  // {
+  //   key: TAB.PHAN_NHOM,
+  //   component: <PhanNhom />,
+  // },
   {
     key: TAB.PHONG_BAN,
     component: <PhongBan />,

@@ -16,22 +16,7 @@ import {
   SUCCESS,
 } from "../../../constants/api";
 import { toLowerCaseNonAccentVietnamese } from "../../../utils/strings";
-
-const { Search } = Input;
-
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(
-      `selectedRowKeys: ${selectedRowKeys}`,
-      "selectedRows: ",
-      selectedRows,
-    );
-  },
-  getCheckboxProps: (record) => ({
-    disabled: record.name === "Disabled User",
-    name: record.name,
-  }),
-};
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 export default () => {
   const [form] = Form.useForm();
@@ -39,25 +24,29 @@ export default () => {
   const [getListLoading, setGetListLoading] = useState(true);
   const [themPBLoading, setThemPBLoading] = useState(false);
   const [sapXepListLoading, setSapXepListLoading] = useState(false);
-  const [selectionType, setSelectionType] = useState("checkbox");
   const [list, setList] = useState([]);
   const [searchList, setSearchList] = useState([]);
-
   const [keyword, setKeyword] = useState("");
+  const [isSorting, setIsSorting] = useState(false);
 
   function onDragEnd(result) {
+    const dsThuTu = list.map((i) => i.thuTu);
+
     if (!result.destination) return;
-    const thuTuMoi = result.destination.index + 1;
-    const thuTuCu = result.source.index + 1;
 
     const items = Array.from(list);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    setList(items);
+    setList(
+      items.map((i, index) => {
+        return { ...i, thuTu: dsThuTu[index] };
+      }),
+    );
   }
 
-  const fetchDsPhongBan = async () => {
+  const handleGetDsPhongBan = async () => {
+    setGetListLoading(true);
     try {
       const res = await getDsPhongBanSvc();
 
@@ -103,17 +92,9 @@ export default () => {
   };
 
   const handleSapXepPhongBan = async () => {
-    const sortedList = list.map((item, index) => {
-      return {
-        ma_PhongBan: item?.maSo,
-        ten_PhongBan: item?.tenPhongBan,
-        order: index + 1,
-      };
-    });
-
     setSapXepListLoading(true);
     try {
-      const res = await sapXepDsPhongBanSvc(sortedList);
+      const res = await sapXepDsPhongBanSvc(list);
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
@@ -133,7 +114,7 @@ export default () => {
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
-        fetchDsPhongBan();
+        handleGetDsPhongBan();
       } else {
         message.error(LOI);
       }
@@ -143,7 +124,7 @@ export default () => {
     }
   };
 
-  const onSearch = (keyword) => {
+  const handleSearch = (keyword) => {
     setKeyword(keyword);
 
     setSearchList(
@@ -156,7 +137,7 @@ export default () => {
   };
 
   useEffect(() => {
-    fetchDsPhongBan();
+    handleGetDsPhongBan();
   }, []);
 
   const columns = [
@@ -183,7 +164,6 @@ export default () => {
           <div>
             <Button type="link">Sửa</Button>
             <Button type="link">Chi tiết</Button>
-            {/* <Button type="link">Xoá</Button> */}
             <Popconfirm
               title="Bạn có chắc chắn muốn xoá?"
               onConfirm={() => handleXoaPhongBan(record)}
@@ -204,104 +184,101 @@ export default () => {
         style={{ width: "95%", marginInline: "auto" }}
         onChange={(activeKey) => {
           if (activeKey == 1) {
-            fetchDsPhongBan();
+            handleGetDsPhongBan();
           }
         }}>
         <Tabs.TabPane tab="Danh sách" key="1">
-          <div style={{}}>
-            <div className="mt-2 mb-4">
-              {/* <Search
-                placeholder="Nhập từ khoá tìm kiếm"
-                onSearch={(value) => {
-                  console.log(value);
-                }}
-                onChange
-                style={{
-                  width: 200,
-                }}
-              /> */}
-              <Input
-                style={{ width: 200 }}
-                placeholder="Nhập từ khoá tìm kiếm"
-                value={keyword}
-                onChange={(e) => onSearch(e.target.value)}
+          {isSorting ? (
+            <div>
+              <div className="mt-2 mb-4 d-flex justify-content-end">
+                <Button
+                  type="link"
+                  className="d-flex align-items-center"
+                  icon={<ArrowLeftOutlined />}
+                  onClick={() => {
+                    handleGetDsPhongBan();
+                    setIsSorting(false);
+                  }}>
+                  Danh sách
+                </Button>
+              </div>
+
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="listTitle">
+                  {(provided) => (
+                    <div
+                      className="c-table"
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}>
+                      <div className="c-row">
+                        <div className="c-data">STT</div>
+                        {/* <div className="c-data">Mã số</div> */}
+                        <div className="flex-grow-1">Tên nhóm</div>
+                        <div className="c-data">Order</div>
+                      </div>
+                      {list.map(({ maSo, tenPhongBan, thuTu }, index) => {
+                        return (
+                          <Draggable
+                            key={maSo?.toString()}
+                            draggableId={maSo?.toString()}
+                            index={index}>
+                            {(provided) => (
+                              <div
+                                key={index}
+                                className={`c-row ${
+                                  index % 2 === 0 && "c-row-even"
+                                }`}
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}>
+                                <div className="c-data">{index + 1}</div>
+                                {/* <div className="c-data">{maSo}</div> */}
+                                <div className="flex-grow-1">{tenPhongBan}</div>
+                                <div className="c-data">{thuTu}</div>
+                              </div>
+                            )}
+                          </Draggable>
+                        );
+                      })}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+
+              <div className="d-flex justify-content-center mt-3">
+                <Button type="primary">Sắp xếp</Button>
+              </div>
+            </div>
+          ) : (
+            <div style={{}}>
+              <div className="mt-2 mb-4 d-flex justify-content-between">
+                <Input
+                  style={{ width: 200 }}
+                  placeholder="Nhập từ khoá tìm kiếm"
+                  value={keyword}
+                  onChange={(e) => handleSearch(e.target.value)}
+                />
+
+                <Button type="primary" onClick={() => setIsSorting(true)}>
+                  Sắp xếp
+                </Button>
+              </div>
+              <Table
+                loading={getListLoading}
+                columns={columns}
+                dataSource={keyword.trim() ? searchList : list}
+                pagination={{ defaultPageSize: 5 }}
               />
             </div>
-            <Table
-              loading={getListLoading}
-              rowSelection={{
-                type: selectionType,
-                ...rowSelection,
-              }}
-              columns={columns}
-              dataSource={keyword.trim() ? searchList : list}
-              pagination={{ defaultPageSize: 5 }}
-            />
-          </div>
+          )}
         </Tabs.TabPane>
 
-        <Tabs.TabPane tab="Sắp xếp" key="2">
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="listTitle">
-              {(provided) => (
-                <div
-                  className="c-table"
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}>
-                  <div className="c-row">
-                    <div className="c-data">STT</div>
-                    {/* <div className="c-data">Mã số</div> */}
-                    <div className="flex-grow-1">Tên nhóm</div>
-                    <div className="c-data">Order</div>
-                  </div>
-                  {list.map(({ maSo, tenPhongBan, thuTu }, index) => {
-                    return (
-                      <Draggable
-                        key={maSo?.toString()}
-                        draggableId={maSo?.toString()}
-                        index={index}>
-                        {(provided) => (
-                          <div
-                            key={index}
-                            className={`c-row ${
-                              index % 2 === 0 && "c-row-even"
-                            }`}
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}>
-                            <div className="c-data">{index + 1}</div>
-                            {/* <div className="c-data">{maSo}</div> */}
-                            <div className="flex-grow-1">{tenPhongBan}</div>
-                            <div className="c-data">{thuTu}</div>
-                          </div>
-                        )}
-                      </Draggable>
-                    );
-                  })}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-
-          <Button
-            loading={sapXepListLoading}
-            onClick={handleSapXepPhongBan}
-            type="primary"
-            htmlType="submit"
-            className="submit-btn">
-            Sắp xếp
-          </Button>
-        </Tabs.TabPane>
-
-        <Tabs.TabPane tab="Thêm phòng ban" key="3">
+        <Tabs.TabPane tab="Thêm phòng ban" key="2">
           <Form
             form={form}
             className="form mx-auto mt-3"
             name="basic"
-            initialValues={{
-              remember: true,
-            }}
             onFinish={handleThemPhongBan}
             autoComplete="off"
             layout="vertical">

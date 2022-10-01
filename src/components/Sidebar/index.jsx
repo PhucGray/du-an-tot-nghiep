@@ -26,13 +26,16 @@ const items = [
     getItem("Văn bản", TAB.VAN_BAN),
     getItem("Kí số chờ duyệt", TAB.KI_CHO_DUYET),
     getItem("Kí số đề xuất", TAB.KI_DE_XUAT),
+    getItem("Thông số người dùng", TAB.THONG_SO_NGUOI_DUNG),
+    getItem("Thông số đơn vị", TAB.THONG_SO_DON_VI),
   ]),
   getItem("Hệ thống", "he-thong", <SettingOutlined />, [
-    getItem("Người dùng", TAB.NGUOI_DUNG, <TeamOutlined />, [
-      getItem("Kí thử", TAB.KI_THU),
-      getItem("Danh sách người dùng", TAB.DANH_SACH_NGUOI_DUNG),
-      getItem("Phân nhóm", TAB.PHAN_NHOM),
-    ]),
+    // getItem("Người dùng", TAB.NGUOI_DUNG, <TeamOutlined />, [
+    //   getItem("Kí thử", TAB.KI_THU),
+    //   getItem("Danh sách người dùng", TAB.DANH_SACH_NGUOI_DUNG),
+    //   getItem("Phân nhóm", TAB.PHAN_NHOM),
+    // ]),
+    getItem("Danh sách người dùng", TAB.DANH_SACH_NGUOI_DUNG),
     getItem("Phòng ban", TAB.PHONG_BAN),
     getItem("Chức danh", TAB.CHUC_DANH),
     getItem("Vai trò", TAB.VAI_TRO),
@@ -49,7 +52,7 @@ const Sidebar = ({ onTabClick, currentTabKey }) => {
   return (
     <PerfectScrollbar
       style={{
-        width: 280,
+        width: 230,
         minHeight: "100vh",
         position: "fixed",
         top: 0,

@@ -44,7 +44,7 @@ const MainLayout = () => {
           height: "100vh",
           display: "flex",
           position: "relative",
-          paddingLeft: 280,
+          paddingLeft: 230,
         }}>
         <Sidebar currentTabKey={currentTabKey} onTabClick={onTabClick} />
 

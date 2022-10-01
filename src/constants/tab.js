@@ -3,6 +3,7 @@ export const KI_CHO_DUYET = "ki-cho-duyet";
 export const KI_DE_XUAT = "ki-de-xuat";
 //---------------------------------------
 export const NGUOI_DUNG = "nguoi-dung";
+export const KI_THU = "ki-thu";
 export const DANH_SACH_NGUOI_DUNG = "danh-sach-nguoi-dung";
 export const PHAN_NHOM = "phan-nhom";
 

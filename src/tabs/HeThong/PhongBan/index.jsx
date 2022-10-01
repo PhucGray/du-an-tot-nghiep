@@ -15,6 +15,9 @@ import {
   RETCODE_SUCCESS,
   SUCCESS,
 } from "../../../constants/api";
+import { toLowerCaseNonAccentVietnamese } from "../../../utils/strings";
+
+const { Search } = Input;
 
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
@@ -38,6 +41,9 @@ export default () => {
   const [sapXepListLoading, setSapXepListLoading] = useState(false);
   const [selectionType, setSelectionType] = useState("checkbox");
   const [list, setList] = useState([]);
+  const [searchList, setSearchList] = useState([]);
+
+  const [keyword, setKeyword] = useState("");
 
   function onDragEnd(result) {
     if (!result.destination) return;
@@ -48,28 +54,7 @@ export default () => {
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    // setList(
-    //   items.map((i) => {
-    //     // const isTargetItem = i?.maSo === reorderedItem?.maSo;
-
-    //     // if (isTargetItem) {
-    //     //   i.thuTu = thuTuMoi + 1;
-    //     // }
-
-    //     console.log(thuTuCu);
-    //     console.log(thuTuMoi);
-
-    //     // if (thuTuMoi === 1) {
-    //     //   console.log("1");
-    //     // } else {
-    //     //   console.log("other");
-    //     // }
-
-    //     // return { ...i, thuTu: i.thuTu };
-
-    //     return i;
-    //   }),
-    // );
+    setList(items);
   }
 
   const fetchDsPhongBan = async () => {
@@ -85,6 +70,7 @@ export default () => {
                 maSo: i?.ma_PhongBan,
                 tenPhongBan: i?.ten_PhongBan,
                 thuTu: i?.order,
+                key: i?.ma_PhongBan,
               };
             }),
         );
@@ -147,14 +133,26 @@ export default () => {
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
+        fetchDsPhongBan();
       } else {
         message.error(LOI);
       }
     } catch (error) {
       message.error(LOI_HE_THONG);
     } finally {
-      // setThemPBLoading(false);
     }
+  };
+
+  const onSearch = (keyword) => {
+    setKeyword(keyword);
+
+    setSearchList(
+      [...list].filter((i) =>
+        toLowerCaseNonAccentVietnamese(i?.tenPhongBan).includes(
+          toLowerCaseNonAccentVietnamese(keyword),
+        ),
+      ),
+    );
   };
 
   useEffect(() => {
@@ -202,7 +200,7 @@ export default () => {
   return (
     <div className="vai-tro">
       <Tabs
-        defaultActiveKey="2"
+        defaultActiveKey="1"
         style={{ width: "95%", marginInline: "auto" }}
         onChange={(activeKey) => {
           if (activeKey == 1) {
@@ -211,6 +209,24 @@ export default () => {
         }}>
         <Tabs.TabPane tab="Danh sách" key="1">
           <div style={{}}>
+            <div className="mt-2 mb-4">
+              {/* <Search
+                placeholder="Nhập từ khoá tìm kiếm"
+                onSearch={(value) => {
+                  console.log(value);
+                }}
+                onChange
+                style={{
+                  width: 200,
+                }}
+              /> */}
+              <Input
+                style={{ width: 200 }}
+                placeholder="Nhập từ khoá tìm kiếm"
+                value={keyword}
+                onChange={(e) => onSearch(e.target.value)}
+              />
+            </div>
             <Table
               loading={getListLoading}
               rowSelection={{
@@ -218,7 +234,7 @@ export default () => {
                 ...rowSelection,
               }}
               columns={columns}
-              dataSource={list}
+              dataSource={keyword.trim() ? searchList : list}
               pagination={{ defaultPageSize: 5 }}
             />
           </div>
@@ -246,6 +262,7 @@ export default () => {
                         index={index}>
                         {(provided) => (
                           <div
+                            key={index}
                             className={`c-row ${
                               index % 2 === 0 && "c-row-even"
                             }`}

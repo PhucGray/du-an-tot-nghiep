@@ -2,6 +2,7 @@ import * as TAB from "../constants/tab";
 
 import ChucDanh from "./HeThong/ChucDanh";
 import NguoiDung from "./HeThong/DSNguoiDung";
+import KiThu from "./HeThong/KiThu";
 import PhanNhom from "./HeThong/PhanNhom";
 import PhongBan from "./HeThong/PhongBan";
 import Quyen from "./HeThong/Quyen";
@@ -24,6 +25,10 @@ export default [
   {
     key: TAB.KI_DE_XUAT,
     component: <KiDeXuat />,
+  },
+  {
+    key: TAB.KI_THU,
+    component: <KiThu />,
   },
   {
     key: TAB.DANH_SACH_NGUOI_DUNG,

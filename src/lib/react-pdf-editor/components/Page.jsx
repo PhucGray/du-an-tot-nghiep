@@ -1,11 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 
-// interface Props {
-//   page: any;
-//   dimensions?: Dimensions;
-//   updateDimensions: ({ width, height }: Dimensions) => void;
-// }
-
 export default ({ page, dimensions, updateDimensions, setPdfSize }) => {
   const canvasRef = useRef();
   const [width, setWidth] = useState((dimensions && dimensions.width) || 0);
@@ -17,9 +11,6 @@ export default ({ page, dimensions, updateDimensions, setPdfSize }) => {
       if (_page) {
         const context = canvasRef.current?.getContext("2d");
         const viewport = _page.getViewport({ scale: 1 });
-
-        console.log("viewport: ");
-        console.log(viewport);
 
         setWidth(viewport.width);
         setHeight(viewport.height);

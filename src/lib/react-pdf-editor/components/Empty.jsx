@@ -1,5 +1,7 @@
+import { Button } from "antd";
 import React from "react";
-import { Segment, Header, Icon, Button } from "semantic-ui-react";
+import { Segment, Header, Icon } from "semantic-ui-react";
+import { FilePdfOutlined } from "@ant-design/icons";
 
 // interface Props {
 //   loading: boolean;
@@ -7,25 +9,30 @@ import { Segment, Header, Icon, Button } from "semantic-ui-react";
 // }
 
 export default ({ loading, uploadPdf }) => (
-  <Segment
-    className="d-flex flex-column align-items-center py-5"
+  <div
+    className="d-flex flex-column align-items-center py-5 border rounded mx-auto mt-3"
+    style={{ width: "90%" }}
     // data-testid="empty-container"
     // placeholder
-    loading={loading}
+    // loading={loading}
     // style={{ height: "80vh" }}
   >
-    <Header icon>
+    {/* <Header icon>
       <Icon name="file pdf outline" />
-      {/* Upload your PDF to start editing! */}
       Tải lên file pdf của bạn để bắt đầu chỉnh sửa
-    </Header>
+    </Header> */}
     <div>
+      <FilePdfOutlined style={{ fontSize: 50 }} />
+    </div>
+
+    <div className="mt-3">
       <Button
-        primary
+        type="primary"
+        className="rounded"
         data-testid="empty-screen-upload-pdf-btn"
         onClick={uploadPdf}>
         Tải PDF
       </Button>
     </div>
-  </Segment>
+  </div>
 );

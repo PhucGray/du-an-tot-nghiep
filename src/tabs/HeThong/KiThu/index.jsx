@@ -92,6 +92,7 @@ const TestPdf = () => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [textarea, setTextarea] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const [xuatLoading, setXuatLoading] = useState(false);
 
   const initializePageAndAttachments = (pdfDetails) => {
     initialize(pdfDetails);
@@ -242,6 +243,7 @@ const TestPdf = () => {
   };
 
   const handleXuatFile = async () => {
+    setXuatLoading(true);
     try {
       if (!url) {
         message.error(LOI);
@@ -276,6 +278,8 @@ const TestPdf = () => {
       console.log("error");
       console.log(error);
       message.error(LOI_HE_THONG);
+    } finally {
+      setXuatLoading(false);
     }
   };
 
@@ -315,17 +319,30 @@ const TestPdf = () => {
     <div className="mx-auto" style={{ width: "100%", minHeight: "100vh" }}>
       <div>
         <div>
-          <div>
+          <div className="d-flex justify-content-end mt-3 me-4 gap-3">
+            {!!resFile && (
+              <Button
+                type="primary"
+                style={{ backgroundColor: "#ff8a2a", border: "none" }}
+                onClick={() => {
+                  window.open(API_DOMAIN + resFile);
+                }}>
+                Mở file
+              </Button>
+            )}
+
             <Button
+              loading={xuatLoading}
               type="primary"
               onClick={() => {
                 uploadToFireBase();
               }}>
-              Xuat
+              Xuất
             </Button>
           </div>
 
           <Select
+            placeholder="Chọn chữ kí"
             style={{
               width: 120,
             }}
@@ -345,16 +362,6 @@ const TestPdf = () => {
               onChange={(e) => setTextarea(e.currentTarget.value)}
             />
           </div>
-
-          {!!resFile && (
-            <button
-              onClick={() => {
-                // console.log(API_DOMAIN + resFile);
-                window.open(API_DOMAIN + resFile);
-              }}>
-              Mo file
-            </button>
-          )}
         </div>
       </div>
       {hiddenInputs}

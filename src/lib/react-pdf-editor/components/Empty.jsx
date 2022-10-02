@@ -11,7 +11,7 @@ import { FilePdfOutlined } from "@ant-design/icons";
 export default ({ loading, uploadPdf }) => (
   <div
     className="d-flex flex-column align-items-center py-5 border rounded mx-auto mt-3"
-    style={{ width: "90%" }}
+    style={{ width: "95%" }}
     // data-testid="empty-container"
     // placeholder
     // loading={loading}

@@ -15,7 +15,6 @@ import useUploader, {
 } from "../../lib/react-pdf-editor/hooks/useUploader";
 import { ggID } from "../../lib/react-pdf-editor/utils/helpers";
 // import Portal from "../../components/Portal";
-import ContextMenu from "../../components/ContextMenu";
 import { useRef } from "react";
 import { Portal } from "react-konva-utils";
 import C_ContextMenu from "../../components/C_ContextMenu";

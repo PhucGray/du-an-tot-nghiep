@@ -1,32 +1,100 @@
-import "./styles.scss";
+import React, { useState } from "react";
+import { Rect, Text } from "react-konva";
+import { Portal } from "react-konva-utils";
 
-import React from "react";
-
-const ContextMenu = ({ x = 0, y = 0, onSelectMenuOption = () => {} }) => {
+const ContentMenu = ({ contextMenuData, onSelectMenuOption }) => {
+  const [option1Hover, setOption1Hover] = useState(false);
+  const [option2Hover, setOption2Hover] = useState(false);
   return (
-    <div style={{ zIndex: 999, position: "absolute", top: 0, left: 0 }}>
-      <div>Hekk</div>
-    </div>
-    // <div
-    //   className="context-menu"
-    //   style={{
-    //     // left: x,
-    //     // top: y,
-    //     left: 0,
-    //     top: 0,
-    //   }}>
-    //   <div
-    //     className="context-menu-option"
-    //     onClick={() => onSelectMenuOption("edit")}>
-    //     Sửa
-    //   </div>
-    //   <div
-    //     className="context-menu-option"
-    //     onClick={() => onSelectMenuOption("delete")}>
-    //     Xoá
-    //   </div>
-    // </div>
+    <Portal>
+      <Rect
+        onClick={(e) => {
+          e.evt.preventDefault();
+          e.evt.stopPropagation();
+          onSelectMenuOption("edit");
+        }}
+        x={contextMenuData?.position?.x || 0}
+        y={contextMenuData?.position?.y || 0}
+        height={30}
+        width={150}
+        fill={option1Hover ? "#d6d6d6" : "#fff"}
+        onMouseEnter={() => {
+          document.body.style.cursor = "pointer";
+          setOption1Hover(true);
+          setOption2Hover(false);
+        }}
+        onMouseLeave={() => {
+          document.body.style.cursor = "default";
+          setOption1Hover(false);
+        }}
+        stroke="#cccccc"
+        strokeWidth={1}
+        cornerRadius={[4, 4, 0, 0]}
+      />
+      <Text
+        onMouseEnter={() => {
+          document.body.style.cursor = "pointer";
+          setOption1Hover(true);
+        }}
+        onMouseLeave={() => {
+          document.body.style.cursor = "default";
+        }}
+        onClick={(e) => {
+          e.evt.preventDefault();
+          e.evt.stopPropagation();
+          onSelectMenuOption("edit");
+        }}
+        text="Sửa"
+        x={contextMenuData?.position?.x + 10 || 10}
+        y={contextMenuData?.position?.y + 8 || 8}
+        height={30}
+      />
+      <Rect
+        onContextMenu={() => console.log("rect")}
+        onClick={(e) => {
+          e.evt.preventDefault();
+          e.evt.stopPropagation();
+          onSelectMenuOption("delete");
+        }}
+        x={contextMenuData?.position?.x || 0}
+        y={contextMenuData?.position?.y + 30 || 30}
+        height={30}
+        width={150}
+        fill={option2Hover ? "#d6d6d6" : "#fff"}
+        onMouseEnter={() => {
+          document.body.style.cursor = "pointer";
+          setOption2Hover(true);
+          setOption1Hover(false);
+        }}
+        onMouseLeave={() => {
+          document.body.style.cursor = "default";
+          setOption2Hover(false);
+        }}
+        stroke="#cccccc"
+        strokeWidth={1}
+        cornerRadius={[0, 0, 4, 4]}
+      />
+      <Text
+        onMouseEnter={() => {
+          document.body.style.cursor = "pointer";
+          setOption2Hover(true);
+        }}
+        onMouseLeave={() => {
+          document.body.style.cursor = "default";
+        }}
+        onContextMenu={() => console.log("text")}
+        onClick={(e) => {
+          e.evt.preventDefault();
+          e.evt.stopPropagation();
+          onSelectMenuOption("delete");
+        }}
+        text="Xoá"
+        height={30}
+        x={contextMenuData?.position?.x + 10 || 10}
+        y={contextMenuData?.position?.y + 38 || 38}
+      />
+    </Portal>
   );
 };
 
-export default ContextMenu;
+export default ContentMenu;

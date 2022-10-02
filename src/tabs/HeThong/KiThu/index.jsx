@@ -5,19 +5,12 @@ import { Pagination } from "semantic-ui-react";
 import { Select, Input, message, Button } from "antd";
 import useImage from "use-image";
 import Empty from "../../../lib/react-pdf-editor/components/Empty";
-// import MenuBar from "../../../lib/react-pdf-editor/components/MenuBar";
 import Page from "../../../lib/react-pdf-editor/components/Page";
-import { AttachmentTypes } from "../../../lib/react-pdf-editor/entities";
 import useAttachments from "../../../lib/react-pdf-editor/hooks/useAttachments";
 import usePdf from "../../../lib/react-pdf-editor/hooks/usePdf";
 import useUploader, {
   UploadTypes,
 } from "../../../lib/react-pdf-editor/hooks/useUploader";
-import { ggID } from "../../../lib/react-pdf-editor/utils/helpers";
-import Portal from "../../../components/Portal";
-import ContextMenu from "../../../components/ContextMenu";
-import { useRef } from "react";
-import getImageSize from "image-size-from-url";
 import axios from "axios";
 import { API_DOMAIN, API_URL } from "../../../configs/api";
 import {
@@ -27,7 +20,7 @@ import {
   LOI_HE_THONG,
 } from "../../../constants/api";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
-import C_ContextMenu from "../../../components/C_ContextMenu";
+import ContextMenu from "../../../components/ContextMenu";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -77,15 +70,9 @@ const TestPdf = () => {
     },
   ];
 
-  // const pdfUrl = "https://www.orimi.com/pdf-test.pdf";
-  const signUrl =
-    "https://firebasestorage.googleapis.com/v0/b/tot-nghiep-csharp.appspot.com/o/ck1.png?alt=media&token=a7200610-5600-43cd-a14c-a43fe17ce612";
-  const pageSign = 1;
-
   const [pdfSize, setPdfSize] = useState({ width: 0, height: 0 });
   const [texts, setTexts] = useState([]);
   const [resFile, setResFile] = useState(null);
-  const [pdfUrl, setPdfUrl] = useState("https://www.orimi.com/pdf-test.pdf");
 
   const [images, setImages] = useState([]);
   const [contextMenuData, setContextMenuData] = useState(null);
@@ -136,8 +123,6 @@ const TestPdf = () => {
     allPageAttachments,
     pageAttachments,
     reset: resetAttachments,
-    update,
-    remove,
   } = useAttachments();
 
   const {
@@ -148,10 +133,9 @@ const TestPdf = () => {
   } = useUploadFileToFireBase({ file: pdfFile });
 
   const {
-    inputRef: imageInput,
-    handleClick: handleImageClick,
-    onClick: onImageClick,
-    upload: uploadImage,
+    inputRef: imageInputRef,
+    onClick: onImageInputClick,
+    upload: onImageInputChange,
   } = useUploader({
     use: UploadTypes.IMAGE,
     afterUploadAttachment: addAttachment,
@@ -170,6 +154,7 @@ const TestPdf = () => {
           y: 0,
           isDragging: false,
           src: option?.value,
+          pageIndex,
         },
       ]);
     }
@@ -195,30 +180,27 @@ const TestPdf = () => {
         y: 0,
         isDragging: false,
         content: textarea,
+        pageIndex,
       },
     ]);
     setTextarea("");
+  };
+  const handleEditText = () => {
+    setTexts(
+      [...texts].map((i) => {
+        if (i?.id == contextMenuData?.data?.id) {
+          i.content = textarea;
+        }
+        return i;
+      }),
+    );
+    setTextarea("");
+    setIsEditing(false);
   };
 
   const handleDeleteText = (id) => {
     setTexts([...texts].filter((text) => text.id != id));
   };
-
-  // const addText = () => {
-  //   const newTextAttachment = {
-  //     id: ggID(),
-  //     type: AttachmentTypes.TEXT,
-  //     x: 0,
-  //     y: 0,
-  //     width: 120,
-  //     height: 25,
-  //     size: 16,
-  //     lineHeight: 1.4,
-  //     fontFamily: "Times-Roman",
-  //     text: "Enter Text Here",
-  //   };
-  //   addAttachment(newTextAttachment);
-  // };
 
   const handleDragStart = (e) => {
     const id = e.target.id();
@@ -244,6 +226,7 @@ const TestPdf = () => {
 
   const handleXuatFile = async () => {
     setXuatLoading(true);
+
     try {
       if (!url) {
         message.error(LOI);
@@ -252,28 +235,28 @@ const TestPdf = () => {
 
       const image = images[0];
 
-      const y = pdfSize.height - image.y - image.height;
-      const x = image.x;
-      const img_w = image.width;
-      const img_h = image.height;
-      const imgSign = image.src;
-      const pageSign = 1;
+      // const y = pdfSize.height - image.y - image.height;
+      // const x = image.x;
+      // const img_w = image.width;
+      // const img_h = image.height;
+      // const imgSign = image.src;
+      // const pageSign = 1;
 
-      const res = await axios.post(`${API_URL}kysos`, {
-        x,
-        y,
-        img_w,
-        img_h,
-        inputFile: url,
-        imgSign,
-        pageSign,
-        Id_NguoiDung: 1,
-      });
+      // const res = await axios.post(`${API_URL}kysos`, {
+      //   x,
+      //   y,
+      //   img_w,
+      //   img_h,
+      //   inputFile: url,
+      //   imgSign,
+      //   pageSign,
+      //   Id_NguoiDung: 1,
+      // });
 
-      if (res.status === SUCCESS && res.data.retCode === RETCODE_SUCCESS) {
-        const file = res.data.data;
-        setResFile(file);
-      }
+      // if (res.status === SUCCESS && res.data.retCode === RETCODE_SUCCESS) {
+      //   const file = res.data.data;
+      //   setResFile(file);
+      // }
     } catch (error) {
       console.log("error");
       console.log(error);
@@ -297,14 +280,14 @@ const TestPdf = () => {
         style={{ display: "none" }}
       />
       <input
-        ref={imageInput}
+        ref={imageInputRef}
         type="file"
         id="image"
         name="image"
         accept="image/*"
-        onClick={onImageClick}
+        onClick={onImageInputClick}
         style={{ display: "none" }}
-        onChange={uploadImage}
+        onChange={onImageInputChange}
       />
     </>
   );
@@ -318,51 +301,64 @@ const TestPdf = () => {
   return (
     <div className="mx-auto" style={{ width: "100%", minHeight: "100vh" }}>
       <div>
-        <div>
-          <div className="d-flex justify-content-end mt-3 me-4 gap-3">
-            {!!resFile && (
+        {true && (
+          <div
+            className="d-flex justify-content-between mx-auto mt-3"
+            style={{ width: "95%" }}>
+            <div>
+              <div>Chữ kí</div>
+              <Select
+                placeholder="Chọn chữ kí"
+                style={{
+                  width: 120,
+                }}
+                onChange={handleSignChange}>
+                {signs.map((sign) => (
+                  <Option key={sign.id} value={sign.value}>
+                    {sign.text}
+                  </Option>
+                ))}
+              </Select>
+
+              <div style={{ width: 300, marginTop: 10 }}>
+                <div>Nội dung</div>
+                <TextArea
+                  rows={4}
+                  value={textarea}
+                  onChange={(e) => setTextarea(e.currentTarget.value)}
+                />
+                <Button
+                  type="primary"
+                  style={{ backgroundColor: "#2ec729", border: "none" }}
+                  onClick={isEditing ? handleEditText : handleAddText}>
+                  {isEditing ? "Sửa" : "Thêm"} nội dung
+                </Button>
+              </div>
+            </div>
+
+            <div className="d-flex justify-content-end mt-3 me-4 gap-3">
+              {!!resFile && (
+                <Button
+                  type="primary"
+                  style={{ backgroundColor: "#ff8a2a", border: "none" }}
+                  onClick={() => {
+                    window.open(API_DOMAIN + resFile);
+                  }}>
+                  Mở file
+                </Button>
+              )}
+
               <Button
+                loading={xuatLoading}
                 type="primary"
-                style={{ backgroundColor: "#ff8a2a", border: "none" }}
                 onClick={() => {
-                  window.open(API_DOMAIN + resFile);
+                  uploadToFireBase();
                 }}>
-                Mở file
+                Xuất
               </Button>
-            )}
-
-            <Button
-              loading={xuatLoading}
-              type="primary"
-              onClick={() => {
-                uploadToFireBase();
-              }}>
-              Xuất
-            </Button>
+            </div>
           </div>
-
-          <Select
-            placeholder="Chọn chữ kí"
-            style={{
-              width: 120,
-            }}
-            onChange={handleSignChange}>
-            {signs.map((sign) => (
-              <Option key={sign.id} value={sign.value}>
-                {sign.text}
-              </Option>
-            ))}
-          </Select>
-
-          <div style={{ width: 300 }}>
-            <button onClick={handleAddText}>Thêm text</button>
-            <TextArea
-              rows={4}
-              value={textarea}
-              onChange={(e) => setTextarea(e.currentTarget.value)}
-            />
-          </div>
-        </div>
+        )}
       </div>
       {hiddenInputs}
 
@@ -413,39 +409,61 @@ const TestPdf = () => {
                   boxShadow: "0 0 1px #000",
                 }}>
                 <Layer>
-                  {images.map((image) => (
-                    <LionImage
-                      src={image.src}
-                      key={image.id}
-                      id={image.id?.toString()}
-                      x={image.x}
-                      y={image.y}
-                      draggable
-                      onDragStart={handleDragStart}
-                      onDragEnd={handleDragEnd}
-                      onContextMenu={(e) => {
-                        setContextMenuVisible(true);
-                        handleContextMenu(e, image, "image");
-                      }}
-                      onChangePos={(data) => {
-                        setImages(
-                          [...images].map((image) => {
-                            if (image?.id == data?.id) {
-                              image.x = data?.x;
-                              image.y = data?.y;
-                            }
-                            return {
-                              ...image,
-                              width: data?.width,
-                              height: data?.height,
-                            };
-                          }),
-                        );
-                      }}
-                    />
-                  ))}
+                  {images
+                    .filter((image) => image.pageIndex === pageIndex)
+                    .map((image) => (
+                      <LionImage
+                        src={image.src}
+                        key={image.id}
+                        id={image.id?.toString()}
+                        x={image.x}
+                        y={image.y}
+                        draggable
+                        onDragStart={handleDragStart}
+                        onDragEnd={handleDragEnd}
+                        onContextMenu={(e) => {
+                          setContextMenuVisible(true);
+                          handleContextMenu(e, image, "image");
+                        }}
+                        onChangePos={(data) => {
+                          setImages(
+                            [...images].map((image) => {
+                              if (image?.id == data?.id) {
+                                image.x = data?.x;
+                                image.y = data?.y;
+                              }
+                              return {
+                                ...image,
+                                width: data?.width,
+                                height: data?.height,
+                              };
+                            }),
+                          );
+                        }}
+                      />
+                    ))}
+
+                  {texts
+                    .filter((text) => text.pageIndex === pageIndex)
+                    .map((text) => (
+                      <Text
+                        key={text.id}
+                        id={text.id}
+                        x={text.x}
+                        y={text.y}
+                        draggable
+                        onDragStart={handleDragStart}
+                        onDragEnd={handleDragEnd}
+                        text={text.content}
+                        onContextMenu={(e) => {
+                          setContextMenuVisible(true);
+                          handleContextMenu(e, text, "text");
+                        }}
+                      />
+                    ))}
+
                   {contextMenuVisible && (
-                    <C_ContextMenu
+                    <ContextMenu
                       contextMenuData={contextMenuData}
                       onSelectMenuOption={(option) => {
                         setContextMenuVisible(false);
@@ -469,22 +487,6 @@ const TestPdf = () => {
                       }}
                     />
                   )}
-                  {texts.map((text) => (
-                    <Text
-                      key={text.id}
-                      id={text.id}
-                      x={text.x}
-                      y={text.y}
-                      draggable
-                      onDragStart={handleDragStart}
-                      onDragEnd={handleDragEnd}
-                      text={text.content}
-                      onContextMenu={(e) => {
-                        setContextMenuVisible(true);
-                        handleContextMenu(e, text, "text");
-                      }}
-                    />
-                  ))}
 
                   {/* {stars.map((star) => (
                     <Star

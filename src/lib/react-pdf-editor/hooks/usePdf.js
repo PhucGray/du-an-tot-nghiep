@@ -55,7 +55,7 @@ export default () => {
     // setPageIndex(number - 1)
   };
 
-  const initialize = ({ name, file, pages: _pages }) => {
+  const initialize = async ({ name, file, pages: _pages }) => {
     const multi = _pages.length > 1;
     setTotalPages(_pages.length);
     setName(name);

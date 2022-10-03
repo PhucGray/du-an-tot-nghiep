@@ -70,6 +70,7 @@ const TestPdf = () => {
     },
   ];
 
+  const [pdfSizes, setPdfSizes] = useState([]);
   const [pdfSize, setPdfSize] = useState({ width: 0, height: 0 });
   const [texts, setTexts] = useState([]);
   const [resFile, setResFile] = useState(null);
@@ -116,7 +117,17 @@ const TestPdf = () => {
     dimensions,
     totalPages,
     setActivePage,
+    pages,
   } = usePdf();
+
+  // console.log(pages.map(async (i) => await i));
+  // if (pages.length > 0) {
+  //   pages.map((page) => {
+  //     page.then((res) => {
+  //       console.log(res);
+  //     });
+  //   });
+  // }
 
   const {
     add: addAttachment,
@@ -225,38 +236,31 @@ const TestPdf = () => {
   };
 
   const handleXuatFile = async () => {
-    setXuatLoading(true);
-
     try {
       if (!url) {
         message.error(LOI);
         return;
       }
 
-      const image = images[0];
+      const res = await axios.post(`${API_URL}kysos`, {
+        inputFile: url,
+        Id_NguoiDung: 1,
+        PostPositionSigns: images.map((image, index) => {
+          return {
+            y: pdfSizes[index].height - image.y - image.height,
+            x: image.x,
+            img_w: image.width,
+            img_h: image.height,
+            imgSign: image.src,
+            pageSign: image.pageIndex + 1,
+          };
+        }),
+      });
 
-      // const y = pdfSize.height - image.y - image.height;
-      // const x = image.x;
-      // const img_w = image.width;
-      // const img_h = image.height;
-      // const imgSign = image.src;
-      // const pageSign = 1;
-
-      // const res = await axios.post(`${API_URL}kysos`, {
-      //   x,
-      //   y,
-      //   img_w,
-      //   img_h,
-      //   inputFile: url,
-      //   imgSign,
-      //   pageSign,
-      //   Id_NguoiDung: 1,
-      // });
-
-      // if (res.status === SUCCESS && res.data.retCode === RETCODE_SUCCESS) {
-      //   const file = res.data.data;
-      //   setResFile(file);
-      // }
+      if (res.status === SUCCESS && res.data.retCode === RETCODE_SUCCESS) {
+        const file = res.data.data;
+        setResFile(file);
+      }
     } catch (error) {
       console.log("error");
       console.log(error);
@@ -352,6 +356,7 @@ const TestPdf = () => {
                 loading={xuatLoading}
                 type="primary"
                 onClick={() => {
+                  setXuatLoading(true);
                   uploadToFireBase();
                 }}>
                 Xuất
@@ -397,6 +402,12 @@ const TestPdf = () => {
                 dimensions={dimensions}
                 updateDimensions={setDimensions}
                 page={currentPage}
+                pages={pages}
+                getPageSizes={(sizes) => {
+                  if (pdfSizes.length === 0) {
+                    setPdfSizes(sizes);
+                  }
+                }}
               />
               <Stage
                 onClick={() => setContextMenuVisible(false)}

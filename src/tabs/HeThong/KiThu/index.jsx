@@ -42,6 +42,22 @@ const LionImage = ({ onDragEnd, onChangePos, ...props }) => {
   );
 };
 
+const LionText = ({ onDragEnd, onChangePos, ...props }) => {
+  return (
+    <Text
+      onDragEnd={(e) => {
+        const offset = { x: e.target.attrs.x, y: e.target.attrs.y };
+        const { x, y } = offset;
+        const { width, height } = e.currentTarget.getSize();
+        onDragEnd(e);
+        onChangePos({ x, y, id: props?.id, width, height });
+      }}
+      {...props}
+      fontSize={14}
+    />
+  );
+};
+
 const TestPdf = () => {
   const signs = [
     {
@@ -242,19 +258,32 @@ const TestPdf = () => {
         return;
       }
 
+      const finalImages = images.map((image) => {
+        return {
+          y: image.finalY,
+          x: image.finalX,
+          img_w: image.width,
+          img_h: image.height,
+          imgSign: image.src,
+          pageSign: image.pageIndex + 1,
+        };
+      });
+
+      const finalTexts = texts.map((text) => {
+        return {
+          y: text.finalY,
+          x: text.finalX,
+          img_w: text.width,
+          img_h: text.height,
+          pageSign: text.pageIndex + 1,
+          textSign: text.content,
+        };
+      });
+
       const res = await axios.post(`${API_URL}kysos`, {
         inputFile: url,
         Id_NguoiDung: 1,
-        PostPositionSigns: images.map((image, index) => {
-          return {
-            y: pdfSizes[index].height - image.y - image.height,
-            x: image.x,
-            img_w: image.width,
-            img_h: image.height,
-            imgSign: image.src,
-            pageSign: image.pageIndex + 1,
-          };
-        }),
+        PostPositionSigns: [...finalImages, ...finalTexts],
       });
 
       if (res.status === SUCCESS && res.data.retCode === RETCODE_SUCCESS) {
@@ -430,23 +459,40 @@ const TestPdf = () => {
                         x={image.x}
                         y={image.y}
                         draggable
-                        onDragStart={handleDragStart}
-                        onDragEnd={handleDragEnd}
+                        onDragStart={() => {}}
+                        onDragEnd={() => {}}
                         onContextMenu={(e) => {
                           setContextMenuVisible(true);
                           handleContextMenu(e, image, "image");
                         }}
                         onChangePos={(data) => {
                           setImages(
-                            [...images].map((image) => {
+                            [...images].map((image, index) => {
+                              const x = data?.x;
+                              const y = data?.y;
+                              const width = data?.width;
+                              const height = data?.height;
+
                               if (image?.id == data?.id) {
-                                image.x = data?.x;
-                                image.y = data?.y;
+                                image.x = x;
+                                image.y = y;
+                                const finalY =
+                                  pdfSizes[index].height - y - height;
+                                const finalX = x;
+
+                                return {
+                                  ...image,
+                                  width,
+                                  height,
+                                  finalX,
+                                  finalY,
+                                };
                               }
+
                               return {
                                 ...image,
-                                width: data?.width,
-                                height: data?.height,
+                                width,
+                                height,
                               };
                             }),
                           );
@@ -457,21 +503,111 @@ const TestPdf = () => {
                   {texts
                     .filter((text) => text.pageIndex === pageIndex)
                     .map((text) => (
+                      <LionText
+                        text={text.content}
+                        key={text.id}
+                        id={text.id?.toString()}
+                        x={text.x}
+                        y={text.y}
+                        draggable
+                        onDragStart={() => {}}
+                        onDragEnd={() => {}}
+                        onContextMenu={(e) => {
+                          setContextMenuVisible(true);
+                          handleContextMenu(e, text, "text");
+                        }}
+                        onChangePos={(data) => {
+                          setTexts(
+                            [...texts].map((text, index) => {
+                              const x = data?.x;
+                              const y = data?.y;
+                              const width = data?.width;
+                              const height = data?.height;
+
+                              if (text?.id == data?.id) {
+                                text.x = x;
+                                text.y = y;
+                                const finalY =
+                                  pdfSizes[index].height - y - height;
+                                const finalX = x;
+
+                                return {
+                                  ...text,
+                                  width,
+                                  height,
+                                  finalX,
+                                  finalY,
+                                };
+                              }
+
+                              return {
+                                ...text,
+                                width,
+                                height,
+                              };
+                            }),
+                          );
+                        }}
+                      />
+                    ))}
+
+                  {/* {texts
+                    .filter((text) => text.pageIndex === pageIndex)
+                    .map((text) => (
                       <Text
                         key={text.id}
                         id={text.id}
                         x={text.x}
                         y={text.y}
                         draggable
-                        onDragStart={handleDragStart}
-                        onDragEnd={handleDragEnd}
+                        onDragStart={() => {}}
+                        onDragEnd={(e) => {
+                          setTexts(
+                            [...texts].map((text, index) => {
+                              const x = data?.x;
+                              const y = data?.y;
+                              const width = data?.width;
+                              const height = data?.height;
+
+                              if (text?.id == data?.id) {
+                                text.x = x;
+                                text.y = y;
+                                const finalY =
+                                  pdfSizes[index].height - y - height;
+                                const finalX = x;
+
+                                console.log({
+                                  ...text,
+                                  width,
+                                  height,
+                                  finalX,
+                                  finalY,
+                                });
+
+                                return {
+                                  ...text,
+                                  width,
+                                  height,
+                                  finalX,
+                                  finalY,
+                                };
+                              }
+
+                              return {
+                                ...text,
+                                width,
+                                height,
+                              };
+                            }),
+                          );
+                        }}
                         text={text.content}
                         onContextMenu={(e) => {
                           setContextMenuVisible(true);
                           handleContextMenu(e, text, "text");
                         }}
                       />
-                    ))}
+                    ))} */}
 
                   {contextMenuVisible && (
                     <ContextMenu

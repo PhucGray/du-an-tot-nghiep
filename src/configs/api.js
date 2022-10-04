@@ -8,3 +8,6 @@ export const PHONG_BAN_SAP_XEP = "PhongBans/sapxep";
 // ChucDanh
 export const CHUC_DANH = "ChucDanhs/chucdanh";
 export const CHUC_DANH_SAP_XEP = "ChucDanhs/sapxep";
+
+// Vai tro
+export const VAI_TRO = "Roles";

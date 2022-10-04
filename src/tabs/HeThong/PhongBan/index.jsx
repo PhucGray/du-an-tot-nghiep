@@ -215,7 +215,6 @@ export default () => {
             <Popconfirm
               title="Bạn có chắc chắn muốn xoá?"
               onConfirm={() => handleDelete(record)}
-              // onCancel={cancel}
               okText="Đồng ý"
               cancelText="Thoát">
               <Button type="link">Xoá</Button>
@@ -373,6 +372,7 @@ export default () => {
         </div>
 
         <Input
+          autoFocus
           value={editText}
           onChange={(e) => setNewEditText(e.target.value)}
         />

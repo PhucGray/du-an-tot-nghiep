@@ -106,7 +106,7 @@ export default () => {
             <Popconfirm
               title="Bạn có chắc chắn muốn xoá?"
               // onConfirm={() => handleXoaPhongBan(record)}
-              // onCancel={cancel}
+
               okText="Đồng ý"
               cancelText="Thoát">
               <Button type="link">Xoá</Button>

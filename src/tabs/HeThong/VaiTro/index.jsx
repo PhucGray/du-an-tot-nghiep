@@ -1,203 +1,264 @@
 import "../../../styles/tabs.scss";
 
-import { Table, Tabs, Button } from "antd";
-import React, { useState } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import {
+  Table,
+  Tabs,
+  Button,
+  Form,
+  Input,
+  message,
+  Popconfirm,
+  Modal,
+} from "antd";
+import React, { useEffect, useState } from "react";
+import {
+  getDsVaiTroSvc,
+  suaVaiTroSvc,
+  themVaiTroSvc,
+  xoaVaiTroSvc,
+} from "../../../store/vaitro/service";
+import {
+  LOI,
+  LOI_HE_THONG,
+  RETCODE_SUCCESS,
+  SUCCESS,
+} from "../../../constants/api";
+import { toLowerCaseNonAccentVietnamese } from "../../../utils/strings";
+import { ArrowDownOutlined } from "@ant-design/icons";
 
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(
-      `selectedRowKeys: ${selectedRowKeys}`,
-      "selectedRows: ",
-      selectedRows,
+export default () => {
+  const [form] = Form.useForm();
+
+  const [list, setList] = useState([]);
+  const [searchList, setSearchList] = useState([]);
+  const [getListLoading, setGetListLoading] = useState(true);
+  const [addLoading, setAddLoading] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
+
+  const [modalEditVisible, setModalEditVisible] = useState(false);
+  const [keyword, setKeyword] = useState("");
+  const [selectedItem, setSelectedItem] = useState("");
+  const [editText, setNewEditText] = useState("");
+
+  const handleGetList = async () => {
+    setGetListLoading(true);
+    try {
+      const res = await getDsVaiTroSvc();
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        setList(
+          res.data?.data
+            ?.filter((i) => i?.isDeleted === false)
+            ?.map((i) => {
+              return {
+                maSo: i?.ma_Role,
+                tenVaiTro: i?.ten_Role,
+                key: i?.ma_Role,
+              };
+            }),
+        );
+      } else {
+        message.error(LOI);
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG);
+    } finally {
+      setGetListLoading(false);
+    }
+  };
+
+  const handleAdd = async (values) => {
+    setAddLoading(true);
+    try {
+      const res = await themVaiTroSvc({ ten_Role: values.tenVaiTro });
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+        form.resetFields(["tenVaiTro"]);
+      } else {
+        message.error(LOI);
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG);
+    } finally {
+      setAddLoading(false);
+    }
+  };
+
+  const handleDelete = async (item) => {
+    try {
+      const res = await xoaVaiTroSvc({ id: item.maSo });
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+        handleGetList();
+      } else {
+        message.error(LOI);
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG);
+    } finally {
+    }
+  };
+
+  const handleEdit = async () => {
+    setEditLoading(true);
+    try {
+      const res = await suaVaiTroSvc({
+        ma_Role: selectedItem?.maSo,
+        ten_Role: editText,
+      });
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+        handleGetList();
+        setModalEditVisible(false);
+      } else {
+        message.error(LOI);
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG);
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
+  const handleSearch = (keyword) => {
+    setKeyword(keyword);
+
+    setSearchList(
+      [...list].filter((i) =>
+        toLowerCaseNonAccentVietnamese(i?.tenVaiTro).includes(
+          toLowerCaseNonAccentVietnamese(keyword),
+        ),
+      ),
     );
-  },
-  getCheckboxProps: (record) => ({
-    disabled: record.name === "Disabled User",
-    // Column configuration not to be checked
-    name: record.name,
-  }),
-};
+  };
 
-const columns = [
-  {
-    title: "Mã số",
-    dataIndex: "maSo",
-    key: "maSo",
-  },
-  {
-    title: "Tên vai trò",
-    dataIndex: "vaiTro",
-    key: "vaiTro",
-  },
-  {
-    title: "Phân hệ",
-    dataIndex: "phanHe",
-    key: "phanHe",
-  },
-  {
-    title: "Ghi chú",
-    dataIndex: "ghiChu",
-    key: "ghiChu",
-  },
-  {
-    title: "Hành động",
-    key: "hanhDong",
-    render: (_, record) => (
-      // <Space size="middle">
-      //   <a>Invite {record.name}</a>
-      //   <a>Delete</a>
-      // </Space>
-      <div>
+  useEffect(() => {
+    handleGetList();
+  }, []);
+
+  const columns = [
+    {
+      title: "Mã số",
+      dataIndex: "maSo",
+      key: "maSo",
+    },
+    {
+      title: "Tên vai trò",
+      dataIndex: "tenVaiTro",
+      key: "tenVaiTro",
+    },
+    {
+      title: "Hành động",
+      key: "hanhDong",
+      render: (_, record) => (
         <div>
-          <Button type="link">Sửa</Button>
-          <Button type="link">Chi tiết</Button>
+          <div>
+            <Button
+              onClick={() => {
+                setSelectedItem(record);
+                setModalEditVisible(true);
+              }}
+              type="link">
+              Sửa
+            </Button>
+            <Button type="link">Chi tiết</Button>
+            <Popconfirm
+              title="Bạn có chắc chắn muốn xoá?"
+              onConfirm={() => handleDelete(record)}
+              okText="Đồng ý"
+              cancelText="Thoát">
+              <Button type="link">Xoá</Button>
+            </Popconfirm>
+          </div>
         </div>
-        <div>
-          <Button type="link">Xoá</Button>
-          <Button type="link">Phân quyền</Button>
-        </div>
-      </div>
-    ),
-  },
-];
-
-const titles = [
-  {
-    id: 11,
-    name: "Tổng giám đốc",
-    order: 1,
-  },
-  {
-    id: 12,
-    name: "Giám đốc chi nhánh",
-    order: 2,
-  },
-  {
-    id: 13,
-    name: "Giám đốc",
-    order: 3,
-  },
-  {
-    id: 14,
-    name: "Trưởng phòng",
-    order: 4,
-  },
-  {
-    id: 15,
-    name: "Phó phòng",
-    order: 5,
-  },
-];
-
-const mockData = [
-  {
-    id: 1,
-    maSo: "CR016",
-    vaiTro: "Quản lý - Toàn quyền",
-    phanHe: "CRM",
-    ghiChu: "",
-  },
-  {
-    id: 2,
-    maSo: "CR017",
-    vaiTro: "Trưởng phòng kinh doanh",
-    phanHe: "CRM",
-    ghiChu: "",
-  },
-  {
-    id: 3,
-    maSo: "CR018",
-    vaiTro: "TGD tham khảo",
-    phanHe: "CRM",
-    ghiChu: "",
-  },
-  {
-    id: 4,
-    maSo: "CR019",
-    vaiTro: "Nhân sự",
-    phanHe: "CRM",
-    ghiChu: "",
-  },
-];
-
-const VaiTro = () => {
-  const [selectionType, setSelectionType] = useState("checkbox");
-  const [list, setList] = useState(mockData);
-
-  function onDragEnd(result) {
-    if (!result.destination) return;
-    const items = Array.from(list);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-    setList(items);
-  }
-
-  const data = mockData.map((i) => {
-    return { ...i, key: i.id };
-  });
-
+      ),
+    },
+  ];
   return (
     <div className="vai-tro">
-      <Tabs defaultActiveKey="1" style={{ width: "95%", marginInline: "auto" }}>
+      <Tabs
+        defaultActiveKey="1"
+        style={{ width: "95%", marginInline: "auto" }}
+        onChange={(activeKey) => {
+          if (activeKey == 1) {
+            handleGetList();
+          }
+        }}>
         <Tabs.TabPane tab="Danh sách" key="1">
           <div style={{}}>
+            <div className="mt-2 mb-4 d-flex justify-content-between">
+              <Input
+                style={{ width: 200 }}
+                placeholder="Nhập từ khoá tìm kiếm"
+                value={keyword}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </div>
             <Table
-              rowSelection={{
-                type: selectionType,
-                ...rowSelection,
-              }}
+              loading={getListLoading}
               columns={columns}
-              dataSource={data}
+              dataSource={keyword.trim() ? searchList : list}
+              pagination={{ defaultPageSize: 5 }}
             />
           </div>
         </Tabs.TabPane>
-        <Tabs.TabPane tab="Sắp xếp" key="2">
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="listTitle">
-              {(provided) => (
-                <div
-                  className="c-table"
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}>
-                  <div className="c-row">
-                    <div className="c-data">STT</div>
-                    <div className="flex-grow-1">Tiêu đề</div>
-                    <div className="c-data">Id</div>
-                    <div className="c-data">Order</div>
-                  </div>
-                  {list.map(({ id, vaiTro }, index) => {
-                    return (
-                      <Draggable
-                        key={id}
-                        draggableId={id.toString()}
-                        index={index}>
-                        {(provided) => (
-                          <div
-                            className={`c-row ${
-                              index % 2 === 0 && "c-row-even"
-                            }`}
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}>
-                            <div className="c-data">{index + 1}</div>
-                            <div className="flex-grow-1">{vaiTro}</div>
-                            <div className="c-data">{id}</div>
-                            <div className="c-data">{index + 1}</div>
-                          </div>
-                        )}
-                      </Draggable>
-                    );
-                  })}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+
+        <Tabs.TabPane tab="Thêm vai trò" key="2">
+          <Form
+            form={form}
+            className="form mx-auto mt-3"
+            name="basic"
+            onFinish={handleAdd}
+            autoComplete="off"
+            layout="vertical">
+            <Form.Item
+              label="Tên vai trò"
+              name="tenVaiTro"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập tên vai trò!",
+                },
+              ]}>
+              <Input placeholder="Nhập tên vai trò" />
+            </Form.Item>
+
+            <Button
+              loading={addLoading}
+              type="primary"
+              htmlType="submit"
+              className="submit-btn">
+              Thêm
+            </Button>
+          </Form>
         </Tabs.TabPane>
       </Tabs>
+
+      <Modal
+        title="Sửa chức danh"
+        open={modalEditVisible}
+        confirmLoading={editLoading}
+        okText="Sửa"
+        onOk={handleEdit}
+        okButtonProps={{ disabled: !editText.trim() }}
+        onCancel={() => {
+          setModalEditVisible(false);
+        }}>
+        <Input value={selectedItem?.tenVaiTro} disabled />
+
+        <div className="text-center mb-3 mt-2">
+          <ArrowDownOutlined />
+        </div>
+
+        <Input
+          autoFocus
+          value={editText}
+          onChange={(e) => setNewEditText(e.target.value)}
+        />
+      </Modal>
     </div>
   );
 };
-
-export default VaiTro;

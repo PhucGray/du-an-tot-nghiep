@@ -52,7 +52,7 @@ export default () => {
             ?.map((i) => {
               return {
                 maSo: i?.ma_Role,
-                tenVaiTro: i?.ten_Role,
+                itemName: i?.ten_Role,
                 key: i?.ma_Role,
               };
             }),
@@ -70,11 +70,11 @@ export default () => {
   const handleAdd = async (values) => {
     setAddLoading(true);
     try {
-      const res = await themVaiTroSvc({ ten_Role: values.tenVaiTro });
+      const res = await themVaiTroSvc({ ten_Role: values.itemName });
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
-        form.resetFields(["tenVaiTro"]);
+        form.resetFields(["itemName"]);
       } else {
         message.error(LOI);
       }
@@ -128,7 +128,7 @@ export default () => {
 
     setSearchList(
       [...list].filter((i) =>
-        toLowerCaseNonAccentVietnamese(i?.tenVaiTro).includes(
+        toLowerCaseNonAccentVietnamese(i?.itemName).includes(
           toLowerCaseNonAccentVietnamese(keyword),
         ),
       ),
@@ -147,8 +147,8 @@ export default () => {
     },
     {
       title: "Tên vai trò",
-      dataIndex: "tenVaiTro",
-      key: "tenVaiTro",
+      dataIndex: "itemName",
+      key: "itemName",
     },
     {
       title: "Hành động",
@@ -216,7 +216,7 @@ export default () => {
             layout="vertical">
             <Form.Item
               label="Tên vai trò"
-              name="tenVaiTro"
+              name="itemName"
               rules={[
                 {
                   required: true,
@@ -247,7 +247,7 @@ export default () => {
         onCancel={() => {
           setModalEditVisible(false);
         }}>
-        <Input value={selectedItem?.tenVaiTro} disabled />
+        <Input value={selectedItem?.itemName} disabled />
 
         <div className="text-center mb-3 mt-2">
           <ArrowDownOutlined />

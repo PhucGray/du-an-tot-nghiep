@@ -11,3 +11,6 @@ export const CHUC_DANH_SAP_XEP = "ChucDanhs/sapxep";
 
 // Vai tro
 export const VAI_TRO = "Roles";
+
+// Quyen
+export const QUYEN = "Quyens";

@@ -31,17 +31,18 @@ import { ArrowLeftOutlined, ArrowDownOutlined } from "@ant-design/icons";
 export default () => {
   const [form] = Form.useForm();
 
-  const [getListLoading, setGetListLoading] = useState(true);
-  const [themPBLoading, setThemPBLoading] = useState(false);
-  const [sapXepListLoading, setSapXepListLoading] = useState(false);
-  const [suaPBLoading, setSuaPBLoading] = useState(false);
   const [list, setList] = useState([]);
   const [searchList, setSearchList] = useState([]);
+  const [getListLoading, setGetListLoading] = useState(true);
+  const [addLoading, setAddLoading] = useState(false);
+  const [sortListLoading, setSortListLoading] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
+
+  const [modalEditVisible, setModalEditVisible] = useState(false);
   const [keyword, setKeyword] = useState("");
   const [isSorting, setIsSorting] = useState(false);
-  const [modalEditVisible, setModalEditVisible] = useState(false);
-  const [selectedPB, setSelectedPB] = useState("");
-  const [newPBname, setNewPBname] = useState("");
+  const [selectedItem, setSelectedItem] = useState("");
+  const [editText, setNewEditText] = useState("");
 
   function onDragEnd(result) {
     const dsThuTu = list.map((i) => i.thuTu);
@@ -59,7 +60,7 @@ export default () => {
     );
   }
 
-  const handleGetDsPhongBan = async () => {
+  const handleGetList = async () => {
     setGetListLoading(true);
     try {
       const res = await getDsPhongBanSvc();
@@ -87,8 +88,8 @@ export default () => {
     }
   };
 
-  const handleThemPhongBan = async (values) => {
-    setThemPBLoading(true);
+  const handleAdd = async (values) => {
+    setAddLoading(true);
     try {
       const res = await themPhongBanSvc({ ten_PhongBan: values.tenPhongBan });
 
@@ -101,12 +102,50 @@ export default () => {
     } catch (error) {
       message.error(LOI_HE_THONG);
     } finally {
-      setThemPBLoading(false);
+      setAddLoading(false);
     }
   };
 
-  const handleSapXepPhongBan = async () => {
-    setSapXepListLoading(true);
+  const handleDelete = async (item) => {
+    try {
+      const res = await xoaPhongBanSvc({ id: item.maSo });
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+        handleGetList();
+      } else {
+        message.error(LOI);
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG);
+    } finally {
+    }
+  };
+
+  const handleEdit = async () => {
+    setEditLoading(true);
+    try {
+      const res = await suaPhongBanSvc({
+        ma_PhongBan: selectedItem?.maSo,
+        ten_PhongBan: editText,
+      });
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+        handleGetList();
+        setModalEditVisible(false);
+      } else {
+        message.error(LOI);
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG);
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
+  const handleSort = async () => {
+    setSortListLoading(true);
     try {
       const sortedList = list.map((item) => {
         return { id: item?.maSo, order: item?.thuTu };
@@ -122,45 +161,7 @@ export default () => {
     } catch (error) {
       message.error(LOI_HE_THONG);
     } finally {
-      setSapXepListLoading(false);
-    }
-  };
-
-  const handleXoaPhongBan = async (phongBan) => {
-    try {
-      const res = await xoaPhongBanSvc({ id: phongBan.maSo });
-
-      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
-        message.success(res.data?.retText);
-        handleGetDsPhongBan();
-      } else {
-        message.error(LOI);
-      }
-    } catch (error) {
-      message.error(LOI_HE_THONG);
-    } finally {
-    }
-  };
-
-  const handleSuaPB = async () => {
-    setSuaPBLoading(true);
-    try {
-      const res = await suaPhongBanSvc({
-        ma_PhongBan: selectedPB?.maSo,
-        ten_PhongBan: newPBname,
-      });
-
-      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
-        message.success(res.data?.retText);
-        handleGetDsPhongBan();
-        setModalEditVisible(false);
-      } else {
-        message.error(LOI);
-      }
-    } catch (error) {
-      message.error(LOI_HE_THONG);
-    } finally {
-      setSuaPBLoading(false);
+      setSortListLoading(false);
     }
   };
 
@@ -177,7 +178,7 @@ export default () => {
   };
 
   useEffect(() => {
-    handleGetDsPhongBan();
+    handleGetList();
   }, []);
 
   const columns = [
@@ -204,7 +205,7 @@ export default () => {
           <div>
             <Button
               onClick={() => {
-                setSelectedPB(record);
+                setSelectedItem(record);
                 setModalEditVisible(true);
               }}
               type="link">
@@ -213,7 +214,7 @@ export default () => {
             <Button type="link">Chi tiết</Button>
             <Popconfirm
               title="Bạn có chắc chắn muốn xoá?"
-              onConfirm={() => handleXoaPhongBan(record)}
+              onConfirm={() => handleDelete(record)}
               // onCancel={cancel}
               okText="Đồng ý"
               cancelText="Thoát">
@@ -231,7 +232,7 @@ export default () => {
         style={{ width: "95%", marginInline: "auto" }}
         onChange={(activeKey) => {
           if (activeKey == 1) {
-            handleGetDsPhongBan();
+            handleGetList();
           }
         }}>
         <Tabs.TabPane tab="Danh sách" key="1">
@@ -243,7 +244,7 @@ export default () => {
                   className="d-flex align-items-center"
                   icon={<ArrowLeftOutlined />}
                   onClick={() => {
-                    handleGetDsPhongBan();
+                    handleGetList();
                     setIsSorting(false);
                   }}>
                   Danh sách
@@ -293,8 +294,8 @@ export default () => {
 
               <div className="d-flex justify-content-center mt-3">
                 <Button
-                  onClick={handleSapXepPhongBan}
-                  loading={sapXepListLoading}
+                  onClick={handleSort}
+                  loading={sortListLoading}
                   type="primary">
                   Sắp xếp
                 </Button>
@@ -329,7 +330,7 @@ export default () => {
             form={form}
             className="form mx-auto mt-3"
             name="basic"
-            onFinish={handleThemPhongBan}
+            onFinish={handleAdd}
             autoComplete="off"
             layout="vertical">
             <Form.Item
@@ -345,7 +346,7 @@ export default () => {
             </Form.Item>
 
             <Button
-              loading={themPBLoading}
+              loading={addLoading}
               type="primary"
               htmlType="submit"
               className="submit-btn">
@@ -358,22 +359,22 @@ export default () => {
       <Modal
         title="Sửa phòng ban"
         open={modalEditVisible}
-        confirmLoading={suaPBLoading}
+        confirmLoading={editLoading}
         okText="Sửa"
-        onOk={handleSuaPB}
-        okButtonProps={{ disabled: !newPBname.trim() }}
+        onOk={handleEdit}
+        okButtonProps={{ disabled: !editText.trim() }}
         onCancel={() => {
           setModalEditVisible(false);
         }}>
-        <Input value={selectedPB?.tenPhongBan} disabled />
+        <Input value={selectedItem?.tenPhongBan} disabled />
 
         <div className="text-center mb-3 mt-2">
           <ArrowDownOutlined />
         </div>
 
         <Input
-          value={newPBname}
-          onChange={(e) => setNewPBname(e.target.value)}
+          value={editText}
+          onChange={(e) => setNewEditText(e.target.value)}
         />
       </Modal>
     </div>

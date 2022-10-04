@@ -11,7 +11,7 @@ const Reducer = (state = initState, action = {}) => {
 };
 
 const persistConfig = {
-  key: "phongban",
+  key: "chucdanh",
   blackList: [],
   storage,
 };

@@ -1,11 +1,21 @@
 import "../../../styles/tabs.scss";
 
-import { Table, Tabs, Button, Form, Input, message, Popconfirm } from "antd";
+import {
+  Table,
+  Tabs,
+  Button,
+  Form,
+  Input,
+  message,
+  Popconfirm,
+  Modal,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   getDsPhongBanSvc,
   sapXepDsPhongBanSvc,
+  suaPhongBanSvc,
   themPhongBanSvc,
   xoaPhongBanSvc,
 } from "../../../store/phongban/service";
@@ -16,7 +26,7 @@ import {
   SUCCESS,
 } from "../../../constants/api";
 import { toLowerCaseNonAccentVietnamese } from "../../../utils/strings";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, ArrowDownOutlined } from "@ant-design/icons";
 
 export default () => {
   const [form] = Form.useForm();
@@ -24,10 +34,14 @@ export default () => {
   const [getListLoading, setGetListLoading] = useState(true);
   const [themPBLoading, setThemPBLoading] = useState(false);
   const [sapXepListLoading, setSapXepListLoading] = useState(false);
+  const [suaPBLoading, setSuaPBLoading] = useState(false);
   const [list, setList] = useState([]);
   const [searchList, setSearchList] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [isSorting, setIsSorting] = useState(false);
+  const [modalEditVisible, setModalEditVisible] = useState(false);
+  const [selectedPB, setSelectedPB] = useState("");
+  const [newPBname, setNewPBname] = useState("");
 
   function onDragEnd(result) {
     const dsThuTu = list.map((i) => i.thuTu);
@@ -94,7 +108,11 @@ export default () => {
   const handleSapXepPhongBan = async () => {
     setSapXepListLoading(true);
     try {
-      const res = await sapXepDsPhongBanSvc(list);
+      const sortedList = list.map((item) => {
+        return { id: item?.maSo, order: item?.thuTu };
+      });
+
+      const res = await sapXepDsPhongBanSvc(sortedList);
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
@@ -121,6 +139,28 @@ export default () => {
     } catch (error) {
       message.error(LOI_HE_THONG);
     } finally {
+    }
+  };
+
+  const handleSuaPB = async () => {
+    setSuaPBLoading(true);
+    try {
+      const res = await suaPhongBanSvc({
+        ma_PhongBan: selectedPB?.maSo,
+        ten_PhongBan: newPBname,
+      });
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+        handleGetDsPhongBan();
+        setModalEditVisible(false);
+      } else {
+        message.error(LOI);
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG);
+    } finally {
+      setSuaPBLoading(false);
     }
   };
 
@@ -162,7 +202,14 @@ export default () => {
       render: (_, record) => (
         <div>
           <div>
-            <Button type="link">Sửa</Button>
+            <Button
+              onClick={() => {
+                setSelectedPB(record);
+                setModalEditVisible(true);
+              }}
+              type="link">
+              Sửa
+            </Button>
             <Button type="link">Chi tiết</Button>
             <Popconfirm
               title="Bạn có chắc chắn muốn xoá?"
@@ -212,9 +259,8 @@ export default () => {
                       ref={provided.innerRef}>
                       <div className="c-row">
                         <div className="c-data">STT</div>
-                        {/* <div className="c-data">Mã số</div> */}
                         <div className="flex-grow-1">Tên nhóm</div>
-                        <div className="c-data">Order</div>
+                        {/* <div className="c-data">Order</div> */}
                       </div>
                       {list.map(({ maSo, tenPhongBan, thuTu }, index) => {
                         return (
@@ -232,9 +278,8 @@ export default () => {
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}>
                                 <div className="c-data">{index + 1}</div>
-                                {/* <div className="c-data">{maSo}</div> */}
                                 <div className="flex-grow-1">{tenPhongBan}</div>
-                                <div className="c-data">{thuTu}</div>
+                                {/* <div className="c-data">{thuTu}</div> */}
                               </div>
                             )}
                           </Draggable>
@@ -247,7 +292,12 @@ export default () => {
               </DragDropContext>
 
               <div className="d-flex justify-content-center mt-3">
-                <Button type="primary">Sắp xếp</Button>
+                <Button
+                  onClick={handleSapXepPhongBan}
+                  loading={sapXepListLoading}
+                  type="primary">
+                  Sắp xếp
+                </Button>
               </div>
             </div>
           ) : (
@@ -304,6 +354,28 @@ export default () => {
           </Form>
         </Tabs.TabPane>
       </Tabs>
+
+      <Modal
+        title="Sửa phòng ban"
+        open={modalEditVisible}
+        confirmLoading={suaPBLoading}
+        okText="Sửa"
+        onOk={handleSuaPB}
+        okButtonProps={{ disabled: !newPBname.trim() }}
+        onCancel={() => {
+          setModalEditVisible(false);
+        }}>
+        <Input value={selectedPB?.tenPhongBan} disabled />
+
+        <div className="text-center mb-3 mt-2">
+          <ArrowDownOutlined />
+        </div>
+
+        <Input
+          value={newPBname}
+          onChange={(e) => setNewPBname(e.target.value)}
+        />
+      </Modal>
     </div>
   );
 };

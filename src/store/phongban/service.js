@@ -16,3 +16,7 @@ export const sapXepDsPhongBanSvc = (payload) => {
 export const xoaPhongBanSvc = ({ id }) => {
   return api.delete(API.PHONG_BAN + "/" + id);
 };
+
+export const suaPhongBanSvc = (payload) => {
+  return api.put(API.PHONG_BAN, payload);
+};

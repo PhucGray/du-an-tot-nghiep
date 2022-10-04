@@ -3,4 +3,4 @@ export const API_DOMAIN = "https://localhost:44388/";
 
 // Phong ban
 export const PHONG_BAN = "PhongBans/phongban";
-export const PHONG_BAN_SAP_XEP = "PhongBans/phongban/sapxep";
+export const PHONG_BAN_SAP_XEP = "PhongBans/sapxep";

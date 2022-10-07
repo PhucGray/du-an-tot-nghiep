@@ -14,3 +14,7 @@ export const VAI_TRO = "Roles";
 
 // Quyen
 export const QUYEN = "Quyens";
+
+// Vai tro - Quyen
+export const VAI_TRO__QUYEN = "Role_Quyens/rolequyen";
+export const VAI_TRO__QUYEN_IN = "Role_Quyens/quyenin";

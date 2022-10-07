@@ -9,14 +9,9 @@ import {
   message,
   Popconfirm,
   Modal,
+  Transfer,
 } from "antd";
 import React, { useEffect, useState } from "react";
-import {
-  getDsVaiTroSvc,
-  suaVaiTroSvc,
-  themVaiTroSvc,
-  xoaVaiTroSvc,
-} from "../../../store/vaitro/service";
 import {
   getDsQuyenSvc,
   suaQuyenSvc,
@@ -30,7 +25,7 @@ import {
   SUCCESS,
 } from "../../../constants/api";
 import { toLowerCaseNonAccentVietnamese } from "../../../utils/strings";
-import { ArrowDownOutlined } from "@ant-design/icons";
+import { ArrowDownOutlined, DoubleLeftOutlined } from "@ant-design/icons";
 
 export default () => {
   const [form] = Form.useForm();
@@ -202,6 +197,10 @@ export default () => {
                 value={keyword}
                 onChange={(e) => handleSearch(e.target.value)}
               />
+
+              <Button type="primary" onClick={() => {}}>
+                Phân quyền
+              </Button>
             </div>
             <Table
               loading={getListLoading}

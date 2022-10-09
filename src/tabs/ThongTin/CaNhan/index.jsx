@@ -25,6 +25,7 @@ const CaNhan = () => {
     <div className="ca-nhan">
       {modalVisible && (
         <ModalUpdateImage
+          title="Thay đổi ảnh đại diện"
           setUrl={setUrl}
           image={image}
           onClose={() => {

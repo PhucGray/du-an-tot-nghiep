@@ -3,7 +3,7 @@ import "./styles.css";
 import React, { useState } from "react";
 import { Stage, Layer, Image as KonvaImage } from "react-konva";
 import useImage from "use-image";
-import SignImage from "../../components/SignImage";
+// import SignImage from "../../components/SignImage";
 import HopDongMau from "../../assets/images/hop-dong-mau.png";
 import * as Images from "../../assets/images";
 import { Select, Button, Input, Pagination } from "antd";
@@ -162,14 +162,14 @@ const TrySign = () => {
               y={0}
             />
 
-            {images.map((image) => (
+            {/* {images.map((image) => (
               <SignImage
                 key={image.id}
                 url={image.url}
                 isSelected={image.id === selectedId}
                 onClick={() => setSelectedId(image.id)}
               />
-            ))}
+            ))} */}
           </Layer>
         </Stage>
       </div>

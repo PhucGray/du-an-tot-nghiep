@@ -10,6 +10,7 @@ const ModalUpdateImage = ({
   onClose = () => {},
   image = null,
   setUrl = () => {},
+  title = "",
 }) => {
   const avatarEditorRef = useRef();
 
@@ -39,7 +40,7 @@ const ModalUpdateImage = ({
         onClick={(e) => {
           e.stopPropagation();
         }}>
-        <div className="c-modal-title">Thay đổi ảnh đại diện</div>
+        <div className="c-modal-title">{title}</div>
         <AvatarEditor
           ref={avatarEditorRef}
           image={image?.data}

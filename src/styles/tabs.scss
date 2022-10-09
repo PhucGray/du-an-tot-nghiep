@@ -28,6 +28,8 @@
 .chuc-danh,
 .vai-tro,
 .crud {
+  position: relative;
+
   .sign-steps-container {
     background-color: #fff;
   }
@@ -49,27 +51,8 @@
     background-color: rgb(250, 250, 250);
   }
 
-  // .c-stt {
-  //   width: 10%;
-  //   text-align: center;
-  // }
-
-  // .c-name {
-  //   flex: 1;
-  // }
-
-  // .c-id {
-  //   width: 10%;
-  //   text-align: center;
-  // }
-
   .c-data {
     width: 10%;
     text-align: center;
   }
-
-  // .c-order {
-  //   width: 10%;
-  //   text-align: center;
-  // }
 }

@@ -8,7 +8,7 @@
 .c-modal-container {
   height: 100vh;
   width: 100vw;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.8);

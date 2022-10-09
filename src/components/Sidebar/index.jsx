@@ -30,12 +30,7 @@ const items = [
     getItem("Thông số đơn vị", TAB.THONG_SO_DON_VI),
   ]),
   getItem("Hệ thống", "he-thong", <SettingOutlined />, [
-    // getItem("Người dùng", TAB.NGUOI_DUNG, <TeamOutlined />, [
-    //   getItem("Kí thử", TAB.KI_THU),
-    //   getItem("Danh sách người dùng", TAB.DANH_SACH_NGUOI_DUNG),
-    //   getItem("Phân nhóm", TAB.PHAN_NHOM),
-    // ]),
-    getItem("Danh sách người dùng", TAB.DANH_SACH_NGUOI_DUNG),
+    getItem("Người dùng", TAB.NGUOI_DUNG),
     getItem("Phòng ban", TAB.PHONG_BAN),
     getItem("Chức danh", TAB.CHUC_DANH),
     getItem("Vai trò", TAB.VAI_TRO),

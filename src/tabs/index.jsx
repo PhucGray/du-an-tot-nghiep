@@ -6,7 +6,7 @@ import KiDeXuat from "./KiSo/KiDeXuat";
 import ThongSoNguoiDung from "./KiSo/ThongSoNguoiDung";
 import ThongSoDonVi from "./KiSo/ThongSoDonVi";
 
-import DSNguoiDung from "./HeThong/DSNguoiDung";
+import NguoiDung from "./HeThong/NguoiDung";
 import PhongBan from "./HeThong/PhongBan";
 import ChucDanh from "./HeThong/ChucDanh";
 import VaiTro from "./HeThong/VaiTro";
@@ -47,8 +47,8 @@ export default [
   //   component: <KiThu />,
   // },
   {
-    key: TAB.DANH_SACH_NGUOI_DUNG,
-    component: <DSNguoiDung />,
+    key: TAB.NGUOI_DUNG,
+    component: <NguoiDung />,
   },
   // {
   //   key: TAB.PHAN_NHOM,

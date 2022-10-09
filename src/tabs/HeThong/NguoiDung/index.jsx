@@ -27,6 +27,15 @@ import {
   themNguoiDungSvc,
   xoaNguoiDungSvc,
 } from "../../../store/nguoidung/service";
+import { getDsPhongBanSvc } from "../../../store/phongban/service";
+import {
+  themNguoiDung_PhongBanSvc,
+  getNguoiDung_PhongBanSvc,
+} from "../../../store/nguoidung_phongban/service";
+import {
+  themNguoiDung_VaiTroSvc,
+  getNguoiDung_VaiTroSvc,
+} from "../../../store/nguoidung_vaitro//service";
 import { getDsChucDanhSvc } from "../../../store/chucdanh/service";
 import {
   LOI,
@@ -48,6 +57,9 @@ import {
 } from "../../../store/vaitro_quyen/service";
 import { phoneRegex } from "../../../utils/regex";
 
+const PHONG_BAN = "Phòng ban";
+const VAI_TRO = "Vai trò";
+
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -56,6 +68,7 @@ export default () => {
 
   const [list, setList] = useState([]);
   const [subList, setSubList] = useState([]);
+  const [subListName, setSubListName] = useState(PHONG_BAN); // Phòng ban || Vai trò
   const [searchList, setSearchList] = useState([]);
   const [getListLoading, setGetListLoading] = useState(true);
   const [getSubListLoading, setGetSubListLoading] = useState(false);
@@ -105,31 +118,66 @@ export default () => {
     }
   };
 
-  const handleGetSubList = async (id = -1) => {
+  const handleGetSubListPB = async (id = -1) => {
     setGetSubListLoading(true);
 
     try {
-      const res = await getDsQuyenSvc();
+      const res = await getDsPhongBanSvc();
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         const subList = res.data?.data
-          ?.filter((i) => i?.isdeleted === false)
+          ?.filter((i) => i?.isDeleted === false)
           ?.map((i) => {
             return {
-              maSo: i?.ma_Quyen,
-              itemName: i?.ten_Quyen,
-              key: i?.ma_Quyen,
+              maSo: i?.ma_PhongBan,
+              itemName: i?.ten_PhongBan,
+              key: i?.ten_PhongBan,
             };
           });
 
-        const res_2 = await getVaiTro_QuyenSvc({ id });
+        const res_2 = await getNguoiDung_PhongBanSvc({ id });
 
         if (
           res_2.status === SUCCESS &&
           res_2.data?.retCode === RETCODE_SUCCESS
         ) {
           const selectedList = res_2.data?.data;
-          setSubList(subList);
+          getTransferData(subList, selectedList);
+        }
+      } else {
+        message.error(LOI);
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG);
+    } finally {
+      setGetSubListLoading(false);
+    }
+  };
+
+  const handleGetSubListVT = async (id = -1) => {
+    setGetSubListLoading(true);
+
+    try {
+      const res = await getDsVaiTroSvc();
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        const subList = res.data?.data
+          ?.filter((i) => i?.isDeleted === false)
+          ?.map((i) => {
+            return {
+              maSo: i?.ma_Role,
+              itemName: i?.ten_Role,
+              key: i?.ma_Role,
+            };
+          });
+
+        const res_2 = await getNguoiDung_VaiTroSvc({ id });
+
+        if (
+          res_2.status === SUCCESS &&
+          res_2.data?.retCode === RETCODE_SUCCESS
+        ) {
+          const selectedList = res_2.data?.data;
           getTransferData(subList, selectedList);
         }
       } else {
@@ -143,9 +191,6 @@ export default () => {
   };
 
   const handleAdd = async (values) => {
-    // const data = { ...values, hoTen: values.itemName };
-    // console.log({...values});
-    // return;
     const data = {
       email: values.email,
       hoTen: values.itemName,
@@ -224,6 +269,8 @@ export default () => {
   };
 
   const getTransferData = (list, selectedList = []) => {
+    const maSo = subListName === PHONG_BAN ? "ma_PhongBan" : "ma_Role";
+
     const targetKeys = [];
     const transferData = [];
 
@@ -231,9 +278,9 @@ export default () => {
       const item = list[i];
 
       const data = {
-        key: item?.key,
+        key: item?.maSo,
         title: item?.itemName,
-        chosen: selectedList.find((i) => i?.ma_Quyen === item?.key),
+        chosen: selectedList.find((i) => i[maSo] === item?.maSo),
       };
 
       if (!data.chosen) {
@@ -264,6 +311,56 @@ export default () => {
         quyens: finalKeys.map((item) => {
           return {
             id_Quyen: item,
+          };
+        }),
+      });
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+      } else {
+        message.error(LOI);
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG);
+    } finally {
+      setAddSubLoading(false);
+    }
+  };
+
+  const handleAddNguoiDung_PB = async () => {
+    setAddSubLoading(true);
+
+    try {
+      const res = await themNguoiDung_PhongBanSvc({
+        id_NguoiDung: selectedItem?.maSo,
+        phongBans: finalKeys.map((item) => {
+          return {
+            id_PhongBan: item,
+          };
+        }),
+      });
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+      } else {
+        message.error(LOI);
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG);
+    } finally {
+      setAddSubLoading(false);
+    }
+  };
+
+  const handleAddNguoiDung_VT = async () => {
+    setAddSubLoading(true);
+
+    try {
+      const res = await themNguoiDung_VaiTroSvc({
+        id_NguoiDung: selectedItem?.maSo,
+        roles: finalKeys.map((item) => {
+          return {
+            id_role: item,
           };
         }),
       });
@@ -366,7 +463,8 @@ export default () => {
                 onClick={() => {
                   setSelectedItem(record);
                   setIsShowTransfer(true);
-                  handleGetSubList(record?.maSo);
+                  handleGetSubListVT(record?.maSo);
+                  setSubListName(VAI_TRO);
                 }}>
                 Vai trò
               </Button>
@@ -376,7 +474,8 @@ export default () => {
                 onClick={() => {
                   setSelectedItem(record);
                   setIsShowTransfer(true);
-                  handleGetSubList(record?.maSo);
+                  handleGetSubListPB(record?.maSo);
+                  setSubListName(PHONG_BAN);
                 }}>
                 Phân nhóm
               </Button>
@@ -390,7 +489,7 @@ export default () => {
   return (
     <div className="crud">
       <Tabs
-        defaultActiveKey="2"
+        defaultActiveKey="1"
         style={{ width: "95%", marginInline: "auto" }}
         onChange={(activeKey) => {
           if (activeKey == 1) {
@@ -412,7 +511,7 @@ export default () => {
                   Danh sách
                 </Button>
 
-                <div>Vai trò hiện tại: {selectedItem?.itemName}</div>
+                {/* <div>Vai trò hiện tại: {selectedItem?.itemName}</div> */}
               </div>
 
               {getSubListLoading ? (
@@ -422,9 +521,9 @@ export default () => {
               ) : (
                 <div className="d-flex flex-column align-items-center mt-2">
                   <div className="d-flex align-items-center justify-content-center gap-5">
-                    <div>Quyền đã có</div>
+                    <div>{subListName} đã có</div>
                     <DoubleLeftOutlined />
-                    <div>Quyền chưa có</div>
+                    <div>{subListName} chưa có</div>
                   </div>
 
                   <Transfer
@@ -443,7 +542,11 @@ export default () => {
                     type="primary"
                     className="mt-3"
                     loading={addSubLoading}
-                    onClick={handleAddVaiTro_Quyen}>
+                    onClick={
+                      subListName === PHONG_BAN
+                        ? handleAddNguoiDung_PB
+                        : handleAddNguoiDung_VT
+                    }>
                     Xác nhận
                   </Button>
                 </div>

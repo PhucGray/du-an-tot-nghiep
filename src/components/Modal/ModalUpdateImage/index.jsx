@@ -43,8 +43,8 @@ const ModalUpdateImage = ({
         <AvatarEditor
           ref={avatarEditorRef}
           image={image?.data}
-          width={height * 0.8 * 0.35}
-          height={height * 0.8 * 0.35}
+          width={height * 0.8 * 0.3}
+          height={height * 0.8 * 0.3}
           border={50}
           scale={scale}
           rotate={rotation}
@@ -91,7 +91,7 @@ const ModalUpdateImage = ({
               loading={updateLoading}
               type="primary"
               size="large"
-              className="c-btn"
+              className="c-modal-btn"
               onClick={onUploadClick}>
               Thay đổi
             </Button>

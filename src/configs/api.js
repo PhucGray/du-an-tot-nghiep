@@ -15,10 +15,18 @@ export const VAI_TRO = "Roles";
 // Quyen
 export const QUYEN = "Quyens";
 
+// Nguoi dung
+export const NGUOI_DUNG = "NguoiDungs/nguoidung";
+export const NGUOI_DUNG_THEM = "NguoiDungs/register";
+
 // Vai tro - Quyen
 export const VAI_TRO__QUYEN = "Role_Quyens/rolequyen";
 export const VAI_TRO__QUYEN_IN = "Role_Quyens/quyenin";
 
-// Nguoi dung
-export const NGUOI_DUNG = "NguoiDungs/nguoidung";
-export const NGUOI_DUNG_THEM = "NguoiDungs/register";
+// Nguoi dung - Phong ban
+export const NGUOI_DUNG__PHONG_BAN = "NguoiDung_PhongBans/nguoidungphongban";
+export const NGUOI_DUNG__PHONG_BAN_IN = "NguoiDung_PhongBans/phongbanin";
+
+// Nguoi dung - Vai tro
+export const NGUOI_DUNG__VAI_TRO = "NguoiDung_Roles/rolenguoidung";
+export const NGUOI_DUNG__VAI_TRO_IN = "NguoiDung_Roles/rolein";

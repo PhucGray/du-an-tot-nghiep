@@ -27,11 +27,18 @@ import { getDsPhongBanSvc } from "../../../../store/phongban/service";
 import { getDsVaiTroSvc } from "../../../../store/vaitro/service";
 import { toLowerCaseNonAccentVietnamese } from "../../../../utils/strings";
 import { ArrowLeftOutlined, DoubleLeftOutlined } from "@ant-design/icons";
+import formState from "../assets/formState";
 
 const PHONG_BAN = "Phòng ban";
 const VAI_TRO = "Vai trò";
 
-export default ({ isShowTransfer, setIsShowTransfer }) => {
+export default ({
+  isShowTransfer,
+  setIsShowTransfer,
+  setUserFormState,
+  setUserData,
+  setCurrentTab,
+}) => {
   const [list, setList] = useState([]);
   const [subListName, setSubListName] = useState(PHONG_BAN); // Phòng ban || Vai trò
   const [searchList, setSearchList] = useState([]);
@@ -39,10 +46,8 @@ export default ({ isShowTransfer, setIsShowTransfer }) => {
   const [getSubListLoading, setGetSubListLoading] = useState(false);
   const [addSubLoading, setAddSubLoading] = useState(false);
 
-  const [modalEditVisible, setModalEditVisible] = useState(false);
   const [keyword, setKeyword] = useState("");
   const [selectedItem, setSelectedItem] = useState("");
-  const [editText, setNewEditText] = useState("");
 
   const [transferData, setTransferData] = useState([]);
   const [targetKeys, setTargetKeys] = useState([]);
@@ -63,6 +68,10 @@ export default ({ isShowTransfer, setIsShowTransfer }) => {
               key: i?.ma_NguoiDung,
               email: i?.email,
               sdt: i?.sdt,
+              gioiTinh: i?.gioiTinh,
+              diaChi: i?.diaChi,
+              ma_ChucDanh: i?.ma_ChucDanh,
+              avatar: i?.avatar,
             };
           });
 
@@ -288,11 +297,22 @@ export default ({ isShowTransfer, setIsShowTransfer }) => {
         <div>
           <div>
             <div className="d-flex">
-              <Button type="link">Chi tiết</Button>
+              <Button
+                type="link"
+                onClick={() => {
+                  setSelectedItem(record);
+                  setUserFormState(formState.DETAIL);
+                  setUserData(record);
+                  setCurrentTab(2);
+                }}>
+                Chi tiết
+              </Button>
               <Button
                 onClick={() => {
                   setSelectedItem(record);
-                  setModalEditVisible(true);
+                  setUserFormState(formState.EDIT);
+                  setUserData(record);
+                  setCurrentTab(2);
                 }}
                 type="link">
                 Sửa

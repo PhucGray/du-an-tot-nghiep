@@ -21,26 +21,32 @@ export default [
   {
     key: TAB.KI_THU,
     component: <KiThu />,
+    title: "Kí thử",
   },
   {
     key: TAB.VAN_BAN,
     component: <VanBan />,
+    title: "Văn bản",
   },
   {
     key: TAB.KI_CHO_DUYET,
     component: <KiChoDuyet />,
+    title: "Kí chờ duyệt",
   },
   {
     key: TAB.KI_DE_XUAT,
     component: <KiDeXuat />,
+    title: "Kí đề xuất",
   },
   {
     key: TAB.THONG_SO_NGUOI_DUNG,
     component: <ThongSoNguoiDung />,
+    title: "Thông số người dùng",
   },
   {
     key: TAB.THONG_SO_DON_VI,
     component: <ThongSoDonVi />,
+    title: "Thông số đơn vị",
   },
   // {
   //   key: TAB.KI_THU,
@@ -49,6 +55,7 @@ export default [
   {
     key: TAB.NGUOI_DUNG,
     component: <NguoiDung />,
+    title: "Người dùng",
   },
   // {
   //   key: TAB.PHAN_NHOM,
@@ -57,25 +64,31 @@ export default [
   {
     key: TAB.PHONG_BAN,
     component: <PhongBan />,
+    title: "Phòng ban",
   },
   {
     key: TAB.CHUC_DANH,
     component: <ChucDanh />,
+    title: "Chức danh",
   },
   {
     key: TAB.VAI_TRO,
     component: <VaiTro />,
+    title: "Vai trò",
   },
   {
     key: TAB.QUYEN,
     component: <Quyen />,
+    title: "Quyền",
   },
   {
     key: TAB.CA_NHAN,
     component: <CaNhan />,
+    title: "Cá nhân",
   },
   {
     key: TAB.MAT_KHAU,
     component: <MatKhau />,
+    title: "Mật khẩu",
   },
 ];

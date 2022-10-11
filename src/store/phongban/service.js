@@ -9,6 +9,10 @@ export const getDsPhongBanSvc = () => {
   return api.get(API.PHONG_BAN);
 };
 
+export const getDsUserPBSvc = ({ id }) => {
+  return api.get(API.PHONG_BAN + "/" + id);
+};
+
 export const sapXepDsPhongBanSvc = (payload) => {
   return api.put(API.PHONG_BAN_SAP_XEP, payload);
 };

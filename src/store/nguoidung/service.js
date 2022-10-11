@@ -9,6 +9,10 @@ export const getDsNguoiDungSvc = () => {
   return api.get(API.NGUOI_DUNG);
 };
 
+export const getNguoiDungById = ({ id }) => {
+  return api.get(API.NGUOI_DUNG + "/" + id);
+};
+
 export const xoaNguoiDungSvc = ({ id }) => {
   return api.delete(API.NGUOI_DUNG + "/" + id);
 };

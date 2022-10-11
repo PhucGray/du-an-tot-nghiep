@@ -38,6 +38,7 @@ export default ({
   setUserFormState,
   setUserData,
   setCurrentTab,
+  setUserList,
 }) => {
   const [list, setList] = useState([]);
   const [subListName, setSubListName] = useState(PHONG_BAN); // Phòng ban || Vai trò
@@ -76,6 +77,7 @@ export default ({
           });
 
         setList(list);
+        setUserList(list);
       } else {
         message.error(LOI);
       }

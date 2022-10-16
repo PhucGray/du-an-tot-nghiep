@@ -34,8 +34,8 @@ const items = [
     getItem("Phòng ban", TAB.PHONG_BAN),
     getItem("Chức danh", TAB.CHUC_DANH),
     getItem("Vai trò", TAB.VAI_TRO),
-    getItem("Quyền", TAB.QUYEN),
-    getItem("Kí thử", TAB.KI_THU),
+    // getItem("Quyền", TAB.QUYEN),
+    // getItem("Kí thử", TAB.KI_THU),
   ]),
   getItem("Thông tin", "thong-tin", <SolutionOutlined />, [
     getItem("Cá nhân @", TAB.CA_NHAN),

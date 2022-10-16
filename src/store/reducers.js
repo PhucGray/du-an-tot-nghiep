@@ -1,7 +1,11 @@
 import { combineReducers } from "redux";
 import PhongBanReducer from "../store/phongban/reducer";
+import AuthReducer from "../store/auth/reducer";
 
-const appReducer = combineReducers({ phongban: PhongBanReducer });
+const appReducer = combineReducers({
+  phongban: PhongBanReducer,
+  auth: AuthReducer,
+});
 
 const rootReducers = (state, action) => {
   if (action.type === "USER_LOGOUT") {

@@ -1,6 +1,7 @@
 import api from "../../api";
+import * as API from "../../configs/api";
 
-export default signIn = (payload) => {
+export const dangNhap = (payload) => {
   // return axios.post(URL)
-  return api.post("", payload);
+  return api.post(API.DANG_NHAP, payload);
 };

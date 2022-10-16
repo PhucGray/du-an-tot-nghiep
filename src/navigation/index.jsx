@@ -11,10 +11,22 @@ import Page_TestPdf from "../pages/Page_TestPdf";
 import Page_SignPdf from "../pages/Page_SignPdf";
 import MainLayout from "../layout/MainLayout";
 
+import { useSelector } from "react-redux";
+import { nguoiDungSelector, tokenSelector } from "../store/auth/selectors";
+
 const Navigation = () => {
+  const nguoiDung = useSelector(nguoiDungSelector);
+  const token = useSelector(tokenSelector);
+
+  const isLogin = !!nguoiDung && !!token;
+
   return (
     <Fragment>
-      <MainLayout />
+      {/* <MainLayout /> */}
+      {/* <Page_SignIn /> */}
+      <Routes>
+        <Route path="/" element={isLogin ? <MainLayout /> : <Page_SignIn />} />
+      </Routes>
     </Fragment>
   );
   //  <Routes>

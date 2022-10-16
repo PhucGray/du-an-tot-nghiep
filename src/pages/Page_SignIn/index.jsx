@@ -2,14 +2,35 @@ import "../../styles/auth.scss";
 import "../../styles/common.scss";
 
 import React from "react";
-import { Button, Checkbox, Form, Input } from "antd";
-import { Link } from "react-router-dom";
+import { Button, Checkbox, Form, Input, message } from "antd";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useState } from "react";
+import { dangNhap } from "../../store/auth/services";
+import { SUCCESS, RETCODE_SUCCESS, LOI_HE_THONG } from "../../constants/api";
+import { useDispatch } from "react-redux";
+import { setNguoiDung } from "../../store/auth/actions";
 
 const SignIn = () => {
-  const onFinish = (values) => {
-    console.log("Success:", values);
-    // alert("run");K
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [submitLoading, setSubmitLoading] = useState(false);
+
+  const onFinish = async (values) => {
+    setSubmitLoading(true);
+    try {
+      const res = await dangNhap(values);
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        dispatch(setNguoiDung(res.data?.data));
+      } else {
+        message.error(res.data?.retText);
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG);
+    } finally {
+      setSubmitLoading(false);
+    }
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -48,7 +69,7 @@ const SignIn = () => {
 
         <Form.Item
           label="Mật khẩu"
-          name="password"
+          name="passWord"
           rules={[
             {
               required: true,
@@ -67,6 +88,7 @@ const SignIn = () => {
         </div>
 
         <Button
+          loading={submitLoading}
           type="primary"
           htmlType="submit"
           className="submit-btn"

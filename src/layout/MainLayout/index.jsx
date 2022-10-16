@@ -4,6 +4,8 @@ import { useReducer } from "react";
 import Sidebar from "../../components/Sidebar";
 import * as TAB from "../../constants/tab";
 import tabs from "../../tabs";
+import { useDispatch } from "react-redux";
+import { clearNguoiDung } from "../../store/auth/actions";
 
 export const TabContext = createContext(null);
 
@@ -23,6 +25,7 @@ const reducer = (state, action) => {
 };
 
 const MainLayout = () => {
+  const _dispatch = useDispatch();
   const [state, dispatch] = useReducer(reducer, {
     tab: localStorage.getItem("currentTabKey") || null,
     params: null,
@@ -36,6 +39,7 @@ const MainLayout = () => {
   const hideModalLogout = () => setModalLogoutVisible(false);
 
   const handleLogout = () => {
+    _dispatch(clearNguoiDung());
     setModalLogoutVisible(false);
   };
 
@@ -49,8 +53,6 @@ const MainLayout = () => {
     dispatch({ type: "DEFAULT", payload: { tab: currentTabKey } });
     localStorage.setItem("currentTabKey", currentTabKey);
   };
-
-  console.log(state.tab);
 
   return (
     <TabContext.Provider value={[state, dispatch]}>

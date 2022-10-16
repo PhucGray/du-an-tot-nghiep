@@ -1,37 +1,74 @@
 import "../../../styles/common.scss";
 
 import React from "react";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { nguoiDungSelector } from "../../../store/auth/selectors";
+import { useState } from "react";
+import {
+  LOI,
+  LOI_HE_THONG,
+  RETCODE_SUCCESS,
+  SUCCESS,
+} from "../../../constants/api";
+import { doiMatKhau } from "../../../store/auth/services";
+// import { useForm } from "antd/es/form/Form";
 
 const MatKhau = () => {
-  const onFinish = (values) => {
-    console.log("Success:", values);
-  };
+  const [form] = Form.useForm();
+  const nguoiDung = useSelector(nguoiDungSelector);
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
+  const [editLoading, setEditLoading] = useState(false);
+
+  const handleEdit = async (values) => {
+    setEditLoading(true);
+    try {
+      const res = await doiMatKhau({
+        ...values,
+        email: nguoiDung?.email,
+      });
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+        form.resetFields();
+      } else {
+        message.error(res.data?.retText);
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG);
+    } finally {
+      setEditLoading(false);
+    }
   };
 
   return (
     <div className="d-flex flex-column align-items-center mt-4">
       <Form
+        form={form}
         className="form"
         name="basic"
         initialValues={{
           remember: true,
         }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
+        onFinish={handleEdit}
         autoComplete="off"
         layout="vertical">
         <Form.Item
           label="Mật khẩu hiện tại"
-          name="newPassword"
+          name="passWord"
           rules={[
             {
               required: true,
               message: "Vui lòng nhập mật khẩu hiện tại!",
+            },
+            {
+              min: 6,
+              message: "Vui lòng nhập mật khẩu từ 6 - 12 ký tự",
+            },
+            {
+              max: 12,
+              message: "Vui lòng nhập mật khẩu từ 6 - 12 ký tự",
             },
           ]}>
           <Input.Password placeholder="Nhập mật khẩu hiện tại" />
@@ -39,11 +76,19 @@ const MatKhau = () => {
 
         <Form.Item
           label="Mật khẩu mới"
-          name="newPassword"
+          name="newPass"
           rules={[
             {
               required: true,
               message: "Vui lòng nhập mật khẩu mới!",
+            },
+            {
+              min: 6,
+              message: "Vui lòng nhập mật khẩu từ 6 - 12 ký tự",
+            },
+            {
+              max: 12,
+              message: "Vui lòng nhập mật khẩu từ 6 - 12 ký tự",
             },
           ]}>
           <Input.Password placeholder="Nhập mật khẩu mới" />
@@ -51,8 +96,8 @@ const MatKhau = () => {
 
         <Form.Item
           label="Xác nhận mật khẩu mới"
-          name="confirmNewPassword"
-          dependencies={["newPassword"]}
+          name="retypePass"
+          dependencies={["newPass"]}
           rules={[
             {
               required: true,
@@ -60,7 +105,7 @@ const MatKhau = () => {
             },
             ({ getFieldValue }) => ({
               validator(_, value) {
-                if (!value || getFieldValue("newPassword") === value) {
+                if (!value || getFieldValue("newPass") === value) {
                   return Promise.resolve();
                 }
                 return Promise.reject(
@@ -72,7 +117,11 @@ const MatKhau = () => {
           <Input.Password placeholder="Nhập xác nhận mật khẩu" />
         </Form.Item>
 
-        <Button type="primary" htmlType="submit" className="submit-btn">
+        <Button
+          loading={editLoading}
+          type="primary"
+          htmlType="submit"
+          className="submit-btn">
           Cập nhật
         </Button>
       </Form>

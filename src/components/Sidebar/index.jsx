@@ -22,10 +22,10 @@ function getItem(label, key, icon, children, type) {
 }
 
 const items = [
-  getItem("Kí số", "ki-so", <EditOutlined />, [
+  getItem("Ký số", "ki-so", <EditOutlined />, [
     getItem("Văn bản", TAB.VAN_BAN),
-    getItem("Kí số chờ duyệt", TAB.KI_CHO_DUYET),
-    getItem("Kí số đề xuất", TAB.KI_DE_XUAT),
+    getItem("Ký số chờ duyệt", TAB.KI_CHO_DUYET),
+    getItem("Ký số đề xuất", TAB.KI_DE_XUAT),
     getItem("Thông số người dùng", TAB.THONG_SO_NGUOI_DUNG),
     getItem("Thông số đơn vị", TAB.THONG_SO_DON_VI),
   ]),
@@ -35,7 +35,7 @@ const items = [
     getItem("Chức danh", TAB.CHUC_DANH),
     getItem("Vai trò", TAB.VAI_TRO),
     // getItem("Quyền", TAB.QUYEN),
-    // getItem("Kí thử", TAB.KI_THU),
+    // getItem("Ký thử", TAB.KI_THU),
   ]),
   getItem("Thông tin", "thong-tin", <SolutionOutlined />, [
     getItem("Cá nhân @", TAB.CA_NHAN),

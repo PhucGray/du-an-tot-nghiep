@@ -38,3 +38,10 @@ export const NGUOI_DUNG__VAI_TRO_IN = "NguoiDung_Roles/rolein";
 // Ky so - thong so
 export const KS_TS = "KySoThongSos/thongso";
 export const KS_TS_NGUOI_DUNG_DUYET = "KySoThongSos/nguoidungduyet";
+
+// Ky so de xuat
+export const KSDX = "KySoDeXuats/dexuat";
+export const KSDX_CHUA_DE_XUAT = "KySoDeXuats/chuadexuat";
+export const KSDX_CHO_DUYET = "KySoDeXuats/choduyet";
+export const KSDX_DA_DUYET = "KySoDeXuats/daduyet";
+export const KSDX_TU_CHOI = "KySoDeXuats/tuchoi";

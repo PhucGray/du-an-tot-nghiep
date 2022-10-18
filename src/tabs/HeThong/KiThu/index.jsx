@@ -339,9 +339,9 @@ const TestPdf = () => {
             className="d-flex justify-content-between mx-auto mt-3"
             style={{ width: "95%" }}>
             <div>
-              <div>Chữ kí</div>
+              <div>Chữ Ký</div>
               <Select
-                placeholder="Chọn chữ kí"
+                placeholder="Chọn chữ Ký"
                 style={{
                   width: 120,
                 }}

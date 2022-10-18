@@ -21,7 +21,7 @@ export default [
   {
     key: TAB.KI_THU,
     component: <KiThu />,
-    title: "Kí thử",
+    title: "Ký thử",
   },
   {
     key: TAB.VAN_BAN,
@@ -31,12 +31,12 @@ export default [
   {
     key: TAB.KI_CHO_DUYET,
     component: <KiChoDuyet />,
-    title: "Kí chờ duyệt",
+    title: "Ký chờ duyệt",
   },
   {
     key: TAB.KI_DE_XUAT,
     component: <KiDeXuat />,
-    title: "Kí đề xuất",
+    title: "Ký đề xuất",
   },
   {
     key: TAB.THONG_SO_NGUOI_DUNG,

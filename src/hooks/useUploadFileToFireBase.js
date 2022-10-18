@@ -50,6 +50,7 @@ const useUploadFileToFireBase = ({ file }) => {
     percent,
     url,
     uploading,
+    resetFile,
   };
 };
 

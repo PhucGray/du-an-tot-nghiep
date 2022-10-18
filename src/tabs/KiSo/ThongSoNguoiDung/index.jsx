@@ -170,6 +170,7 @@ export default () => {
         setIsModalOpen(false);
         getListThongSo();
         message.success(res.data?.retText);
+        form.resetFields();
       }
     } catch (error) {
       message.error(LOI_HE_THONG);
@@ -263,7 +264,7 @@ export default () => {
       key: "ngayChuKyHetHan",
     },
     {
-      title: "Kí thử",
+      title: "Ký thử",
       dataIndex: "isThongSo",
       key: "isThongSo",
       render: (_, record) => {
@@ -383,16 +384,16 @@ export default () => {
             labelCol={{
               span: 5,
             }}
-            label="Người kí"
+            label="Người Ký"
             name="ma_NguoiDung"
             rules={[
               {
                 required: true,
-                message: "Vui lòng chọn người kí!",
+                message: "Vui lòng chọn người Ký!",
               },
             ]}>
             <Select
-              placeholder="Chọn người kí"
+              placeholder="Chọn người Ký"
               style={{
                 width: "100%",
               }}>

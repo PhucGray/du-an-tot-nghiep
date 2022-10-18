@@ -15,7 +15,6 @@ export const uploadBlobToStorage = async (blob) => {
 };
 
 export const uploadImageToStorage = async (file) => {
-  console.log(file);
   const time = new Date().toISOString();
   const fileName = file?.name;
   const storageRef = ref(storage, time.concat(fileName));
@@ -25,7 +24,6 @@ export const uploadImageToStorage = async (file) => {
 };
 
 export const handleUploadImage = async (e, callback) => {
-  console.log("fajwf");
   if (e.target.files && e.target.files.length > 0) {
     const selectedFiles = e.target.files;
 

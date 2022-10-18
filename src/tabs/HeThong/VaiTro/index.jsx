@@ -414,7 +414,7 @@ export default () => {
       </Tabs>
 
       <Modal
-        title="Sửa chức danh"
+        title="Sửa vai trò"
         open={modalEditVisible}
         confirmLoading={editLoading}
         okText="Sửa"

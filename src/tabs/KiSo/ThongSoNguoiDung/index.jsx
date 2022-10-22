@@ -34,6 +34,7 @@ import {
   uploadBase64Image,
   uploadBlobToStorage,
   uploadImageToStorage,
+  uploadImagToFirebase,
 } from "../../../utils/images";
 import {
   getListNguoiDungDuyetSvc,
@@ -46,8 +47,13 @@ import { useSelector } from "react-redux";
 import { nguoiDungSelector } from "../../../store/auth/selectors";
 import moment from "moment";
 import ThongSoChiTiet from "./ThongSoChiTiet";
-
+import { useRef } from "react";
+import ReactImageSize from "react-image-size";
+import ImageModal from "./ImageModal";
 const { Option } = Select;
+
+const KICH_THUOC_QUA_LON = "Kích thước ảnh quá lớn";
+const VUI_LONG_CHON_HINH = "Vui lòng chọn hình";
 
 export default () => {
   const [form] = Form.useForm();
@@ -61,6 +67,22 @@ export default () => {
   const [change1, setChange1] = useState(false);
   const [change2, setChange2] = useState(false);
   const [change3, setChange3] = useState(false);
+
+  const file1Ref = useRef();
+  const file2Ref = useRef();
+  const file3Ref = useRef();
+
+  const [hinh1, setHinh1] = useState(null);
+  const [hinh2, setHinh2] = useState(null);
+  const [hinh3, setHinh3] = useState(null);
+
+  const [hinh1Error, setHinh1Error] = useState("");
+  const [hinh2Error, setHinh2Error] = useState("");
+  const [hinh3Error, setHinh3Error] = useState("");
+
+  const [hinh1Loading, setHinh1Loading] = useState(false);
+  const [hinh2Loading, setHinh2Loading] = useState(false);
+  const [hinh3Loading, setHinh3Loading] = useState(false);
 
   const [keyword, setKeyword] = useState("");
   const [list, setList] = useState([
@@ -90,6 +112,19 @@ export default () => {
 
   const [currentUserDetail, setCurrentUserDetail] = useState(null);
 
+  const transformUser = (item) => {
+    return {
+      ...item,
+      itemName: item?.nguoiDung?.hoTen,
+      ma_NguoiDung: item?.nguoiDung?.ma_NguoiDung,
+      hoTen: item?.nguoiDung?.hoTen,
+      ten_ChucDanh: item?.nguoiDung?.chucDanh?.ten_ChucDanh,
+      ngayChuKyHetHan: item?.ngayChuKyHetHan,
+      isThongSo: item?.nguoiDung?.isThongSo,
+      trangThai: item?.trangThai,
+    };
+  };
+
   const getListThongSo = async () => {
     setGetListLoading(true);
     try {
@@ -98,16 +133,7 @@ export default () => {
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         setList(
           res.data?.data?.map((item) => {
-            return {
-              ...item,
-              itemName: item?.nguoiDung?.hoTen,
-              ma_NguoiDung: item?.nguoiDung?.ma_NguoiDung,
-              hoTen: item?.nguoiDung?.hoTen,
-              ten_ChucDanh: item?.nguoiDung?.chucDanh?.ten_ChucDanh,
-              ngayChuKyHetHan: item?.ngayChuKyHetHan,
-              isThongSo: item?.nguoiDung?.isThongSo,
-              trangThai: item?.trangThai,
-            };
+            return transformUser(item);
           }),
         );
       } else {
@@ -147,16 +173,10 @@ export default () => {
 
   const handleAdd = async (values) => {
     setThemNguoiDungDuyetLoading(true);
-    let hinh2 = null;
-    let hinh3 = null;
-    if (!!values?.hinh2) {
-      hinh2 = await uploadBase64Image(values?.hinh2?.file?.thumbUrl);
-    }
-    if (!!values?.hinh3) {
-      hinh3 = await uploadBase64Image(values?.hinh3?.file?.thumbUrl);
-    }
+    let isValid = true;
 
-    let hinh1 = await uploadBase64Image(values?.hinh1?.file?.thumbUrl);
+    if (!isValid) return;
+
     const new3Months = moment().add(3, "months").format();
     const data = {
       ma_NguoiDung: values?.ma_NguoiDung,
@@ -190,28 +210,6 @@ export default () => {
 
   const handleEdit = async (values) => {
     setThemNguoiDungDuyetLoading(true);
-    let hinh1 = null;
-    let hinh2 = null;
-    let hinh3 = null;
-
-    if (!!values?.hinh1 && !!values?.hinh1?.file) {
-      hinh1 = await uploadBase64Image(values?.hinh1?.file?.thumbUrl);
-    } else if (!!values?.hinh1) {
-      hinh1 = values.hinh1;
-    }
-
-    if (!!values?.hinh2 && !!values?.hinh2?.file) {
-      console.log(values?.hinh2?.file);
-      hinh2 = await uploadBase64Image(values?.hinh2?.file?.thumbUrl);
-    } else if (!!values?.hinh2) {
-      hinh2 = values.hinh2;
-    }
-
-    if (!!values?.hinh3 && !!values?.hinh3?.file) {
-      hinh3 = await uploadBase64Image(values?.hinh3?.file?.thumbUrl);
-    } else if (!!values?.hinh3) {
-      hinh3 = values.hinh3;
-    }
 
     const data = {
       ma_NguoiDung: values?.ma_NguoiDung,
@@ -231,6 +229,7 @@ export default () => {
         getListThongSo();
         message.success(res.data?.retText);
         form.resetFields();
+        setCurrentUserDetail(transformUser(res.data?.data));
       }
     } catch (error) {
       message.error(LOI_HE_THONG);
@@ -262,14 +261,16 @@ export default () => {
     setIsEdit(true);
     const item = list.find((i) => i.ma_NguoiDung === info?.ma_NguoiDung);
 
-    const nguoiDung = item?.nguoiDung;
-
     form.setFieldValue("trangThai", item?.trangThai);
     form.setFieldValue("lyDoMacDinh", item?.lyDoMacDinh);
     form.setFieldValue("hinh1", item?.hinh1);
     form.setFieldValue("hinh2", item?.hinh2);
     form.setFieldValue("hinh3", item?.hinh3);
-    form.setFieldValue("ma_NguoiDung", nguoiDung?.ma_NguoiDung);
+    form.setFieldValue("ma_NguoiDung", item?.ma_NguoiDung);
+
+    setHinh1(item?.hinh1 || null);
+    setHinh2(item?.hinh2 || null);
+    setHinh3(item?.hinh3 || null);
   };
 
   const columns = [
@@ -327,26 +328,6 @@ export default () => {
       render: (_, record) => (
         <div>
           <div>
-            {/* <Button
-              type="link"
-              onClick={() => {
-                setIsModalOpen(true);
-                setIsEdit(true);
-                const item = list.find(
-                  (i) => i.ma_NguoiDung === record?.ma_NguoiDung,
-                );
-
-                const nguoiDung = item?.nguoiDung;
-
-                form.setFieldValue("trangThai", item?.trangThai);
-                form.setFieldValue("lyDoMacDinh", item?.lyDoMacDinh);
-                form.setFieldValue("hinh1", item?.hinh1);
-                form.setFieldValue("hinh2", item?.hinh2);
-                form.setFieldValue("hinh3", item?.hinh3);
-                form.setFieldValue("ma_NguoiDung", nguoiDung?.ma_NguoiDung);
-              }}>
-              Sửa
-            </Button> */}
             <Button
               type="link"
               onClick={() => {
@@ -372,14 +353,6 @@ export default () => {
     getListNguoiDungCanDuyet();
   }, []);
 
-  // if (!!currentUserDetail)
-  //   return (
-  //     <ThongSoChiTiet
-  //       currentUserDetail={currentUserDetail}
-  //       setCurrentUserDetail={setCurrentUserDetail}
-  //     />
-  //   );
-
   return (
     <>
       <Modal
@@ -387,17 +360,36 @@ export default () => {
         open={isModalOpen}
         onOk={() => {}}
         onCancel={() => {
+          if (hinh1Loading || hinh2Loading || hinh3Loading) return;
+
           setIsModalOpen(false);
           setIsEdit(false);
           setIsDetail(false);
           form.resetFields();
+          setHinh1(null);
+          setHinh2(null);
+          setHinh3(null);
+          setHinh1Error(false);
         }}
         footer={null}>
         <Form
           disabled={isDetail}
           form={form}
           name="suathongso"
-          onFinish={isEdit ? handleEdit : handleAdd}
+          onFinish={(e) => {
+            if (!hinh1) {
+              setHinh1Error(VUI_LONG_CHON_HINH);
+              return;
+            }
+
+            isEdit ? handleEdit(e) : handleAdd(e);
+          }}
+          onFinishFailed={() => {
+            if (!hinh1) {
+              setHinh1Error(VUI_LONG_CHON_HINH);
+              return;
+            }
+          }}
           initialValues={{
             hinh2: null,
             hinh3: null,
@@ -422,11 +414,17 @@ export default () => {
               style={{
                 width: "100%",
               }}>
-              {listNguoiCanDuyet.map((item, index) => (
-                <Option key={index} value={item?.ma_NguoiDung}>
-                  {item?.hoTen}
-                </Option>
-              ))}
+              {isEdit
+                ? list.map((item, index) => (
+                    <Option key={index} value={item?.ma_NguoiDung}>
+                      {item?.hoTen}
+                    </Option>
+                  ))
+                : listNguoiCanDuyet.map((item, index) => (
+                    <Option key={index} value={item?.ma_NguoiDung}>
+                      {item?.hoTen}
+                    </Option>
+                  ))}
             </Select>
           </Form.Item>
 
@@ -478,123 +476,48 @@ export default () => {
             </Form.Item>
           )}
 
-          <div className="d-flex justify-content-around">
-            <div>
-              <Form.Item
-                className="mb-0"
-                name="hinh1"
-                label="Hình 1"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng chọn hình ",
-                  },
-                ]}>
-                <Upload
-                  listType="picture"
-                  multiple={false}
-                  onChange={() => {
-                    setChange1(true);
-                  }}>
-                  <Button
-                    icon={<UploadOutlined />}
-                    className="d-flex align-items-center">
-                    Chọn {!!form.getFieldValue("hinh1") ? "lại" : "hình"}
-                  </Button>
-                </Upload>
-              </Form.Item>
-              {!change1 && !!form.getFieldValue("hinh1") && (
-                <div className="d-flex justify-content-center">
-                  <img
-                    src={form.getFieldValue("hinh1")}
-                    height={40}
-                    width={40}
-                  />
-                </div>
-              )}
-            </div>
+          <ImageModal
+            required
+            onClick={() => file1Ref.current?.click()}
+            error={hinh1Error}
+            image={hinh1}
+            loading={hinh1Loading}
+          />
+          <ImageModal
+            number={2}
+            onClick={() => file2Ref.current?.click()}
+            error={hinh2Error}
+            image={hinh2}
+            loading={hinh2Loading}
+          />
+          <ImageModal
+            number={3}
+            onClick={() => file3Ref.current?.click()}
+            error={hinh3Error}
+            image={hinh3}
+            loading={hinh3Loading}
+          />
 
-            <div>
-              <Form.Item name="hinh2" label="Hình 2">
-                <Upload
-                  name="hinh2"
-                  listType="picture"
-                  multiple={false}
-                  onChange={() => {
-                    setChange2(true);
-                  }}>
-                  <Button
-                    icon={<UploadOutlined />}
-                    className="d-flex align-items-center">
-                    Chọn {!!form.getFieldValue("hinh2") ? "lại" : "hình"}
-                  </Button>
-                </Upload>
-              </Form.Item>
-              {!change2 && !!form.getFieldValue("hinh2") && (
-                <div className="d-flex justify-content-center">
-                  <img
-                    src={form.getFieldValue("hinh2")}
-                    height={40}
-                    width={40}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="d-flex justify-content-around">
-            <div style={{ marginLeft: 10 }}>
-              <Form.Item name="hinh3" label="Hình 3">
-                <Upload
-                  name="hinh3"
-                  listType="picture"
-                  multiple={false}
-                  onChange={() => {
-                    setChange3(true);
-                  }}>
-                  <Button
-                    icon={<UploadOutlined />}
-                    className="d-flex align-items-center">
-                    Chọn {!!form.getFieldValue("hinh3s") ? "lại" : "hình"}
-                  </Button>
-                </Upload>
-              </Form.Item>
-              {!change3 && !!form.getFieldValue("hinh3") && (
-                <div className="d-flex justify-content-center">
-                  <img
-                    src={form.getFieldValue("hinh3")}
-                    height={40}
-                    width={40}
-                  />
-                </div>
-              )}
-            </div>
-
-            <div style={{ opacity: 0, pointerEvents: "none" }}>
-              <Form.Item label="Hình 3">
-                <Upload listType="picture">
-                  <Button
-                    icon={<UploadOutlined />}
-                    className="d-flex align-items-center">
-                    Chọn hình
-                  </Button>
-                </Upload>
-              </Form.Item>
-            </div>
-          </div>
-
-          <div className="d-flex justify-content-center gap-3">
+          <div className="d-flex justify-content-center gap-3 mt-3">
             <Form.Item>
               <Button
                 type="ghost"
                 htmlType="button"
-                onClick={() => setIsModalOpen(false)}>
+                onClick={() => {
+                  if (hinh1Loading || hinh2Loading || hinh3Loading) return;
+                  setIsModalOpen(false);
+                }}>
                 Bỏ qua
               </Button>
             </Form.Item>
             <Form.Item>
               <Button
-                loading={themNguoiDungDuyetLoading}
+                loading={
+                  themNguoiDungDuyetLoading ||
+                  hinh1Loading ||
+                  hinh2Loading ||
+                  hinh3Loading
+                }
                 type="primary"
                 htmlType="submit">
                 Đồng ý
@@ -603,6 +526,69 @@ export default () => {
           </div>
         </Form>
       </Modal>
+
+      <input
+        className="position-fixed"
+        style={{ top: -1000, opacity: 0 }}
+        type="file"
+        ref={file1Ref}
+        onChange={async (e) => {
+          setHinh1Error(null);
+          setHinh1Loading(true);
+
+          const hinh1 = await uploadImagToFirebase(e);
+          const { width, height } = await ReactImageSize(hinh1);
+          if (width > 250 || height > 250) {
+            setHinh1Error(KICH_THUOC_QUA_LON);
+          } else {
+            setHinh1(hinh1);
+          }
+
+          setHinh1Loading(false);
+        }}
+      />
+
+      <input
+        className="position-fixed"
+        style={{ top: -1000, opacity: 0 }}
+        type="file"
+        ref={file2Ref}
+        onChange={async (e) => {
+          setHinh2Error(null);
+          setHinh2Loading(true);
+
+          const hinh2 = await uploadImagToFirebase(e);
+          const { width, height } = await ReactImageSize(hinh2);
+          if (width > 250 || height > 250) {
+            setHinh2Error(KICH_THUOC_QUA_LON);
+          } else {
+            setHinh2(hinh2);
+          }
+
+          setHinh2Loading(false);
+        }}
+      />
+
+      <input
+        className="position-fixed"
+        style={{ top: -1000, opacity: 0 }}
+        type="file"
+        ref={file3Ref}
+        onChange={async (e) => {
+          setHinh3Error(null);
+          setHinh3Loading(true);
+
+          const hinh3 = await uploadImagToFirebase(e);
+          const { width, height } = await ReactImageSize(hinh3);
+          if (width > 250 || height > 250) {
+            setHinh3Error(KICH_THUOC_QUA_LON);
+          } else {
+            setHinh3(hinh3);
+          }
+
+          setHinh3Loading(false);
+        }}
+      />
 
       {currentUserDetail ? (
         <ThongSoChiTiet

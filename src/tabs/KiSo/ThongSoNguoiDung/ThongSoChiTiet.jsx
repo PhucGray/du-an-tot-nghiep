@@ -25,8 +25,8 @@ const Row = ({ label, children, even = true }) => {
       </div>
       <div
         style={{
-          minHeight: "100%",
-          width: 1,
+          // minHeight: "100%",s
+          // width: 1,
           backgroundColor: even ? "#fff" : "#d9d9d9",
         }}></div>
       <div
@@ -227,12 +227,6 @@ const ThongSoChiTiet = ({
         <div className="mt-2" style={{ paddingInline: 40 }}>
           <Row label="Người ký">
             <div className="d-flex align-items-center">
-              {/* <img
-              className="me-2"
-              src="https://joeschmoe.io/api/v1/random"
-              height={40}
-              width={40}
-            /> */}
               <div>{data?.hoTen}</div>
             </div>
           </Row>
@@ -244,34 +238,22 @@ const ThongSoChiTiet = ({
           <Row label="Lý do">{data?.lyDoMacDinh}</Row>
 
           <Row label="Hình 1" even={false}>
-            {data?.hinh1 && (
-              <img
-                src={data.hinh1}
-                style={{ height: "auto", width: "auto", maxHeight: 200 }}
-              />
-            )}
+            {data?.hinh1 && <img src={data.hinh1} style={{}} />}
           </Row>
           <Row label="Hình 2">
-            {data?.hinh2 && (
-              <img
-                src={data.hinh2}
-                style={{ height: "auto", width: "auto", maxHeight: 200 }}
-              />
-            )}
+            {data?.hinh2 && <img src={data.hinh2} style={{}} />}
           </Row>
           <Row label="Hình 3" even={false}>
-            {data?.hinh3 && (
-              <img
-                src={data.hinh3}
-                style={{ height: "auto", width: "auto", maxHeight: 200 }}
-              />
-            )}
+            {data?.hinh3 && <img src={data.hinh3} style={{}} />}
           </Row>
 
-          <Row label="Serial">{data?.serial}</Row>
-          <Row label="Subject" even={false}>
-            {data?.subject}
+          <Row label="Passcode">{data?.passCode}</Row>
+
+          <Row label="Serial" even={false}>
+            {data?.serial}
           </Row>
+
+          <Row label="Subject">{data?.subject}</Row>
         </div>
       </div>
     </>

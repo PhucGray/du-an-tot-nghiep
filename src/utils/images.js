@@ -88,3 +88,51 @@ export const uploadBase64Image = async (base64) => {
 
   return url;
 };
+
+export const uploadImagToFirebase = async (e) => {
+  const types = ["image/jpeg", "image/jpg", "image/png"];
+
+  if (e.target.files && e.target.files.length > 0) {
+    const selectedFile = e.target.files[0];
+
+    if (selectedFile && types.includes(selectedFile.type)) {
+      // dispatch(
+      //     setLoading({
+      //         state: true,
+      //         message: isVietnames
+      //             ? 'Đang tải ảnh...'
+      //             : 'Uploading...',
+      //     }),
+      // );
+
+      const time = new Date().toISOString();
+      const fileName = selectedFile.name;
+
+      const storageRef = ref(storage, time.concat(fileName));
+
+      await uploadBytes(storageRef, selectedFile);
+
+      const resultUrl = await getDownloadURL(storageRef);
+
+      return resultUrl;
+      // if (resultUrl) {sss
+      //     const newMessage = {
+      //         msg: {
+      //             type: 'image',
+      //             content: resultUrl,
+      //         },
+      //         sentAt: new Date().toString(),
+      //         uid: user?.uid,
+      //     } as MessageType;
+
+      //     await updateDoc(conversationDocumentRef, {
+      //         messages: arrayUnion(newMessage),
+      //     });
+
+      //     dispatch(setLoading({ state: false }));
+      // }
+    }
+  }
+
+  return null;
+};

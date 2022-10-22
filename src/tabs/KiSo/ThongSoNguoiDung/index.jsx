@@ -29,7 +29,12 @@ import {
   HourglassTwoTone,
   UploadOutlined,
 } from "@ant-design/icons";
-import { uploadImageToStorage } from "../../../utils/images";
+import {
+  handleUploadImage,
+  uploadBase64Image,
+  uploadBlobToStorage,
+  uploadImageToStorage,
+} from "../../../utils/images";
 import {
   getListNguoiDungDuyetSvc,
   getListThongSoKiSo,
@@ -40,6 +45,7 @@ import {
 import { useSelector } from "react-redux";
 import { nguoiDungSelector } from "../../../store/auth/selectors";
 import moment from "moment";
+import ThongSoChiTiet from "./ThongSoChiTiet";
 
 const { Option } = Select;
 
@@ -51,6 +57,10 @@ export default () => {
   const [isDetail, setIsDetail] = useState(false);
   const [getListLoading, setGetListLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [change1, setChange1] = useState(false);
+  const [change2, setChange2] = useState(false);
+  const [change3, setChange3] = useState(false);
 
   const [keyword, setKeyword] = useState("");
   const [list, setList] = useState([
@@ -77,6 +87,8 @@ export default () => {
   const [listNguoiCanDuyet, setListNguoiCanDuyet] = useState([]);
   const [themNguoiDungDuyetLoading, setThemNguoiDungDuyetLoading] =
     useState(false);
+
+  const [currentUserDetail, setCurrentUserDetail] = useState(null);
 
   const getListThongSo = async () => {
     setGetListLoading(true);
@@ -137,19 +149,15 @@ export default () => {
     setThemNguoiDungDuyetLoading(true);
     let hinh2 = null;
     let hinh3 = null;
-
     if (!!values?.hinh2) {
-      hinh2 = await uploadImageToStorage(hinh2?.file);
+      hinh2 = await uploadBase64Image(values?.hinh2?.file?.thumbUrl);
     }
-
     if (!!values?.hinh3) {
-      hinh3 = await uploadImageToStorage(hinh3?.file);
+      hinh3 = await uploadBase64Image(values?.hinh3?.file?.thumbUrl);
     }
 
-    let hinh1 = await uploadImageToStorage(values.hinh1?.file);
-
+    let hinh1 = await uploadBase64Image(values?.hinh1?.file?.thumbUrl);
     const new3Months = moment().add(3, "months").format();
-
     const data = {
       ma_NguoiDung: values?.ma_NguoiDung,
       hinh1,
@@ -162,10 +170,8 @@ export default () => {
       trangThai: values?.trangThai,
       ngayChuKyHetHan: new3Months,
     };
-
     try {
       const res = await themNguoiDungDuyetSvc(data);
-
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         setIsModalOpen(false);
         getListThongSo();
@@ -176,6 +182,9 @@ export default () => {
       message.error(LOI_HE_THONG);
     } finally {
       setThemNguoiDungDuyetLoading(false);
+      setChange1(false);
+      setChange2(false);
+      setChange3(false);
     }
   };
 
@@ -186,19 +195,20 @@ export default () => {
     let hinh3 = null;
 
     if (!!values?.hinh1 && !!values?.hinh1?.file) {
-      hinh1 = await uploadImageToStorage(hinh1?.file);
+      hinh1 = await uploadBase64Image(values?.hinh1?.file?.thumbUrl);
     } else if (!!values?.hinh1) {
       hinh1 = values.hinh1;
     }
 
     if (!!values?.hinh2 && !!values?.hinh2?.file) {
-      hinh2 = await uploadImageToStorage(hinh2?.file);
+      console.log(values?.hinh2?.file);
+      hinh2 = await uploadBase64Image(values?.hinh2?.file?.thumbUrl);
     } else if (!!values?.hinh2) {
       hinh2 = values.hinh2;
     }
 
     if (!!values?.hinh3 && !!values?.hinh3?.file) {
-      hinh3 = await uploadImageToStorage(hinh3?.file);
+      hinh3 = await uploadBase64Image(values?.hinh3?.file?.thumbUrl);
     } else if (!!values?.hinh3) {
       hinh3 = values.hinh3;
     }
@@ -220,26 +230,46 @@ export default () => {
         setIsModalOpen(false);
         getListThongSo();
         message.success(res.data?.retText);
+        form.resetFields();
       }
     } catch (error) {
       message.error(LOI_HE_THONG);
     } finally {
       setThemNguoiDungDuyetLoading(false);
+      setChange1(false);
+      setChange2(false);
+      setChange3(false);
     }
   };
 
-  const handleXoaThongSo = async (nguoiDung) => {
+  const handleDelete = async (nguoiDung) => {
     try {
       const res = await xoaThongSoNguoiDung({ id: nguoiDung?.ma_NguoiDung });
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         getListThongSo();
+        getListNguoiDungCanDuyet();
       } else {
         message.error(LOI);
       }
     } catch (error) {
       message.error(LOI_HE_THONG);
     }
+  };
+
+  const handleShowModalEdit = (info) => {
+    setIsModalOpen(true);
+    setIsEdit(true);
+    const item = list.find((i) => i.ma_NguoiDung === info?.ma_NguoiDung);
+
+    const nguoiDung = item?.nguoiDung;
+
+    form.setFieldValue("trangThai", item?.trangThai);
+    form.setFieldValue("lyDoMacDinh", item?.lyDoMacDinh);
+    form.setFieldValue("hinh1", item?.hinh1);
+    form.setFieldValue("hinh2", item?.hinh2);
+    form.setFieldValue("hinh3", item?.hinh3);
+    form.setFieldValue("ma_NguoiDung", nguoiDung?.ma_NguoiDung);
   };
 
   const columns = [
@@ -297,7 +327,7 @@ export default () => {
       render: (_, record) => (
         <div>
           <div>
-            <Button
+            {/* <Button
               type="link"
               onClick={() => {
                 setIsModalOpen(true);
@@ -316,31 +346,17 @@ export default () => {
                 form.setFieldValue("ma_NguoiDung", nguoiDung?.ma_NguoiDung);
               }}>
               Sửa
-            </Button>
+            </Button> */}
             <Button
               type="link"
               onClick={() => {
-                setIsModalOpen(true);
-                setIsDetail(true);
-                const item = list.find(
-                  (i) => i.ma_NguoiDung === record?.ma_NguoiDung,
-                );
-
-                const nguoiDung = item?.nguoiDung;
-
-                form.setFieldValue("trangThai", item?.trangThai);
-                form.setFieldValue("lyDoMacDinh", item?.lyDoMacDinh);
-                form.setFieldValue("passCode", item?.passCode);
-                form.setFieldValue("hinh1", item?.hinh1);
-                form.setFieldValue("hinh2", item?.hinh2);
-                form.setFieldValue("hinh3", item?.hinh3);
-                form.setFieldValue("ma_NguoiDung", nguoiDung?.ma_NguoiDung);
+                setCurrentUserDetail(record);
               }}>
               Chi tiết
             </Button>
             <Popconfirm
               title="Bạn có chắc chắn muốn xoá?"
-              onConfirm={() => handleXoaThongSo(record)}
+              onConfirm={() => handleDelete(record)}
               okText="Đồng ý"
               cancelText="Thoát">
               <Button type="link">Xoá</Button>
@@ -355,6 +371,14 @@ export default () => {
     getListThongSo();
     getListNguoiDungCanDuyet();
   }, []);
+
+  // if (!!currentUserDetail)
+  //   return (
+  //     <ThongSoChiTiet
+  //       currentUserDetail={currentUserDetail}
+  //       setCurrentUserDetail={setCurrentUserDetail}
+  //     />
+  //   );
 
   return (
     <>
@@ -393,6 +417,7 @@ export default () => {
               },
             ]}>
             <Select
+              disabled={isEdit}
               placeholder="Chọn người Ký"
               style={{
                 width: "100%",
@@ -456,6 +481,7 @@ export default () => {
           <div className="d-flex justify-content-around">
             <div>
               <Form.Item
+                className="mb-0"
                 name="hinh1"
                 label="Hình 1"
                 rules={[
@@ -464,7 +490,12 @@ export default () => {
                     message: "Vui lòng chọn hình ",
                   },
                 ]}>
-                <Upload listType="picture" multiple={false}>
+                <Upload
+                  listType="picture"
+                  multiple={false}
+                  onChange={() => {
+                    setChange1(true);
+                  }}>
                   <Button
                     icon={<UploadOutlined />}
                     className="d-flex align-items-center">
@@ -472,11 +503,26 @@ export default () => {
                   </Button>
                 </Upload>
               </Form.Item>
+              {!change1 && !!form.getFieldValue("hinh1") && (
+                <div className="d-flex justify-content-center">
+                  <img
+                    src={form.getFieldValue("hinh1")}
+                    height={40}
+                    width={40}
+                  />
+                </div>
+              )}
             </div>
 
             <div>
               <Form.Item name="hinh2" label="Hình 2">
-                <Upload name="hinh2" listType="picture" multiple={false}>
+                <Upload
+                  name="hinh2"
+                  listType="picture"
+                  multiple={false}
+                  onChange={() => {
+                    setChange2(true);
+                  }}>
                   <Button
                     icon={<UploadOutlined />}
                     className="d-flex align-items-center">
@@ -484,13 +530,28 @@ export default () => {
                   </Button>
                 </Upload>
               </Form.Item>
+              {!change2 && !!form.getFieldValue("hinh2") && (
+                <div className="d-flex justify-content-center">
+                  <img
+                    src={form.getFieldValue("hinh2")}
+                    height={40}
+                    width={40}
+                  />
+                </div>
+              )}
             </div>
           </div>
 
           <div className="d-flex justify-content-around">
             <div style={{ marginLeft: 10 }}>
               <Form.Item name="hinh3" label="Hình 3">
-                <Upload name="hinh3" listType="picture" multiple={false}>
+                <Upload
+                  name="hinh3"
+                  listType="picture"
+                  multiple={false}
+                  onChange={() => {
+                    setChange3(true);
+                  }}>
                   <Button
                     icon={<UploadOutlined />}
                     className="d-flex align-items-center">
@@ -498,6 +559,15 @@ export default () => {
                   </Button>
                 </Upload>
               </Form.Item>
+              {!change3 && !!form.getFieldValue("hinh3") && (
+                <div className="d-flex justify-content-center">
+                  <img
+                    src={form.getFieldValue("hinh3")}
+                    height={40}
+                    width={40}
+                  />
+                </div>
+              )}
             </div>
 
             <div style={{ opacity: 0, pointerEvents: "none" }}>
@@ -534,33 +604,41 @@ export default () => {
         </Form>
       </Modal>
 
-      <div style={{ width: "95%", marginInline: "auto" }}>
-        <div className="mt-4 mb-4 d-flex justify-content-between align-items-center">
-          <Input
-            style={{ width: 200 }}
-            placeholder="Nhập từ khoá tìm kiếm"
-            value={keyword}
-            onChange={(e) => handleSearch(e.target.value)}
-          />
+      {currentUserDetail ? (
+        <ThongSoChiTiet
+          handleShowModalEdit={handleShowModalEdit}
+          currentUserDetail={currentUserDetail}
+          setCurrentUserDetail={setCurrentUserDetail}
+        />
+      ) : (
+        <div style={{ width: "95%", marginInline: "auto" }}>
+          <div className="mt-4 mb-4 d-flex justify-content-between align-items-center">
+            <Input
+              style={{ width: 200 }}
+              placeholder="Nhập từ khoá tìm kiếm"
+              value={keyword}
+              onChange={(e) => handleSearch(e.target.value)}
+            />
 
-          <Button
-            type="primary"
-            onClick={() => {
-              setIsModalOpen(true);
-            }}>
-            Thêm
-          </Button>
-        </div>
+            <Button
+              type="primary"
+              onClick={() => {
+                setIsModalOpen(true);
+              }}>
+              Thêm
+            </Button>
+          </div>
 
-        <div>
-          <Table
-            loading={getListLoading}
-            columns={columns}
-            dataSource={keyword.trim() ? searchList : list}
-            pagination={{ defaultPageSize: 5 }}
-          />
+          <div>
+            <Table
+              loading={getListLoading}
+              columns={columns}
+              dataSource={keyword.trim() ? searchList : list}
+              pagination={{ defaultPageSize: 5 }}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

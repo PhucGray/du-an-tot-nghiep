@@ -4,12 +4,12 @@ import "../../styles/common.scss";
 import React from "react";
 import { Button, Checkbox, Form, Input, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useState } from "react";
 import { dangNhap } from "../../store/auth/services";
 import { SUCCESS, RETCODE_SUCCESS, LOI_HE_THONG } from "../../constants/api";
 import { useDispatch } from "react-redux";
 import { setNguoiDung } from "../../store/auth/actions";
+import api from "../../api";
 
 const SignIn = () => {
   const dispatch = useDispatch();
@@ -22,6 +22,12 @@ const SignIn = () => {
       const res = await dangNhap(values);
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        // console.log(res.data?.data);
+
+        const token = res.data?.data?.token;
+        api.defaults.headers.common = {
+          Authorization: `Bearer ${token}`,
+        };
         dispatch(setNguoiDung(res.data?.data));
       } else {
         message.error(res.data?.retText);

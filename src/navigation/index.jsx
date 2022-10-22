@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Page_SignIn from "../pages/Page_SignIn";
@@ -13,12 +13,21 @@ import MainLayout from "../layout/MainLayout";
 
 import { useSelector } from "react-redux";
 import { nguoiDungSelector, tokenSelector } from "../store/auth/selectors";
+import api from "../api";
 
 const Navigation = () => {
   const nguoiDung = useSelector(nguoiDungSelector);
   const token = useSelector(tokenSelector);
 
   const isLogin = !!nguoiDung && !!token;
+
+  useEffect(() => {
+    if (isLogin) {
+      api.defaults.headers.common = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
+  }, [isLogin]);
 
   return (
     <Fragment>

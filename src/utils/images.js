@@ -2,9 +2,11 @@ import {
   getDownloadURL,
   ref,
   uploadBytes,
+  uploadBytesResumable,
   uploadString,
 } from "firebase/storage";
 import { storage } from "../firebase";
+import { v4 as uuidv4 } from "uuid";
 
 export const uploadBlobToStorage = async (blob) => {
   const time = new Date().toISOString();
@@ -15,17 +17,42 @@ export const uploadBlobToStorage = async (blob) => {
 };
 
 export const uploadImageToStorage = async (file) => {
-  const time = new Date().toISOString();
+  // console.log(file);
   const fileName = file?.name;
-  const storageRef = ref(storage, time.concat(fileName));
-  await uploadBytes(storageRef, file);
-  const resultUrl = await getDownloadURL(storageRef);
-  return resultUrl;
+  // console.log(fileName);
+  const storageRef = ref(storage, `/images/${fileName}`);
+  const uploadTask = uploadBytesResumable(storageRef, file);
+
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {
+      //  const progress = Math.round(
+      //    (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
+      //  );
+      //  setProgresspercent(progress);
+    },
+    (error) => {
+      //  alert(error);
+    },
+    () => {
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        //  setImgUrl(downloadURL);
+        console.log(downloadURL);
+      });
+    },
+  );
+  // const time = new Date().toString();
+  // const fileName = file?.name;
+  // const storageRef = ref(storage,'/images/' + time.concat(fileName));
+  // await uploadBytes(storageRef, file);
+  // const resultUrl = await getDownloadURL(storageRef);
+  // return resultUrl;
 };
 
-export const handleUploadImage = async (e, callback) => {
-  if (e.target.files && e.target.files.length > 0) {
-    const selectedFiles = e.target.files;
+export const handleUploadImage = async (e, callback, files = null) => {
+  const _files = files || e.target.files;
+  if (_files && _files.length > 0) {
+    const selectedFiles = _files;
 
     let images = [];
 
@@ -49,4 +76,15 @@ export const handleUploadImage = async (e, callback) => {
       reader.readAsDataURL(file);
     }
   }
+};
+
+export const uploadBase64Image = async (base64) => {
+  console.log(base64);
+  const result = await fetch(base64);
+  const blob = await result.blob();
+  const url = await uploadBlobToStorage(blob);
+
+  console.log(url);
+
+  return url;
 };

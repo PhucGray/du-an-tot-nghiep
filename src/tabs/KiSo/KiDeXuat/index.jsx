@@ -19,7 +19,6 @@ import {
 import { nguoiDungSelector } from "../../../store/auth/selectors";
 import { useSelector } from "react-redux";
 import { useRef } from "react";
-import { uploadImageToStorage } from "../../../utils/images";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
 
 const { TextArea } = Input;

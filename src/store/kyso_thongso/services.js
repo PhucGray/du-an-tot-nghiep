@@ -13,6 +13,10 @@ export const suaNguoiDungDuyetSvc = (payload) => {
   return api.put(API.KS_TS, payload);
 };
 
+export const suaPasscodeSvc = (payload) => {
+  return api.put(API.KS_TS_DOI_PASSCODE, payload);
+};
+
 export const getListThongSoKiSo = () => {
   return api.get(API.KS_TS);
 };

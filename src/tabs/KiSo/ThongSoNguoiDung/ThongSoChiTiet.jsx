@@ -1,5 +1,5 @@
-import { Button, Form, Input, Modal, Radio, Upload } from "antd";
-import React from "react";
+import { Button, Form, Input, Modal, Radio, Upload, message } from "antd";
+import React, { useEffect, useRef, useState } from "react";
 import {
   EditOutlined,
   LockOutlined,
@@ -7,7 +7,18 @@ import {
   HistoryOutlined,
   HighlightOutlined,
   UploadOutlined,
+  CloudUploadOutlined,
 } from "@ant-design/icons";
+import { textToCharacter } from "../../../utils/strings";
+import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
+import {
+  LOI,
+  LOI_HE_THONG,
+  RETCODE_SUCCESS,
+  SUCCESS,
+} from "../../../constants/api";
+import { suaPasscodeSvc } from "../../../store/kyso_thongso/services";
+import { transformUser } from "../../../utils/user";
 
 const Row = ({ label, children, even = true }) => {
   return (
@@ -43,35 +54,75 @@ const Row = ({ label, children, even = true }) => {
 const PASSCODE = "passcode";
 const CAU_HINH = "cauhinh";
 
-const _Modal = ({ type = PASSCODE }) => {
-  const handleChangePasscode = async (values) => {};
-
+const _Modal = ({
+  form,
+  type = PASSCODE,
+  visible = false,
+  onClose = () => {},
+  fileError = "",
+  loading = false,
+  setFile,
+  inputFileRef,
+  fileName,
+  onUploadClick = () => {},
+  detailData,
+  setCurrentUserDetail,
+  getListThongSo,
+}) => {
   let title = "";
+
   switch (type) {
     case PASSCODE:
-      title = "Sửa thông số";
+      title = "Sửa passcode";
       break;
     case CAU_HINH:
       title = "Cấu hình chữ ký";
       break;
   }
 
+  const [submitLoading, setSubmitLoading] = useState(false);
+
+  const handleDoiPasscode = async (values) => {
+    setSubmitLoading(true);
+    const data = {
+      ...values,
+      ma_NguoiDung: detailData?.ma_NguoiDung,
+    };
+
+    try {
+      const res = await suaPasscodeSvc(data);
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+        form.resetFields();
+        setCurrentUserDetail(transformUser(res.data?.data));
+        console.log(transformUser(res.data?.data));
+        onClose();
+      } else {
+        message.error(res.data?.retText);
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG);
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+  const handleDoiCauHinh = async (values) => {};
+
   return (
     <Modal
+      getListThongSo={getListThongSo}
       title={title}
-      open={false}
+      open={visible}
       onOk={() => {}}
       onCancel={() => {
-        // setIsModalOpen(false);
-        // setIsEdit(false);/
-        // setIsDetail(false);
-        // form.resetFields();
+        onClose();
       }}
       footer={null}>
       <Form
-        // form={form}
+        form={form}
         name="suapassword"
-        onFinish={handleChangePasscode}
+        onFinish={type === PASSCODE ? handleDoiPasscode : handleDoiCauHinh}
         initialValues={{}}
         autoComplete="off"
         layout={type === PASSCODE ? "vertical" : "horizontal"}>
@@ -83,7 +134,7 @@ const _Modal = ({ type = PASSCODE }) => {
               rules={[
                 {
                   required: true,
-                  message: "Vui lòng nhập passcode!",
+                  message: "Vui lòng nhập passcode cũ!",
                 },
               ]}>
               <Input />
@@ -91,11 +142,11 @@ const _Modal = ({ type = PASSCODE }) => {
 
             <Form.Item
               label="Passcode mới"
-              name="passCode"
+              name="newPassCode"
               rules={[
                 {
                   required: true,
-                  message: "Vui lòng nhập passcode!",
+                  message: "Vui lòng nhập passcode mới!",
                 },
               ]}>
               <Input />
@@ -117,15 +168,13 @@ const _Modal = ({ type = PASSCODE }) => {
               </Radio.Group>
             </Form.Item>
 
-            <Form.Item
+            {/* <Form.Item
               labelCol={{
                 span: 5,
               }}
-              name="upload"
+              name="pfx"
               label="Chọn file"
-              valuePropName="fileList"
-              // extra="longgggggggggggggggggggggggggggggggggg"
-            >
+              valuePropName="fileList">
               <Upload name="logo" listType="picture">
                 <Button
                   className="d-flex align-items-center"
@@ -133,7 +182,32 @@ const _Modal = ({ type = PASSCODE }) => {
                   Thêm file
                 </Button>
               </Upload>
-            </Form.Item>
+            </Form.Item> */}
+            <div className="ms-3 d-flex flex-column" style={{ marginTop: -10 }}>
+              <div className="d-flex align-items-center">
+                <Button
+                  onClick={onUploadClick}
+                  className="d-flex align-items-center"
+                  type="link"
+                  icon={<CloudUploadOutlined />}>
+                  Đính kèm file
+                </Button>
+
+                {fileName}
+              </div>
+
+              {!!fileError && (
+                <div className="ms-3 ant-form-item-explain-error">
+                  {fileError}
+                </div>
+              )}
+            </div>
+
+            {/* {fileError && (
+              <div className="ant-form-item-explain-error text-center mb-2">
+                {fileError}
+              </div>
+            )} */}
 
             <Form.Item
               labelCol={{
@@ -154,12 +228,15 @@ const _Modal = ({ type = PASSCODE }) => {
 
         <div className="d-flex justify-content-center gap-3">
           <Form.Item>
-            <Button type="ghost" htmlType="button" onClick={() => {}}>
+            <Button type="ghost" htmlType="button" onClick={onClose}>
               Bỏ qua
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button loading={false} type="primary" htmlType="submit">
+            <Button
+              loading={loading || submitLoading}
+              type="primary"
+              htmlType="submit">
               Đồng ý
             </Button>
           </Form.Item>
@@ -174,10 +251,71 @@ const ThongSoChiTiet = ({
   setCurrentUserDetail,
   handleShowModalEdit,
 }) => {
-  const handleChangePasscode = async (values) => {};
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalType, setModalType] = useState(CAU_HINH);
+
+  const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [fileError, setFileError] = useState("");
+
+  const {
+    percent,
+    uploading,
+    uploadFile: uploadToFireBase,
+    url,
+    resetFile,
+  } = useUploadFileToFireBase({ file });
+
+  const inputFileRef = useRef();
+
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (file) {
+      uploadToFireBase();
+      setFileError(false);
+    }
+  }, [file]);
+
   return (
     <>
-      <_Modal type={CAU_HINH} />
+      <input
+        style={{ position: "absolute", left: "-100vw" }}
+        className="input-file"
+        ref={inputFileRef}
+        type="file"
+        // accept="application/x-pkcs12"
+        multiple={false}
+        onChange={async (e) => {
+          if (e.target.files && e.target.files.length > 0) {
+            const selectedFiles = e.target.files;
+            const file = selectedFiles[0];
+
+            if (file.type !== "application/x-pkcs12") {
+              setFileError("Vui lòng chọn file pfx");
+            } else {
+              setFile(file);
+              setFileName(file.name);
+            }
+          }
+        }}
+      />
+
+      <_Modal
+        detailData={data}
+        fileError={fileError}
+        form={form}
+        type={modalType}
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        loading={uploading}
+        fileName={fileName}
+        setCurrentUserDetail={setCurrentUserDetail}
+        onUploadClick={() => {
+          setFile(null);
+          inputFileRef.current?.click();
+        }}
+      />
       <div>
         <Button
           type="link"
@@ -196,6 +334,10 @@ const ThongSoChiTiet = ({
           </Button>
 
           <Button
+            onClick={() => {
+              setModalVisible(true);
+              setModalType(PASSCODE);
+            }}
             className="d-flex align-items-center text-black"
             type="link"
             icon={<LockOutlined />}>
@@ -203,6 +345,10 @@ const ThongSoChiTiet = ({
           </Button>
 
           <Button
+            onClick={() => {
+              setModalVisible(true);
+              setModalType(CAU_HINH);
+            }}
             className="d-flex align-items-center text-black"
             type="link"
             icon={<SettingOutlined />}>
@@ -247,7 +393,9 @@ const ThongSoChiTiet = ({
             {data?.hinh3 && <img src={data.hinh3} style={{}} />}
           </Row>
 
-          <Row label="Passcode">{data?.passCode}</Row>
+          <Row label="Passcode">
+            {textToCharacter({ text: data?.passCode })}
+          </Row>
 
           <Row label="Serial" even={false}>
             {data?.serial}

@@ -50,6 +50,8 @@ import ThongSoChiTiet from "./ThongSoChiTiet";
 import { useRef } from "react";
 import ReactImageSize from "react-image-size";
 import ImageModal from "./ImageModal";
+import { transformUser } from "../../../utils/user";
+
 const { Option } = Select;
 
 const KICH_THUOC_QUA_LON = "Kích thước ảnh quá lớn";
@@ -111,19 +113,6 @@ export default () => {
     useState(false);
 
   const [currentUserDetail, setCurrentUserDetail] = useState(null);
-
-  const transformUser = (item) => {
-    return {
-      ...item,
-      itemName: item?.nguoiDung?.hoTen,
-      ma_NguoiDung: item?.nguoiDung?.ma_NguoiDung,
-      hoTen: item?.nguoiDung?.hoTen,
-      ten_ChucDanh: item?.nguoiDung?.chucDanh?.ten_ChucDanh,
-      ngayChuKyHetHan: item?.ngayChuKyHetHan,
-      isThongSo: item?.nguoiDung?.isThongSo,
-      trangThai: item?.trangThai,
-    };
-  };
 
   const getListThongSo = async () => {
     setGetListLoading(true);
@@ -595,6 +584,7 @@ export default () => {
           handleShowModalEdit={handleShowModalEdit}
           currentUserDetail={currentUserDetail}
           setCurrentUserDetail={setCurrentUserDetail}
+          getListThongSo={getListThongSo}
         />
       ) : (
         <div style={{ width: "95%", marginInline: "auto" }}>

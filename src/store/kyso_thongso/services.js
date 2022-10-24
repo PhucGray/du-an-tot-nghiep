@@ -17,6 +17,10 @@ export const suaPasscodeSvc = (payload) => {
   return api.put(API.KS_TS_DOI_PASSCODE, payload);
 };
 
+export const suaCauHinhPfxSvc = (payload) => {
+  return api.put(API.KS_TS_CAU_HINH_PFX, payload);
+};
+
 export const getListThongSoKiSo = () => {
   return api.get(API.KS_TS);
 };

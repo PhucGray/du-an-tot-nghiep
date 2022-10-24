@@ -17,8 +17,13 @@ import {
   RETCODE_SUCCESS,
   SUCCESS,
 } from "../../../constants/api";
-import { suaPasscodeSvc } from "../../../store/kyso_thongso/services";
+import {
+  suaCauHinhPfxSvc,
+  suaPasscodeSvc,
+} from "../../../store/kyso_thongso/services";
 import { transformUser } from "../../../utils/user";
+
+const VUI_LONG_CHON_FILE = "Vui lòng chọn file pfx";
 
 const Row = ({ label, children, even = true }) => {
   return (
@@ -68,6 +73,9 @@ const _Modal = ({
   detailData,
   setCurrentUserDetail,
   getListThongSo,
+  resetFilePfx,
+  filePfxUrl,
+  setFileError,
 }) => {
   let title = "";
 
@@ -107,7 +115,38 @@ const _Modal = ({
       setSubmitLoading(false);
     }
   };
-  const handleDoiCauHinh = async (values) => {};
+  const handleDoiCauHinh = async (values) => {
+    //  setSubmitLoading(true);
+
+    if (!fileName) {
+      setFileError(VUI_LONG_CHON_FILE);
+      return;
+    }
+
+    const data = {
+      ...values,
+      ma_NguoiDung: detailData?.ma_NguoiDung,
+      filePfx: filePfxUrl,
+    };
+
+    try {
+      const res = await suaCauHinhPfxSvc(data);
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+        form.resetFields();
+        setCurrentUserDetail(transformUser(res.data?.data));
+        resetFilePfx();
+        onClose();
+      } else {
+        message.error(res.data?.retText);
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG);
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
 
   return (
     <Modal
@@ -123,7 +162,7 @@ const _Modal = ({
         form={form}
         name="suapassword"
         onFinish={type === PASSCODE ? handleDoiPasscode : handleDoiCauHinh}
-        initialValues={{}}
+        initialValues={{ loaiChuKy: true }}
         autoComplete="off"
         layout={type === PASSCODE ? "vertical" : "horizontal"}>
         {type === PASSCODE && (
@@ -157,14 +196,14 @@ const _Modal = ({
         {type === CAU_HINH && (
           <>
             <Form.Item
-              name="ass"
+              name="loaiChuKy"
               label="Loại chữ ký"
               labelCol={{
                 span: 5,
               }}>
-              <Radio.Group defaultValue="a">
-                <Radio value="a">File chữ ký</Radio>
-                <Radio value="b">SmartSign VNPT</Radio>
+              <Radio.Group defaultValue={true}>
+                <Radio value={true}>File chữ ký</Radio>
+                <Radio value={false}>SmartSign VNPT</Radio>
               </Radio.Group>
             </Form.Item>
 
@@ -203,18 +242,12 @@ const _Modal = ({
               )}
             </div>
 
-            {/* {fileError && (
-              <div className="ant-form-item-explain-error text-center mb-2">
-                {fileError}
-              </div>
-            )} */}
-
             <Form.Item
               labelCol={{
                 span: 5,
               }}
               label="Mật khẩu"
-              name="passCode"
+              name="passcodeFilePfx"
               rules={[
                 {
                   required: true,
@@ -270,10 +303,16 @@ const ThongSoChiTiet = ({
 
   const [form] = Form.useForm();
 
+  const resetPfx = () => {
+    resetFile();
+    setFile(null);
+    setFileName(null);
+  };
+
   useEffect(() => {
     if (file) {
       uploadToFireBase();
-      setFileError(false);
+      setFileError("");
     }
   }, [file]);
 
@@ -292,7 +331,7 @@ const ThongSoChiTiet = ({
             const file = selectedFiles[0];
 
             if (file.type !== "application/x-pkcs12") {
-              setFileError("Vui lòng chọn file pfx");
+              setFileError(VUI_LONG_CHON_FILE);
             } else {
               setFile(file);
               setFileName(file.name);
@@ -302,6 +341,8 @@ const ThongSoChiTiet = ({
       />
 
       <_Modal
+        filePfxUrl={url}
+        resetFilePfx={resetPfx}
         detailData={data}
         fileError={fileError}
         form={form}
@@ -310,6 +351,7 @@ const ThongSoChiTiet = ({
         onClose={() => setModalVisible(false)}
         loading={uploading}
         fileName={fileName}
+        setFileError={setFileError}
         setCurrentUserDetail={setCurrentUserDetail}
         onUploadClick={() => {
           setFile(null);

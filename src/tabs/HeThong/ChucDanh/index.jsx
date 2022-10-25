@@ -211,7 +211,7 @@ export default () => {
               type="link">
               Sửa
             </Button>
-            <Button type="link">Chi tiết</Button>
+            {/* <Button type="link">Chi tiết</Button> */}
             <Popconfirm
               title="Bạn có chắc chắn muốn xoá?"
               onConfirm={() => handleDelete(record)}

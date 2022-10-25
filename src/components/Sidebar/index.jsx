@@ -9,6 +9,7 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import * as TAB from "../../constants/tab";
+import { useLocation } from "react-router-dom";
 
 function getItem(label, key, icon, children, type) {
   return {
@@ -44,7 +45,9 @@ const items = [
   getItem("Đăng xuất", TAB.DANG_XUAT, <LoginOutlined />),
 ];
 
-const Sidebar = ({ onTabClick, selectedKey }) => {
+const Sidebar = ({ onTabClick }) => {
+  const location = useLocation();
+
   return (
     <PerfectScrollbar
       style={{
@@ -60,8 +63,7 @@ const Sidebar = ({ onTabClick, selectedKey }) => {
         style={{
           height: "100%",
         }}
-        defaultSelectedKeys={[selectedKey]}
-        selectedKeys={selectedKey}
+        selectedKeys={location.pathname?.substring(1)}
         defaultOpenKeys={["ki-so", "he-thong", "thong-tin"]}
         mode="inline"
         items={items}

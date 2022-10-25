@@ -28,6 +28,7 @@ import { getDsVaiTroSvc } from "../../../../store/vaitro/service";
 import { toLowerCaseNonAccentVietnamese } from "../../../../utils/strings";
 import { ArrowLeftOutlined, DoubleLeftOutlined } from "@ant-design/icons";
 import formState from "../assets/formState";
+import { useNavigate } from "react-router-dom";
 
 const PHONG_BAN = "Phòng ban";
 const VAI_TRO = "Vai trò";
@@ -38,12 +39,14 @@ export default ({
   setUserFormState,
   setUserData,
   setCurrentTab,
-  setUserList,
+  // setUserList,
+  listUser,
 }) => {
+  const navigate = useNavigate();
   const [list, setList] = useState([]);
   const [subListName, setSubListName] = useState(PHONG_BAN); // Phòng ban || Vai trò
   const [searchList, setSearchList] = useState([]);
-  const [getListLoading, setGetListLoading] = useState(true);
+  const [getListLoading, setGetListLoading] = useState(false);
   const [getSubListLoading, setGetSubListLoading] = useState(false);
   const [addSubLoading, setAddSubLoading] = useState(false);
 
@@ -53,40 +56,6 @@ export default ({
   const [transferData, setTransferData] = useState([]);
   const [targetKeys, setTargetKeys] = useState([]);
   const [finalKeys, setFinalKeys] = useState([]);
-
-  const handleGetList = async () => {
-    setGetListLoading(true);
-    try {
-      const res = await getDsNguoiDungSvc();
-
-      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
-        const list = res.data?.data
-          ?.filter((i) => i?.isDeleted === false)
-          ?.map((i) => {
-            return {
-              maSo: i?.ma_NguoiDung,
-              itemName: i?.hoTen,
-              key: i?.ma_NguoiDung,
-              email: i?.email,
-              sdt: i?.sdt,
-              gioiTinh: i?.gioiTinh,
-              diaChi: i?.diaChi,
-              ma_ChucDanh: i?.ma_ChucDanh,
-              avatar: i?.avatar,
-            };
-          });
-
-        setList(list);
-        setUserList(list);
-      } else {
-        message.error(LOI);
-      }
-    } catch (error) {
-      message.error(LOI_HE_THONG);
-    } finally {
-      setGetListLoading(false);
-    }
-  };
 
   const handleGetSubListPB = async (id = -1) => {
     setGetSubListLoading(true);
@@ -179,7 +148,7 @@ export default ({
     setKeyword(keyword);
 
     setSearchList(
-      [...list].filter((i) =>
+      [...listUser].filter((i) =>
         toLowerCaseNonAccentVietnamese(i?.itemName).includes(
           toLowerCaseNonAccentVietnamese(keyword),
         ),
@@ -304,8 +273,8 @@ export default ({
                 onClick={() => {
                   setSelectedItem(record);
                   setUserFormState(formState.DETAIL);
-                  setUserData(record);
                   setCurrentTab(2);
+                  navigate("detail/" + record?.maSo);
                 }}>
                 Chi tiết
               </Button>
@@ -358,9 +327,9 @@ export default ({
     },
   ];
 
-  useEffect(() => {
-    handleGetList();
-  }, []);
+  // useEffect(() => {
+  //   handleGetList();
+  // }, []);
   return (
     <div>
       {isShowTransfer ? (
@@ -371,7 +340,7 @@ export default ({
               className="d-flex align-items-center"
               icon={<ArrowLeftOutlined />}
               onClick={() => {
-                handleGetList();
+                // handleGetList();
                 setIsShowTransfer(false);
               }}>
               Danh sách
@@ -431,7 +400,7 @@ export default ({
           <Table
             loading={getListLoading}
             columns={columns}
-            dataSource={keyword.trim() ? searchList : list}
+            dataSource={keyword.trim() ? searchList : listUser}
             pagination={{ defaultPageSize: 5 }}
           />
         </div>

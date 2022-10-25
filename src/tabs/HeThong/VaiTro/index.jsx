@@ -270,7 +270,7 @@ export default () => {
       render: (_, record) => (
         <div>
           <div>
-            <Button type="link">Chi tiết</Button>
+            {/* <Button type="link">Chi tiết</Button> */}
             <Button
               onClick={() => {
                 setSelectedItem(record);

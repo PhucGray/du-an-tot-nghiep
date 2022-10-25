@@ -1,19 +1,24 @@
 import React, { Fragment, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Page_SignIn from "../pages/Page_SignIn";
-import Page_ForgotPassword from "../pages/Page_ForgotPassword";
-import Page_ResetPassword from "../pages/Page_ResetPassword";
-import Page_ConfirmOTP from "../pages/Page_ConfirmOTP";
-import Page_TrySign from "../pages/Page_TrySign";
-import Page_ManageUser from "../pages/Page_ManageUser";
-import Page_TestPdf from "../pages/Page_TestPdf";
-import Page_SignPdf from "../pages/Page_SignPdf";
+import SignIn from "../pages/SignIn";
 import MainLayout from "../layout/MainLayout";
+import * as TAB from "../constants/tab";
 
 import { useSelector } from "react-redux";
 import { nguoiDungSelector, tokenSelector } from "../store/auth/selectors";
 import api from "../api";
+import ThongSoNguoiDung from "../tabs/KiSo/ThongSoNguoiDung";
+import VanBan from "../tabs/KiSo/VanBan";
+import KiChoDuyet from "../tabs/KiSo/KiChoDuyet";
+import KiDeXuat from "../tabs/KiSo/KiDeXuat";
+import ThongSoDonVi from "../tabs/KiSo/ThongSoDonVi";
+import NguoiDung from "../tabs/HeThong/NguoiDung";
+import PhongBan from "../tabs/HeThong/PhongBan";
+import ChucDanh from "../tabs/HeThong/ChucDanh";
+import VaiTro from "../tabs/HeThong/VaiTro";
+import CaNhan from "../tabs/ThongTin/CaNhan";
+import MatKhau from "../tabs/ThongTin/MatKhau";
 
 const Navigation = () => {
   const nguoiDung = useSelector(nguoiDungSelector);
@@ -30,13 +35,25 @@ const Navigation = () => {
   }, [isLogin]);
 
   return (
-    <Fragment>
-      {/* <MainLayout /> */}
-      {/* <Page_SignIn /> */}
-      <Routes>
-        <Route path="/" element={isLogin ? <MainLayout /> : <Page_SignIn />} />
-      </Routes>
-    </Fragment>
+    <Routes>
+      <Route path="/" element={isLogin ? <MainLayout /> : <SignIn />}>
+        <Route path={TAB.VAN_BAN} element={<VanBan />} />
+        <Route path={TAB.KI_CHO_DUYET} element={<KiChoDuyet />} />
+        <Route path={TAB.KI_DE_XUAT} element={<KiDeXuat />} />
+        <Route path={TAB.THONG_SO_NGUOI_DUNG} element={<ThongSoNguoiDung />} />
+        <Route path={TAB.THONG_SO_DON_VI} element={<ThongSoDonVi />} />
+
+        <Route path={TAB.NGUOI_DUNG} element={<NguoiDung />} />
+        <Route path={TAB.NGUOI_DUNG + "/detail/:id"} element={<NguoiDung />} />
+        <Route path={TAB.PHONG_BAN} element={<PhongBan />} />
+        <Route path={TAB.PHONG_BAN + "/detail/:id"} element={<PhongBan />} />
+        <Route path={TAB.CHUC_DANH} element={<ChucDanh />} />
+        <Route path={TAB.VAI_TRO} element={<VaiTro />} />
+
+        <Route path={TAB.CA_NHAN} element={<CaNhan />} />
+        <Route path={TAB.MAT_KHAU} element={<MatKhau />} />
+      </Route>
+    </Routes>
   );
   //  <Routes>
   {

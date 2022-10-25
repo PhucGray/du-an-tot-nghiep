@@ -34,7 +34,7 @@ import { useContext } from "react";
 import { TabContext } from "../../../layout/MainLayout";
 
 export default () => {
-  const [state, dispatch] = useContext(TabContext);
+  // const [state, dispatch] = useContext(TabContext);
   const [form] = Form.useForm();
 
   const [list, setList] = useState([]);
@@ -308,14 +308,14 @@ export default () => {
               <Button
                 type="link"
                 onClick={() => {
-                  dispatch({
-                    type: "DETAIL-USER",
-                    payload: {
-                      props: {
-                        maSo: record?.maSo || null,
-                      },
-                    },
-                  });
+                  // dispatch({
+                  //   type: "DETAIL-USER",
+                  //   payload: {
+                  //     props: {
+                  //       maSo: record?.maSo || null,
+                  //     },
+                  //   },
+                  // });
                 }}>
                 Chi tiết
               </Button>

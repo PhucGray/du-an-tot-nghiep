@@ -14,7 +14,10 @@ import {
   RETCODE_SUCCESS,
   SUCCESS,
 } from "../../../../constants/api";
-import { getDsNguoiDungSvc } from "../../../../store/nguoidung/service";
+import {
+  getDsNguoiDungSvc,
+  xoaNguoiDungSvc,
+} from "../../../../store/nguoidung/service";
 import {
   getNguoiDung_PhongBanSvc,
   themNguoiDung_PhongBanSvc,
@@ -39,8 +42,8 @@ export default ({
   setUserFormState,
   setUserData,
   setCurrentTab,
-  // setUserList,
   listUser,
+  getListUser = () => {},
 }) => {
   const navigate = useNavigate();
   const [list, setList] = useState([]);
@@ -130,6 +133,18 @@ export default ({
   };
 
   const handleDelete = async (item) => {
+    try {
+      const res = await xoaNguoiDungSvc({ id: item?.maSo });
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+        getListUser();
+      } else {
+        message.error(LOI);
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG);
+    }
     // try {
     //   const res = await xoaVaiTroSvc({ id: item.maSo });
     //   if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {

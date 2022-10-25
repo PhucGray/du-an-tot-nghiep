@@ -20,6 +20,7 @@ export const QUYEN = "Quyens";
 
 // Nguoi dung
 export const NGUOI_DUNG = "NguoiDungs/nguoidung";
+export const NGUOI_DUNG_XOA = "NguoiDungs/deletenguoidung";
 export const NGUOI_DUNG_THEM = "NguoiDungs/register";
 export const NGUOI_DUNG_DOI_MK = "NguoiDungs/doimatkhau";
 

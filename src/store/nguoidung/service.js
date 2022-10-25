@@ -14,7 +14,7 @@ export const getNguoiDungById = ({ id }) => {
 };
 
 export const xoaNguoiDungSvc = ({ id }) => {
-  return api.delete(API.NGUOI_DUNG + "/" + id);
+  return api.delete(API.NGUOI_DUNG_XOA + "/" + id);
 };
 
 export const suaNguoiDungSvc = (payload) => {

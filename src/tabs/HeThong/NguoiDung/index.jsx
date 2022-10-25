@@ -92,10 +92,12 @@ export default () => {
         <Tabs
           destroyInactiveTabPane={true}
           onChange={(value) => {
+            setCurrentTab(value);
+
             if (value == 1) {
+              handleGetListUser();
               navigate("/" + TAB.NGUOI_DUNG);
             }
-            setCurrentTab(value);
           }}
           activeKey={currentTab.toString()}
           defaultActiveKey="1"
@@ -110,6 +112,7 @@ export default () => {
               isShowTransfer={isShowTransfer}
               setIsShowTransfer={setIsShowTransfer}
               setCurrentTab={setCurrentTab}
+              getListUser={handleGetListUser}
             />
           </Tabs.TabPane>
 

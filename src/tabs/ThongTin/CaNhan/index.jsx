@@ -131,7 +131,7 @@ const CaNhan = () => {
       form.setFieldValue("diaChi", nguoiDung?.diaChi);
       form.setFieldValue("ma_ChucDanh", nguoiDung?.ma_ChucDanh);
 
-      // setUrl(!!nguoiDung?.avatar ? nguoiDung?.avatar : "");
+      setUrl(!!nguoiDung?.avatar ? nguoiDung?.avatar : "");
     }
 
     // return () => {

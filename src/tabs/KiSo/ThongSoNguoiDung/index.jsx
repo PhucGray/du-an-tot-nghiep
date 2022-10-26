@@ -51,6 +51,8 @@ import { useRef } from "react";
 import ReactImageSize from "react-image-size";
 import ImageModal from "./ImageModal";
 import { transformUser } from "../../../utils/user";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import * as TAB from "../../../constants/tab";
 
 const { Option } = Select;
 
@@ -58,11 +60,17 @@ const KICH_THUOC_QUA_LON = "Kích thước ảnh quá lớn";
 const VUI_LONG_CHON_HINH = "Vui lòng chọn hình";
 
 export default () => {
+  const location = useLocation();
+  const params = useParams();
+  const navigate = useNavigate();
+
+  const isDetail = !!params?.id && location.pathname?.includes("detail");
+
   const [form] = Form.useForm();
   const nguoiDung = useSelector(nguoiDungSelector);
 
   const [isEdit, setIsEdit] = useState(false);
-  const [isDetail, setIsDetail] = useState(false);
+  // const [isDetail, setIsDetail] = useState(false);
   const [getListLoading, setGetListLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -120,11 +128,17 @@ export default () => {
       const res = await getListThongSoKiSo();
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
-        setList(
-          res.data?.data?.map((item) => {
-            return transformUser(item);
-          }),
-        );
+        const list = res.data?.data?.map((item) => {
+          return transformUser(item);
+        });
+
+        setList(list);
+
+        if (isDetail) {
+          setCurrentUserDetail(
+            list?.find((u) => u?.ma_NguoiDung == params?.id),
+          );
+        }
       } else {
         message.error(LOI);
       }
@@ -321,6 +335,12 @@ export default () => {
               type="link"
               onClick={() => {
                 setCurrentUserDetail(record);
+                navigate(
+                  "/" +
+                    TAB.THONG_SO_NGUOI_DUNG +
+                    "/detail/" +
+                    record?.ma_NguoiDung,
+                );
               }}>
               Chi tiết
             </Button>
@@ -353,7 +373,6 @@ export default () => {
 
           setIsModalOpen(false);
           setIsEdit(false);
-          setIsDetail(false);
           form.resetFields();
           setHinh1(null);
           setHinh2(null);
@@ -362,7 +381,7 @@ export default () => {
         }}
         footer={null}>
         <Form
-          disabled={isDetail}
+          // disabled={isDetail}
           form={form}
           name="suathongso"
           onFinish={(e) => {

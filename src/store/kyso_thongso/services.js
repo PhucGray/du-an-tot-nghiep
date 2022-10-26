@@ -25,6 +25,10 @@ export const getListThongSoKiSo = () => {
   return api.get(API.KS_TS);
 };
 
+export const getThongSoNguoiDungSvc = ({ id }) => {
+  return api.get(API.KS_TS + "/" + id);
+};
+
 export const xoaThongSoNguoiDung = ({ id }) => {
   return api.delete(API.KS_TS + "/" + id);
 };

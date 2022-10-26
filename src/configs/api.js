@@ -48,3 +48,6 @@ export const KSDX_CHUA_DE_XUAT = "KySoDeXuats/chuadexuat";
 export const KSDX_CHO_DUYET = "KySoDeXuats/choduyet";
 export const KSDX_DA_DUYET = "KySoDeXuats/daduyet";
 export const KSDX_TU_CHOI = "KySoDeXuats/tuchoi";
+
+// Ky so
+export const KS_KI_THU = "KySos/signtest";

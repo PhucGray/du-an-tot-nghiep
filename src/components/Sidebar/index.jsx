@@ -63,7 +63,7 @@ const Sidebar = ({ onTabClick }) => {
         style={{
           height: "100%",
         }}
-        selectedKeys={location.pathname?.substring(1)}
+        selectedKeys={location.pathname?.split("/")?.[1]}
         defaultOpenKeys={["ki-so", "he-thong", "thong-tin"]}
         mode="inline"
         items={items}

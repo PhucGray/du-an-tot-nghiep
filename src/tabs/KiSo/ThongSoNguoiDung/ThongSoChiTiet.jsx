@@ -22,7 +22,8 @@ import {
   suaPasscodeSvc,
 } from "../../../store/kyso_thongso/services";
 import { transformUser } from "../../../utils/user";
-
+import { useNavigate } from "react-router-dom";
+import * as TAB from "../../../constants/tab";
 const VUI_LONG_CHON_FILE = "Vui lòng chọn file pfx";
 
 const Row = ({ label, children, even = true }) => {
@@ -131,6 +132,9 @@ const _Modal = ({
 
     try {
       const res = await suaCauHinhPfxSvc(data);
+
+      console.log(data);
+      console.log(res.data);
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
@@ -284,6 +288,7 @@ const ThongSoChiTiet = ({
   setCurrentUserDetail,
   handleShowModalEdit,
 }) => {
+  const navigate = useNavigate();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(CAU_HINH);
 
@@ -362,7 +367,10 @@ const ThongSoChiTiet = ({
         <Button
           type="link"
           className="ms-3 mt-3"
-          onClick={() => setCurrentUserDetail(null)}>
+          onClick={() => {
+            setCurrentUserDetail(null);
+            navigate("/" + TAB.THONG_SO_NGUOI_DUNG);
+          }}>
           Trở lại danh sách
         </Button>
 
@@ -398,6 +406,11 @@ const ThongSoChiTiet = ({
           </Button>
 
           <Button
+            onClick={() => {
+              navigate(
+                "/" + TAB.THONG_SO_NGUOI_DUNG + "/ki-thu/" + data?.ma_NguoiDung,
+              );
+            }}
             className="d-flex align-items-center text-black"
             type="link"
             icon={<HighlightOutlined />}>

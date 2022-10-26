@@ -16,6 +16,7 @@ import ThongSoDonVi from "../tabs/KiSo/ThongSoDonVi";
 import NguoiDung from "../tabs/HeThong/NguoiDung";
 import PhongBan from "../tabs/HeThong/PhongBan";
 import ChucDanh from "../tabs/HeThong/ChucDanh";
+import KiThu from "../tabs/HeThong/KiThu";
 import VaiTro from "../tabs/HeThong/VaiTro";
 import CaNhan from "../tabs/ThongTin/CaNhan";
 import MatKhau from "../tabs/ThongTin/MatKhau";
@@ -41,6 +42,14 @@ const Navigation = () => {
         <Route path={TAB.KI_CHO_DUYET} element={<KiChoDuyet />} />
         <Route path={TAB.KI_DE_XUAT} element={<KiDeXuat />} />
         <Route path={TAB.THONG_SO_NGUOI_DUNG} element={<ThongSoNguoiDung />} />
+        <Route
+          path={TAB.THONG_SO_NGUOI_DUNG + "/detail/:id"}
+          element={<ThongSoNguoiDung />}
+        />
+        <Route
+          path={TAB.THONG_SO_NGUOI_DUNG + "/ki-thu/:id"}
+          element={<KiThu />}
+        />
         <Route path={TAB.THONG_SO_DON_VI} element={<ThongSoDonVi />} />
 
         <Route path={TAB.NGUOI_DUNG} element={<NguoiDung />} />

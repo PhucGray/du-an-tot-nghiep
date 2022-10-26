@@ -21,6 +21,9 @@ import {
 } from "../../../constants/api";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
 import ContextMenu from "../../../components/ContextMenu";
+import { useParams } from "react-router-dom";
+import { getThongSoNguoiDungSvc } from "../../../store/kyso_thongso/services";
+import { kyThuSvc } from "../../../store/kyso/services";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -58,7 +61,9 @@ const LionText = ({ onDragEnd, onChangePos, ...props }) => {
   );
 };
 
-const TestPdf = () => {
+const KiThu = () => {
+  const params = useParams();
+
   const signs = [
     {
       id: 1,
@@ -85,6 +90,8 @@ const TestPdf = () => {
       text: "chuky4.png",
     },
   ];
+
+  const [nguoiDungKi, setNguoiDungKi] = useState(null);
 
   const [pdfSizes, setPdfSizes] = useState([]);
   const [pdfSize, setPdfSize] = useState({ width: 0, height: 0 });
@@ -135,15 +142,6 @@ const TestPdf = () => {
     setActivePage,
     pages,
   } = usePdf();
-
-  // console.log(pages.map(async (i) => await i));
-  // if (pages.length > 0) {
-  //   pages.map((page) => {
-  //     page.then((res) => {
-  //       console.log(res);
-  //     });
-  //   });
-  // }
 
   const {
     add: addAttachment,
@@ -229,27 +227,27 @@ const TestPdf = () => {
     setTexts([...texts].filter((text) => text.id != id));
   };
 
-  const handleDragStart = (e) => {
-    const id = e.target.id();
-    setTexts(
-      texts.map((text) => {
-        return {
-          ...text,
-          isDragging: text.id === id,
-        };
-      }),
-    );
-  };
-  const handleDragEnd = (e) => {
-    setTexts(
-      texts.map((text) => {
-        return {
-          ...text,
-          isDragging: false,
-        };
-      }),
-    );
-  };
+  // const handleDragStart = (e) => {
+  //   const id = e.target.id();
+  //   setTexts(
+  //     texts.map((text) => {
+  //       return {
+  //         ...text,
+  //         isDragging: text.id === id,
+  //       };
+  //     }),
+  //   );
+  // };
+  // const handleDragEnd = (e) => {
+  //   setTexts(
+  //     texts.map((text) => {
+  //       return {
+  //         ...text,
+  //         isDragging: false,
+  //       };
+  //     }),
+  //   );
+  // };
 
   const handleXuatFile = async () => {
     try {
@@ -280,11 +278,25 @@ const TestPdf = () => {
         };
       });
 
-      const res = await axios.post(`${API_URL}kysos`, {
+      // const res = await axios.post(`${API_URL}Kysos/signtest`, {
+      //   inputFile: url,
+      //   id_NguoiDung: params?.id,
+      //   PostPositionSigns: [...finalImages, ...finalTexts],
+      // });
+      console.log(
+        JSON.stringify({
+          inputFile: url,
+          id_NguoiDung: params?.id,
+          postPositionSigns: [...finalImages, ...finalTexts],
+        }),
+      );
+      const res = await kyThuSvc({
         inputFile: url,
-        Id_NguoiDung: 1,
-        PostPositionSigns: [...finalImages, ...finalTexts],
+        id_NguoiDung: params?.id,
+        postPositionSigns: [...finalImages, ...finalTexts],
       });
+
+      console.log(res.data);
 
       if (res.status === SUCCESS && res.data.retCode === RETCODE_SUCCESS) {
         const file = res.data.data;
@@ -331,6 +343,20 @@ const TestPdf = () => {
     }
   }, [url]);
 
+  const handleGetThongSo = async () => {
+    try {
+      const res = await getThongSoNguoiDungSvc({ id: params?.id });
+
+      setNguoiDungKi(res.data?.data);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    if (!!params?.id) {
+      handleGetThongSo();
+    }
+  }, [params?.id]);
+
   return (
     <div className="mx-auto" style={{ width: "100%", minHeight: "100vh" }}>
       <div>
@@ -346,11 +372,23 @@ const TestPdf = () => {
                   width: 120,
                 }}
                 onChange={handleSignChange}>
-                {signs.map((sign) => (
-                  <Option key={sign.id} value={sign.value}>
-                    {sign.text}
+                {!!nguoiDungKi?.hinh1 && (
+                  <Option key={nguoiDungKi?.hinh1} value={nguoiDungKi?.hinh1}>
+                    Chữ ký 1
                   </Option>
-                ))}
+                )}
+
+                {!!nguoiDungKi?.hinh2 && (
+                  <Option key={nguoiDungKi?.hinh2} value={nguoiDungKi?.hinh2}>
+                    Chữ ký 2
+                  </Option>
+                )}
+
+                {!!nguoiDungKi?.hinh3 && (
+                  <Option key={nguoiDungKi?.hinh3} value={nguoiDungKi?.hinh3}>
+                    Chữ ký 3
+                  </Option>
+                )}
               </Select>
 
               <div style={{ width: 300, marginTop: 10 }}>
@@ -678,4 +716,4 @@ const TestPdf = () => {
   );
 };
 
-export default TestPdf;
+export default KiThu;

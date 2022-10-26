@@ -20,6 +20,7 @@ import KiThu from "../tabs/HeThong/KiThu";
 import VaiTro from "../tabs/HeThong/VaiTro";
 import CaNhan from "../tabs/ThongTin/CaNhan";
 import MatKhau from "../tabs/ThongTin/MatKhau";
+import KiSoChiTiet from "../tabs/KiSo/KiSoChiTiet";
 
 const Navigation = () => {
   const nguoiDung = useSelector(nguoiDungSelector);
@@ -51,6 +52,7 @@ const Navigation = () => {
           element={<KiThu />}
         />
         <Route path={TAB.THONG_SO_DON_VI} element={<ThongSoDonVi />} />
+        <Route path={TAB.KI_SO_CHI_TIET} element={<KiSoChiTiet />} />
 
         <Route path={TAB.NGUOI_DUNG} element={<NguoiDung />} />
         <Route path={TAB.NGUOI_DUNG + "/detail/:id"} element={<NguoiDung />} />

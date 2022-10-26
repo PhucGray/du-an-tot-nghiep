@@ -29,6 +29,7 @@ const items = [
     getItem("Ký số đề xuất", TAB.KI_DE_XUAT),
     getItem("Thông số người dùng", TAB.THONG_SO_NGUOI_DUNG),
     getItem("Thông số đơn vị", TAB.THONG_SO_DON_VI),
+    getItem("Kí số chi tiết", TAB.KI_SO_CHI_TIET),
   ]),
   getItem("Hệ thống", "he-thong", <SettingOutlined />, [
     getItem("Người dùng", TAB.NGUOI_DUNG),

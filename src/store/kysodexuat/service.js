@@ -20,3 +20,19 @@ export const getListKSDX_TuChoi = ({ id }) => {
 export const themKSDX = (payload) => {
   return api.post(API.KSDX, payload);
 };
+
+export const getKSDXSvc = ({ id }) => {
+  return api.get(API.KSDX + "/" + id);
+};
+
+export const getDsBuocDuyetSvc = ({ id }) => {
+  return api.get(API.KSBD + "/" + id);
+};
+
+export const themBuocDuyetSvc = (payload) => {
+  return api.post(API.KSBD, payload);
+};
+
+export const xoaBuocDuyetSvc = ({ id }) => {
+  return api.delete(API.KSBD + "/" + id);
+};

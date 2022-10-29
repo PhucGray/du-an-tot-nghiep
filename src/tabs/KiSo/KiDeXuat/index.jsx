@@ -21,9 +21,12 @@ import { useSelector } from "react-redux";
 import { useRef } from "react";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
 
+import { useNavigate } from "react-router-dom";
+
 const { TextArea } = Input;
 
 const KiDeXuat = () => {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
 
   const [file, setFile] = useState(null);
@@ -112,7 +115,6 @@ const KiDeXuat = () => {
         id: nguoiDung?.ma_NguoiDung,
       });
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
-        console.log(res.data?.data);
         setList_4(res.data?.data);
       } else {
         message.error(LOI);
@@ -190,6 +192,22 @@ const KiDeXuat = () => {
       render: (data, record, index) => {
         return (
           <div className="text-center">{moment(data).format("DD-MM-YYYY")}</div>
+        );
+      },
+    },
+    {
+      title: "Hành động",
+      dataIndex: "hanhDong",
+      key: "hanhDong",
+      render: (data, record, index) => {
+        return (
+          // <div className="text-center">{moment(data).format("DD-MM-YYYY")}</div>
+          <div
+            onClick={() => {
+              navigate("detail/" + record.ma_KySoDeXuat);
+            }}>
+            <Button type="link">Chi tiết</Button>
+          </div>
         );
       },
     },

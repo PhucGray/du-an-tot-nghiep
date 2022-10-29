@@ -117,7 +117,7 @@ const _Modal = ({
     }
   };
   const handleDoiCauHinh = async (values) => {
-    //  setSubmitLoading(true);
+    setSubmitLoading(true);
 
     if (!fileName) {
       setFileError(VUI_LONG_CHON_FILE);
@@ -130,12 +130,14 @@ const _Modal = ({
       filePfx: filePfxUrl,
     };
 
+    console.log(data);
+
     try {
       const res = await suaCauHinhPfxSvc(data);
 
-      console.log(data);
-      console.log(res.data);
-
+      // console.log(data);
+      // console.log(res.data);
+      //
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
         form.resetFields();

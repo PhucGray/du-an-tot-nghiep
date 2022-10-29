@@ -42,6 +42,10 @@ const Navigation = () => {
         <Route path={TAB.VAN_BAN} element={<VanBan />} />
         <Route path={TAB.KI_CHO_DUYET} element={<KiChoDuyet />} />
         <Route path={TAB.KI_DE_XUAT} element={<KiDeXuat />} />
+        <Route
+          path={TAB.KI_DE_XUAT + "/detail/:id"}
+          element={<KiSoChiTiet />}
+        />
         <Route path={TAB.THONG_SO_NGUOI_DUNG} element={<ThongSoNguoiDung />} />
         <Route
           path={TAB.THONG_SO_NGUOI_DUNG + "/detail/:id"}
@@ -52,7 +56,7 @@ const Navigation = () => {
           element={<KiThu />}
         />
         <Route path={TAB.THONG_SO_DON_VI} element={<ThongSoDonVi />} />
-        <Route path={TAB.KI_SO_CHI_TIET} element={<KiSoChiTiet />} />
+        {/* <Route path={TAB.KI_SO_CHI_TIET} element={<KiSoChiTiet />} /> */}
 
         <Route path={TAB.NGUOI_DUNG} element={<NguoiDung />} />
         <Route path={TAB.NGUOI_DUNG + "/detail/:id"} element={<NguoiDung />} />

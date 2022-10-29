@@ -18,30 +18,9 @@ import VaiTro from "../../tabs/HeThong/VaiTro";
 
 export const TabContext = createContext(null);
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "DETAIL-USER":
-      return {
-        tab: TAB.NGUOI_DUNG,
-        props: action?.payload?.props || null,
-      };
-    default:
-      return {
-        tab: action?.payload?.tab,
-        props: action?.payload?.props || null,
-      };
-  }
-};
-
 const MainLayout = () => {
   const navigate = useNavigate();
-
-  const _dispatch = useDispatch();
-
-  // const [state, dispatch] = useReducer(reducer, {
-  //   tab: localStorage.getItem("currentTabKey") || null,
-  //   params: null,
-  // });
+  const dispatch = useDispatch();
 
   const [modalLogoutVisible, setModalLogoutVisible] = useState(false);
 
@@ -49,7 +28,7 @@ const MainLayout = () => {
   const hideModalLogout = () => setModalLogoutVisible(false);
 
   const handleLogout = () => {
-    _dispatch(clearNguoiDung());
+    dispatch(clearNguoiDung());
     setModalLogoutVisible(false);
   };
 
@@ -60,12 +39,8 @@ const MainLayout = () => {
     }
 
     navigate(`/${e.key}`);
-    // const currentTabKey = e.key;
-    // dispatch({ type: "DEFAULT", payload: { tab: currentTabKey } });
-    // localStorage.setItem("currentTabKey", currentTabKey);
   };
 
-  // console.log(location);
   return (
     <>
       <Fragment>

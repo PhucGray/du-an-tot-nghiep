@@ -45,7 +45,7 @@ export const prepareAssets = () => {
       script.src = src;
       script.onload = () => {
         resolve(window[name]);
-        console.log(`${name} is loaded.`);
+        // console.log(`${name} is loaded.`);
       };
       script.onerror = () =>
         reject(`The script ${name} didn't load correctly.`);

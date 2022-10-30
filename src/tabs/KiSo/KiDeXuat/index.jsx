@@ -2,12 +2,13 @@ import React, { useEffect } from "react";
 import { PlusOutlined, CloudUploadOutlined } from "@ant-design/icons";
 import { Button, Tabs, Table, message, Form, Input, Modal } from "antd";
 import { useState } from "react";
-import moment from "moment";
+import moment, { isDate } from "moment";
 import {
   getListKSDX_ChoDuyet,
   getListKSDX_ChuaDeXuat,
   getListKSDX_DaDuyet,
   getListKSDX_TuChoi,
+  suaKSDXSvc,
   themKSDX,
 } from "../../../store/kysodexuat/service";
 import {
@@ -31,6 +32,8 @@ const KiDeXuat = () => {
 
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
+
+  const [isEdit, setIsEdit] = useState(false);
 
   const {
     percent,
@@ -126,8 +129,7 @@ const KiDeXuat = () => {
     }
   };
 
-  const handleAdd = async (values) => {
-    console.log(url);
+  const handleThemDeXuat = async (values) => {
     if (!url) return setFileError(" Vui lòng nhập chọn file");
 
     const data = {
@@ -268,7 +270,7 @@ const KiDeXuat = () => {
         <Form
           form={form}
           name="suathongso"
-          onFinish={handleAdd}
+          onFinish={handleThemDeXuat}
           autoComplete="off">
           <Form.Item
             labelCol={{

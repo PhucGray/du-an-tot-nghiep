@@ -23,13 +23,14 @@ import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
 import ContextMenu from "../../../components/ContextMenu";
 import { useParams } from "react-router-dom";
 import { getThongSoNguoiDungSvc } from "../../../store/kyso_thongso/services";
-import { kyThuSvc } from "../../../store/kyso/services";
+import { v4 as uuidv4 } from "uuid";
 
 const { Option } = Select;
 const { TextArea } = Input;
 
 const LionImage = ({ onDragEnd, onChangePos, ...props }) => {
   const [image] = useImage(props?.src);
+
   return (
     <KonvaImage
       onDragEnd={(e) => {
@@ -64,33 +65,6 @@ const LionText = ({ onDragEnd, onChangePos, ...props }) => {
 const KiThu = () => {
   const params = useParams();
 
-  const signs = [
-    {
-      id: 1,
-      value:
-        "https://firebasestorage.googleapis.com/v0/b/tot-nghiep-csharp.appspot.com/o/ck1.png?alt=media&token=a7200610-5600-43cd-a14c-a43fe17ce612",
-      text: "chuky1.png",
-    },
-    {
-      id: 2,
-      value:
-        "https://firebasestorage.googleapis.com/v0/b/tot-nghiep-csharp.appspot.com/o/ck2.png?alt=media&token=263c4d5d-72db-40f6-8603-0008226e1ee8",
-      text: "chuky2.png",
-    },
-    {
-      id: 3,
-      value:
-        "https://firebasestorage.googleapis.com/v0/b/tot-nghiep-csharp.appspot.com/o/ck3.png?alt=media&token=80ebc8e0-49ae-4677-932d-91a336ad3637",
-      text: "chuky3.png",
-    },
-    {
-      id: 4,
-      value:
-        "https://firebasestorage.googleapis.com/v0/b/tot-nghiep-csharp.appspot.com/o/ck4.png?alt=media&token=568c3b1b-88ec-49b5-afb9-6ed067512bff",
-      text: "chuky4.png",
-    },
-  ];
-
   const [nguoiDungKi, setNguoiDungKi] = useState(null);
 
   const [pdfSizes, setPdfSizes] = useState([]);
@@ -104,6 +78,8 @@ const KiThu = () => {
   const [textarea, setTextarea] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [xuatLoading, setXuatLoading] = useState(false);
+
+  const [disableXuat, setDisableXuat] = useState(true);
 
   const initializePageAndAttachments = (pdfDetails) => {
     initialize(pdfDetails);
@@ -127,35 +103,21 @@ const KiThu = () => {
     file,
     initialize,
     pageIndex,
-    isMultiPage,
     isFirstPage,
     isLastPage,
     currentPage,
-    isSaving,
-    savePdf,
-    previousPage,
-    nextPage,
     setDimensions,
-    name,
     dimensions,
     totalPages,
     setActivePage,
     pages,
   } = usePdf();
 
-  const {
-    add: addAttachment,
-    allPageAttachments,
-    pageAttachments,
-    reset: resetAttachments,
-  } = useAttachments();
+  const { add: addAttachment, reset: resetAttachments } = useAttachments();
 
-  const {
-    percent,
-    uploading,
-    uploadFile: uploadToFireBase,
-    url,
-  } = useUploadFileToFireBase({ file: pdfFile });
+  const { uploadFile: uploadToFireBase, url } = useUploadFileToFireBase({
+    file: pdfFile,
+  });
 
   const {
     inputRef: imageInputRef,
@@ -166,7 +128,7 @@ const KiThu = () => {
     afterUploadAttachment: addAttachment,
   });
 
-  const handleSignChange = (value, option) => {
+  const handleChonChuKy = (value, option) => {
     const key = option?.key;
 
     if (key) {
@@ -174,7 +136,7 @@ const KiThu = () => {
         ...images,
         {
           ...option,
-          id: key?.toString(),
+          id: uuidv4(),
           x: 0,
           y: 0,
           isDragging: false,
@@ -227,28 +189,6 @@ const KiThu = () => {
     setTexts([...texts].filter((text) => text.id != id));
   };
 
-  // const handleDragStart = (e) => {
-  //   const id = e.target.id();
-  //   setTexts(
-  //     texts.map((text) => {
-  //       return {
-  //         ...text,
-  //         isDragging: text.id === id,
-  //       };
-  //     }),
-  //   );
-  // };
-  // const handleDragEnd = (e) => {
-  //   setTexts(
-  //     texts.map((text) => {
-  //       return {
-  //         ...text,
-  //         isDragging: false,
-  //       };
-  //     }),
-  //   );
-  // };
-
   const handleXuatFile = async () => {
     try {
       if (!url) {
@@ -278,30 +218,22 @@ const KiThu = () => {
         };
       });
 
-      // const res = await axios.post(`${API_URL}Kysos/signtest`, {
-      //   inputFile: url,
-      //   id_NguoiDung: params?.id,
-      //   PostPositionSigns: [...finalImages, ...finalTexts],
-      // });
-      console.log(
-        JSON.stringify({
-          inputFile: url,
-          id_NguoiDung: params?.id,
-          postPositionSigns: [...finalImages, ...finalTexts],
-        }),
-      );
-      const res = await kyThuSvc({
+      console.log({
         inputFile: url,
         id_NguoiDung: params?.id,
         postPositionSigns: [...finalImages, ...finalTexts],
       });
 
-      console.log(res.data);
+      // const res = await kyThuSvc({
+      //   inputFile: url,
+      //   id_NguoiDung: params?.id,
+      //   postPositionSigns: [...finalImages, ...finalTexts],
+      // });
 
-      if (res.status === SUCCESS && res.data.retCode === RETCODE_SUCCESS) {
-        const file = res.data.data;
-        setResFile(file);
-      }
+      // if (res.status === SUCCESS && res.data.retCode === RETCODE_SUCCESS) {
+      //   const file = res.data.data;
+      //   setResFile(file);
+      // }
     } catch (error) {
       console.log("error");
       console.log(error);
@@ -360,7 +292,7 @@ const KiThu = () => {
   return (
     <div className="mx-auto" style={{ width: "100%", minHeight: "100vh" }}>
       <div>
-        {true && (
+        {!!file && (
           <div
             className="d-flex justify-content-between mx-auto mt-3"
             style={{ width: "95%" }}>
@@ -371,7 +303,7 @@ const KiThu = () => {
                 style={{
                   width: 120,
                 }}
-                onChange={handleSignChange}>
+                onSelect={handleChonChuKy}>
                 {!!nguoiDungKi?.hinh1 && (
                   <Option key={nguoiDungKi?.hinh1} value={nguoiDungKi?.hinh1}>
                     Chữ ký 1
@@ -399,6 +331,7 @@ const KiThu = () => {
                   onChange={(e) => setTextarea(e.currentTarget.value)}
                 />
                 <Button
+                  disabled={!textarea.trim()}
                   type="primary"
                   style={{ backgroundColor: "#2ec729", border: "none" }}
                   onClick={isEditing ? handleEditText : handleAddText}>
@@ -420,6 +353,7 @@ const KiThu = () => {
               )}
 
               <Button
+                disabled={disableXuat}
                 loading={xuatLoading}
                 type="primary"
                 onClick={() => {
@@ -488,7 +422,7 @@ const KiThu = () => {
                 }}>
                 <Layer>
                   {images
-                    .filter((image) => image.pageIndex === pageIndex)
+                    .filter((image) => image?.pageIndex === pageIndex)
                     .map((image) => (
                       <LionImage
                         src={image.src}
@@ -504,6 +438,7 @@ const KiThu = () => {
                           handleContextMenu(e, image, "image");
                         }}
                         onChangePos={(data) => {
+                          setDisableXuat(false);
                           setImages(
                             [...images].map((image, index) => {
                               const x = data?.x;
@@ -511,12 +446,13 @@ const KiThu = () => {
                               const width = data?.width;
                               const height = data?.height;
 
+                              const finalY =
+                                pdfSizes[pageIndex]?.height - y - height;
+                              const finalX = x;
+
                               if (image?.id == data?.id) {
                                 image.x = x;
                                 image.y = y;
-                                const finalY =
-                                  pdfSizes[index].height - y - height;
-                                const finalX = x;
 
                                 return {
                                   ...image,
@@ -555,6 +491,7 @@ const KiThu = () => {
                           handleContextMenu(e, text, "text");
                         }}
                         onChangePos={(data) => {
+                          setDisableXuat(false);
                           setTexts(
                             [...texts].map((text, index) => {
                               const x = data?.x;

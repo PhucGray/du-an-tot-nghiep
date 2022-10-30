@@ -43,12 +43,14 @@ import * as TAB from "../../../constants/tab";
 import {
   getDsBuocDuyetSvc,
   getKSDXSvc,
+  suaKSDXSvc,
   themBuocDuyetSvc,
   xoaBuocDuyetSvc,
+  xoaKSDX,
 } from "../../../store/kysodexuat/service";
 import { useParams } from "react-router-dom";
 import ModalBuocDuyet from "./ModalBuocDuyet";
-
+const { TextArea } = Input;
 const VUI_LONG_CHON_FILE = "Vui lòng chọn file pfx";
 
 const Row = ({ label, children, even = true }) => {
@@ -104,6 +106,8 @@ const KiSoChiTiet = () => {
   const [themBuocLoading, seThemBuocLoading] = useState(false);
   const [modalBuocDuyetVisible, setModalBuocDuyetVisible] = useState(false);
 
+  const [suaDeXuatLoading, setSuaDeXuatLoading] = useState(false);
+
   const {
     percent,
     uploading,
@@ -115,12 +119,18 @@ const KiSoChiTiet = () => {
   const inputFileRef = useRef();
 
   const [form] = Form.useForm();
+  const [formDeXuat] = Form.useForm();
 
   const getKSDX = async () => {
     try {
       const res = await getKSDXSvc({ id: params?.id });
 
-      setKSDXData(res.data?.data);
+      const data = res.data?.data;
+      setKSDXData(data);
+
+      formDeXuat.setFieldValue("ten_DeXuat", data?.ten_DeXuat);
+      formDeXuat.setFieldValue("loaiVanBan", data?.loaiVanBan);
+      formDeXuat.setFieldValue("ghiChu", data?.ghiChu);
     } catch (error) {
       message.error(LOI);
     } finally {
@@ -131,12 +141,12 @@ const KiSoChiTiet = () => {
     try {
       const res = await getDsBuocDuyetSvc({ id: params?.id });
 
-      console.log(res.data?.data);
       setDsBuocDuyet(
         res.data?.data?.map((item, index) => {
           return {
             ...item,
             stt: index + 1,
+            hoTen: item?.nguoiDung?.hoTen,
           };
         }),
       );
@@ -181,7 +191,6 @@ const KiSoChiTiet = () => {
   };
 
   const handleXoaBuocDuyet = async (buocduyet) => {
-    // console.log(buocduyet);
     try {
       const res = await xoaBuocDuyetSvc({ id: buocduyet?.ma_BuocDuyet });
 
@@ -192,6 +201,49 @@ const KiSoChiTiet = () => {
       }
     } catch (error) {
       message.error(LOI);
+    }
+  };
+
+  const handleXoaDeXuat = async () => {
+    try {
+      const res = await xoaKSDX({ id: params?.id });
+
+      navigate("/" + TAB.KI_DE_XUAT);
+    } catch (error) {
+      message.error(LOI);
+    }
+  };
+
+  const [modalDeXuatVisible, setModalDeXuatVisible] = useState(false);
+
+  const handleSuaDeXuat = async (values) => {
+    if (!url) return setFileError(" Vui lòng nhập chọn file");
+
+    const data = {
+      ...values,
+      inputFile: url,
+      ma_NguoiDeXuat: nguoiDung?.ma_NguoiDung,
+    };
+
+    setSuaDeXuatLoading(true);
+
+    try {
+      const res = await suaKSDXSvc(data);
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+        formDeXuat.resetFields();
+        setFile(null);
+        resetFile();
+        setFileName("");
+        setModalDeXuatVisible(false);
+      } else {
+        message.error(LOI);
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG);
+    } finally {
+      setSuaDeXuatLoading(false);
     }
   };
 
@@ -277,9 +329,6 @@ const KiSoChiTiet = () => {
       dataIndex: "hanhDong",
       key: "hanhDong",
       render: (_, record) => (
-        // <div>
-        //   <Button icon={<DeleteOutlined />} />
-        // </div>
         <Popconfirm
           title="Bạn có chắc chắn muốn xoá?"
           onConfirm={() => handleXoaBuocDuyet(record)}
@@ -293,6 +342,109 @@ const KiSoChiTiet = () => {
 
   return (
     <>
+      <Modal
+        title={"Sửa ký số đề xuất"}
+        open={modalDeXuatVisible}
+        onOk={() => {}}
+        onCancel={() => {
+          setModalDeXuatVisible(false);
+          form.resetFields();
+        }}
+        footer={null}>
+        <Form
+          form={formDeXuat}
+          name="suathongso"
+          onFinish={handleSuaDeXuat}
+          autoComplete="off">
+          <Form.Item
+            labelCol={{
+              span: 5,
+            }}
+            label="Trích yếu"
+            name="ten_DeXuat"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập trích yếu!",
+              },
+            ]}>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            labelCol={{
+              span: 5,
+            }}
+            label="Loại văn bản"
+            name="loaiVanBan"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập loại văn bản!",
+              },
+            ]}>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            labelCol={{
+              span: 5,
+            }}
+            label="Ghi chú"
+            name="ghiChu"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập ghi chú!",
+              },
+            ]}>
+            <TextArea cols={10} />
+          </Form.Item>
+
+          <div
+            className="ms-3 d-flex flex-column"
+            style={{ marginTop: -10 }}
+            onClick={() => {
+              setFile(null);
+              inputFileRef.current?.click();
+            }}>
+            <div className="d-flex align-items-center">
+              <Button
+                className="d-flex align-items-center"
+                type="link"
+                icon={<CloudUploadOutlined />}>
+                Đính kèm file
+              </Button>
+
+              {fileName}
+            </div>
+
+            {!!fileError && (
+              <div className="ms-3 ant-form-item-explain-error">
+                {fileError}
+              </div>
+            )}
+          </div>
+
+          <div className="d-flex justify-content-center gap-3 mt-2">
+            <Form.Item>
+              <Button
+                type="ghost"
+                htmlType="button"
+                onClick={() => setModalDeXuatVisible(false)}>
+                Bỏ qua
+              </Button>
+            </Form.Item>
+            <Form.Item>
+              <Button
+                loading={suaDeXuatLoading}
+                type="primary"
+                htmlType="submit">
+                Đồng ý
+              </Button>
+            </Form.Item>
+          </div>
+        </Form>
+      </Modal>
+
       <ModalBuocDuyet
         visible={modalBuocDuyetVisible}
         loading={themBuocLoading}
@@ -305,15 +457,15 @@ const KiSoChiTiet = () => {
         className="input-file"
         ref={inputFileRef}
         type="file"
-        // accept="application/x-pkcs12"
+        accept="application/pdf"
         multiple={false}
         onChange={async (e) => {
           if (e.target.files && e.target.files.length > 0) {
             const selectedFiles = e.target.files;
             const file = selectedFiles[0];
 
-            if (file.type !== "application/x-pkcs12") {
-              setFileError(VUI_LONG_CHON_FILE);
+            if (file.type !== "application/pdf") {
+              setFileError("Vui lòng chọn file pdf");
             } else {
               setFile(file);
               setFileName(file.name);
@@ -342,14 +494,31 @@ const KiSoChiTiet = () => {
             Chuyển duyệt
           </Button>
           <Button
-            // onClick={() => handleShowModalEdit(data)}
+            onClick={() => setModalDeXuatVisible(true)}
             className="d-flex align-items-center text-black"
             type="link"
             icon={<EditOutlined />}>
             Sửa đề xuất
           </Button>
 
-          <Button
+          <Popconfirm
+            title="Bạn có chắc chắn muốn xoá?"
+            onConfirm={() => handleXoaDeXuat()}
+            okText="Đồng ý"
+            cancelText="Thoát">
+            <Button
+              onClick={() => {
+                setModalVisible(true);
+                setModalType(PASSCODE);
+              }}
+              className="d-flex align-items-center text-black"
+              type="link"
+              icon={<DeleteOutlined />}>
+              Xoá đề xuất
+            </Button>
+          </Popconfirm>
+
+          {/* <Button
             onClick={() => {
               setModalVisible(true);
               setModalType(PASSCODE);
@@ -358,7 +527,7 @@ const KiSoChiTiet = () => {
             type="link"
             icon={<DeleteOutlined />}>
             Xoá đề xuất
-          </Button>
+          </Button> */}
 
           <Button
             className="d-flex align-items-center text-black"

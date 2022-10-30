@@ -21,6 +21,14 @@ export const themKSDX = (payload) => {
   return api.post(API.KSDX, payload);
 };
 
+export const suaKSDXSvc = (payload) => {
+  return api.put(API.KSDX, payload);
+};
+
+export const xoaKSDX = ({ id }) => {
+  return api.delete(API.KSDX + "/" + id);
+};
+
 export const getKSDXSvc = ({ id }) => {
   return api.get(API.KSDX + "/" + id);
 };

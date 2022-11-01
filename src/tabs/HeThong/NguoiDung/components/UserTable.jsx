@@ -44,9 +44,8 @@ export default ({
   setCurrentTab,
   listUser,
   getListUser = () => {},
+  loading
 }) => {
-  const navigate = useNavigate();
-  const [list, setList] = useState([]);
   const [subListName, setSubListName] = useState(PHONG_BAN); // Phòng ban || Vai trò
   const [searchList, setSearchList] = useState([]);
   const [getListLoading, setGetListLoading] = useState(false);
@@ -145,18 +144,6 @@ export default ({
     } catch (error) {
       message.error(LOI_HE_THONG);
     }
-    // try {
-    //   const res = await xoaVaiTroSvc({ id: item.maSo });
-    //   if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
-    //     message.success(res.data?.retText);
-    //     handleGetList();
-    //   } else {
-    //     message.error(LOI);
-    //   }
-    // } catch (error) {
-    //   message.error(LOI_HE_THONG);
-    // } finally {
-    // }
   };
 
   const handleSearch = (keyword) => {
@@ -289,7 +276,8 @@ export default ({
                   setSelectedItem(record);
                   setUserFormState(formState.DETAIL);
                   setCurrentTab(2);
-                  navigate("detail/" + record?.maSo);
+                  setUserData(record);
+                  // navigate("detail/" + record?.maSo);
                 }}>
                 Chi tiết
               </Button>
@@ -413,7 +401,7 @@ export default ({
             />
           </div>
           <Table
-            loading={getListLoading}
+            loading={loading}
             columns={columns}
             dataSource={keyword.trim() ? searchList : listUser}
             pagination={{ defaultPageSize: 5 }}

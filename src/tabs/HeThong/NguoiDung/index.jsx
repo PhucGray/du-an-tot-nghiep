@@ -73,19 +73,11 @@ export default () => {
     return _list;
   };
 
-  const init = async ({ isDetail = false }) => {
-    const list = await handleGetListUser();
-
-    if (isDetail) {
-      setCurrentTab(2);
-      setUserFormState(formState.DETAIL);
-      setUserData(list.find((i) => i?.maSo == params?.id));
-    }
-  };
-
   useEffect(() => {
-    init({ isDetail });
+    handleGetListUser()
   }, []);
+
+  
   return (
     <Fragment>
       <div className="crud">
@@ -96,7 +88,6 @@ export default () => {
 
             if (value == 1) {
               handleGetListUser();
-              navigate("/" + TAB.NGUOI_DUNG);
             }
           }}
           activeKey={currentTab.toString()}
@@ -113,6 +104,7 @@ export default () => {
               setIsShowTransfer={setIsShowTransfer}
               setCurrentTab={setCurrentTab}
               getListUser={handleGetListUser}
+              loading={getListLoading}
             />
           </Tabs.TabPane>
 

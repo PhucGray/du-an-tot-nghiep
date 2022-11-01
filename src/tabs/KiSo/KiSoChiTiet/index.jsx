@@ -128,6 +128,8 @@ const KiSoChiTiet = () => {
       const data = res.data?.data;
       setKSDXData(data);
 
+      console.log(data);
+
       formDeXuat.setFieldValue("ten_DeXuat", data?.ten_DeXuat);
       formDeXuat.setFieldValue("loaiVanBan", data?.loaiVanBan);
       formDeXuat.setFieldValue("ghiChu", data?.ghiChu);
@@ -607,13 +609,6 @@ const KiSoChiTiet = () => {
             <Table
               loading={false}
               columns={columns_2}
-              // dataSource={[
-              //   {
-              //     stt: 1,
-              //     nguoiDuyet: "Nguyen Van A",
-              //     trangThai: true,
-              //   },
-              // ]}
               dataSource={dsBuocDuyet}
               pagination={{ defaultPageSize: 5 }}
             />

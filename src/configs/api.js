@@ -54,3 +54,4 @@ export const KSBD = "KySoBuocDuyets/buocduyet";
 // Ky so
 export const KS_KI_THU = "KySos/signtest";
 export const KS_BUOC_DUYET = "KySos/buocduyet";
+export const KS_KT_PASSCODE = 'KySos/checkpasscode'

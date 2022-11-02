@@ -8,6 +8,10 @@ export const kyThuSvc = (payload) => {
 export const getListKySoBuocDuyet = () => {
   return api.get(API.KS_BUOC_DUYET);
 };
+
+export const kiemTraPasscodeSvc = (payload) => {
+  return api.put(API.KS_KT_PASSCODE, payload);
+};
 // export const getListNguoiDungDuyetSvc = () => {
 //   return api.get(API.KS_TS_NGUOI_DUNG_DUYET);
 // };

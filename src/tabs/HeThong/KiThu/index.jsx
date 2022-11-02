@@ -21,9 +21,11 @@ import {
 } from "../../../constants/api";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
 import ContextMenu from "../../../components/ContextMenu";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams, useRoutes } from "react-router-dom";
 import { getThongSoNguoiDungSvc } from "../../../store/kyso_thongso/services";
+import { kyThuSvc } from "../../../store/kyso/services";
 import { v4 as uuidv4 } from "uuid";
+import { Document } from 'react-pdf';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -64,6 +66,11 @@ const LionText = ({ onDragEnd, onChangePos, ...props }) => {
 
 const KiThu = () => {
   const params = useParams();
+  const location = useLocation();
+
+  const isKiThat = location.pathname.includes('ki-that');
+  const _file_ = localStorage.getItem('ki-that')
+
 
   const [nguoiDungKi, setNguoiDungKi] = useState(null);
 
@@ -218,22 +225,21 @@ const KiThu = () => {
         };
       });
 
-      console.log({
+      
+
+      const res = await kyThuSvc({
         inputFile: url,
         id_NguoiDung: params?.id,
         postPositionSigns: [...finalImages, ...finalTexts],
       });
 
-      // const res = await kyThuSvc({
-      //   inputFile: url,
-      //   id_NguoiDung: params?.id,
-      //   postPositionSigns: [...finalImages, ...finalTexts],
-      // });
-
-      // if (res.status === SUCCESS && res.data.retCode === RETCODE_SUCCESS) {
-      //   const file = res.data.data;
-      //   setResFile(file);
-      // }
+      console.log(res)
+      if (res.status === SUCCESS && res.data.retCode === RETCODE_SUCCESS) {
+        const file = res.data.data;
+        setResFile(file);
+      } else {
+        message.error(res.data?.retText)
+      }
     } catch (error) {
       console.log("error");
       console.log(error);
@@ -289,8 +295,43 @@ const KiThu = () => {
     }
   }, [params?.id]);
 
+
+  function urltoFile(url, filename, mimeType){
+    return (fetch(url)
+        .then(function(res){return res.arrayBuffer();})
+        .then(function(buf){return new File([buf], filename,{type:mimeType});})
+    );
+}
+ 
+  //  loadScannedImage("a.pdf","https://firebasestorage.googleapis.com/v0/b/tot-nghiep-csharp.appspot.com/o/files%2Fa98bccb2-17fd-43e5-9a0d-72e035a80b972022-Fall_Tai-lieu-dinh-huong-DATN.pdf?alt=media&token=01310f55-c634-4c80-ad33-243d9aabc813")
+  // const link = "https://firebasestorage.googleapis.com/v0/b/tot-nghiep-csharp.appspot.com/o/files%2Fa98bccb2-17fd-43e5-9a0d-72e035a80b972022-Fall_Tai-lieu-dinh-huong-DATN.pdf?alt=media&token=01310f55-c634-4c80-ad33-243d9aabc813"
+
+  const aaaa = (link) => {
+    var request = new XMLHttpRequest();
+    request.open('GET', link, true);
+    request.responseType = 'blob';
+    request.onload = function() {
+        var reader = new FileReader();
+        reader.readAsDataURL(request.response);
+        reader.onload =  function(e){
+          console.log('run')
+          urltoFile(e.target.result, 'hello.pdf','application/pdf')
+          .then(function(file){ 
+    
+            uploadPdf(null, file)
+          });
+        };
+    };
+    request.send();
+  }
+   useEffect(()=>{
+    if(isKiThat && !!_file_) {
+      aaaa(_file_)
+    }
+  },[isKiThat, _file_])
   return (
     <div className="mx-auto" style={{ width: "100%", minHeight: "100vh" }}>
+     
       <div>
         {!!file && (
           <div

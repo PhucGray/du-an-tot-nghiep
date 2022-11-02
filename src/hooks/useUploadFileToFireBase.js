@@ -51,6 +51,7 @@ const useUploadFileToFireBase = ({ file }) => {
     url,
     uploading,
     resetFile,
+    setUrl
   };
 };
 

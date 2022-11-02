@@ -11,7 +11,7 @@ export const UploadTypes = {
   IMAGE: "image",
 };
 
-const handlers = {
+export const handlers = {
   pdf: async (file) => {
     try {
       const pdf = await readAsPDF(file);
@@ -73,19 +73,26 @@ export default ({ use, afterUploadPdf, afterUploadAttachment }) => {
     }
   };
 
-  const upload = async (event) => {
+  const upload = async (event = null, _file = null) => {
     setIsUploading(true);
 
+   let file;
+
+   if(event) {
     const files =
-      event.currentTarget.files ||
-      (event.dataTransfer && event.dataTransfer.files);
-    if (!files) {
-      setIsUploading(false);
-      return;
-    }
+    event.currentTarget.files ||
+    (event.dataTransfer && event.dataTransfer.files);
+  if (!files) {
+    setIsUploading(false);
+    return;
+  }
 
-    const file = files[0];
+  file = files[0];
+   } else {
+file = _file
+   }
 
+   console.log(file)
     setFile(file);
 
     const result = await handlers[use](file);

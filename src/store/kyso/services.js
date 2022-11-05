@@ -12,6 +12,10 @@ export const getListKySoBuocDuyet = () => {
 export const kiemTraPasscodeSvc = (payload) => {
   return api.put(API.KS_KT_PASSCODE, payload);
 };
+
+export const kyThatSvc = payload => {
+  return api.post(API.KS_KI_THAT, payload)
+}
 // export const getListNguoiDungDuyetSvc = () => {
 //   return api.get(API.KS_TS_NGUOI_DUNG_DUYET);
 // };

@@ -48,3 +48,7 @@ export const xoaBuocDuyetSvc = ({ id }) => {
 export const chuyenDuyetSvc = ({id}) => {
   return api.put(API.KSDX_CHUYEN_DUYET + '/' + id)
 }
+
+export const tuChoiKySvc = ({id}) => {
+  return api.put(API.KSDB_TU_CHOI + '/' + id)
+}

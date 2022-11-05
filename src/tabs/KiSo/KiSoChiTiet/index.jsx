@@ -23,6 +23,8 @@ import {
   PlusCircleOutlined,
   ScheduleOutlined,
   FilePdfOutlined,
+  CheckCircleTwoTone,
+  ClockCircleTwoTone
 } from "@ant-design/icons";
 import { textToCharacter } from "../../../utils/strings";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
@@ -110,6 +112,8 @@ const KiSoChiTiet = () => {
   const [suaDeXuatLoading, setSuaDeXuatLoading] = useState(false);
   const [chuyenDuyetLoading, setChuyenDuyetLoading] = useState(false)
 
+  const daChuyenDuyet = KSDXData?.trangThai;
+
   const {
     percent,
     uploading,
@@ -151,6 +155,7 @@ const KiSoChiTiet = () => {
             ...item,
             stt: index + 1,
             hoTen: item?.nguoiDung?.hoTen,
+            trangThai: item?.isDaKy
           };
         }),
       );
@@ -346,7 +351,21 @@ const KiSoChiTiet = () => {
       title: "Trạng thái",
       dataIndex: "trangThai",
       key: "trangThai",
-      render: (_, record) => <div>{_ ? "Đã thực hiện" : "Chưa thực hiện"}</div>,
+      render: (_, record) => (
+        <div className="d-flex align-items-center gap-2">
+          {_ ? (
+            <>
+              <CheckCircleTwoTone twoToneColor="#52c41a" />
+              <div>Đã thực hiện</div>
+            </>
+          ) : (
+            <>
+              <ClockCircleTwoTone />
+              <div>Chưa thực hiện</div>
+            </>
+          )}
+        </div>
+      ),
     },
 
     {
@@ -354,13 +373,17 @@ const KiSoChiTiet = () => {
       dataIndex: "hanhDong",
       key: "hanhDong",
       render: (_, record) => (
-        <Popconfirm
-          title="Bạn có chắc chắn muốn xoá?"
-          onConfirm={() => handleXoaBuocDuyet(record)}
-          okText="Đồng ý"
-          cancelText="Thoát">
-          <Button icon={<DeleteOutlined />} />
-        </Popconfirm>
+        <>
+          {
+           !daChuyenDuyet &&  <Popconfirm
+            title="Bạn có chắc chắn muốn xoá?"
+            onConfirm={() => handleXoaBuocDuyet(record)}
+            okText="Đồng ý"
+            cancelText="Thoát">
+            <Button icon={<DeleteOutlined />} />
+          </Popconfirm>
+          }
+        </>
       ),
     },
   ];
@@ -511,57 +534,49 @@ const KiSoChiTiet = () => {
         </Button>
 
         <div className="d-flex justify-content-center">
-          <Button
-            onClick={handleChuyenDuyet}
-            className="d-flex align-items-center text-black"
-            type="link"
-            loading={chuyenDuyetLoading}
-            disabled={dsBuocDuyet.length === 0}
-            icon={<ScheduleOutlined />}>
-            Chuyển duyệt
-          </Button>
-          <Button
-            onClick={() => setModalDeXuatVisible(true)}
-            className="d-flex align-items-center text-black"
-            type="link"
-            icon={<EditOutlined />}>
-            Sửa đề xuất
-          </Button>
+          {!daChuyenDuyet && (
+            <>
+              <Button
+                onClick={handleChuyenDuyet}
+                className="d-flex align-items-center text-black"
+                type="link"
+                loading={chuyenDuyetLoading}
+                disabled={dsBuocDuyet.length === 0}
+                icon={<ScheduleOutlined />}>
+                Chuyển duyệt
+              </Button>
+              <Button
+                onClick={() => setModalDeXuatVisible(true)}
+                className="d-flex align-items-center text-black"
+                type="link"
+                icon={<EditOutlined />}>
+                Sửa đề xuất
+              </Button>
 
-          <Popconfirm
-            title="Bạn có chắc chắn muốn xoá?"
-            onConfirm={() => handleXoaDeXuat()}
-            okText="Đồng ý"
-            cancelText="Thoát">
-            <Button
-              onClick={() => {
-                setModalVisible(true);
-                setModalType(PASSCODE);
-              }}
-              className="d-flex align-items-center text-black"
-              type="link"
-              icon={<DeleteOutlined />}>
-              Xoá đề xuất
-            </Button>
-          </Popconfirm>
-
+              <Popconfirm
+                title="Bạn có chắc chắn muốn xoá?"
+                onConfirm={() => handleXoaDeXuat()}
+                okText="Đồng ý"
+                cancelText="Thoát">
+                <Button
+                  onClick={() => {
+                    setModalVisible(true);
+                    setModalType(PASSCODE);
+                  }}
+                  className="d-flex align-items-center text-black"
+                  type="link"
+                  icon={<DeleteOutlined />}>
+                  Xoá đề xuất
+                </Button>
+              </Popconfirm>
+            </>
+          )}
 
           <Button
             className="d-flex align-items-center text-black"
             type="link"
             icon={<HistoryOutlined />}>
             Lịch sử
-          </Button>
-
-          <Button
-            onClick={() => {
-              setModalVisible(true);
-              setModalType(CAU_HINH);
-            }}
-            className="d-flex align-items-center text-black"
-            type="link"
-            icon={<PlusCircleOutlined />}>
-            Thêm quy trình
           </Button>
         </div>
 
@@ -585,13 +600,11 @@ const KiSoChiTiet = () => {
 
         <Table
           style={{
-            marginTop: 20
+            marginTop: 20,
           }}
           loading={false}
           columns={columns}
-          dataSource={[
-            KSDXData
-          ]}
+          dataSource={[KSDXData]}
           pagination={{ defaultPageSize: 5 }}
         />
 

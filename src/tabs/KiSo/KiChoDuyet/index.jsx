@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { PlusOutlined, CloudUploadOutlined } from "@ant-design/icons";
-import { Button, Tabs, Table, message, Form, Input, Modal } from "antd";
+import { Button, Tabs, Table, message, Form, Input, Modal, Popconfirm } from "antd";
 import { useState } from "react";
 import moment, { isDate } from "moment";
 import {
@@ -10,6 +10,7 @@ import {
   getListKSDX_TuChoi,
   suaKSDXSvc,
   themKSDX,
+  tuChoiKySvc,
 } from "../../../store/kysodexuat/service";
 import {
   LOI,
@@ -39,24 +40,6 @@ const KiDeXuat = () => {
   const [submitLoading, setSubmitLoading] = useState(false)
   const [list, setList] = useState([]);
   const [record, setRecord] = useState(null)
-
-  const getList = async () => {
-    setGetListLoading(true);
-    try {
-      const res = await getListKSDX_ChuaDeXuat({ id: nguoiDung?.ma_NguoiDung });
-      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
-        // setList(res.data?.data);
-      } else {
-        message.error(LOI);
-      }
-    } catch (error) {
-      message.error(LOI_HE_THONG);
-    } finally {
-      setGetListLoading(false);
-    }
-  };
-
-  console.log(nguoiDung)
 
   const g = async () => {
     const res = await getListKySoBuocDuyet();
@@ -88,7 +71,7 @@ const KiDeXuat = () => {
 
       if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         localStorage.setItem('ki-that', record?.kySoDeXuat?.inputFile)
-        navigate("ki-that/" + record.ma_KySoDeXuat);
+        navigate("ki-that/" + record.ma_BuocDuyet);
       } else {
         message.error(res.data?.retText)
       }
@@ -96,6 +79,23 @@ const KiDeXuat = () => {
       message.error(LOI_HE_THONG)
     } finally {
       setSubmitLoading(false)
+    }
+  }
+
+  const handleTuChoi= async (record) => {
+    try {
+      const res = await tuChoiKySvc({id: record?.ma_KySoDeXuat})
+
+      if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        g();
+        message.success(res.data?.retText)
+      } else {
+        message.error(res.data?.retText)
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG)
+    } finally {
+
     }
   }
 
@@ -134,14 +134,22 @@ const KiDeXuat = () => {
       key: "hanhDong",
       render: (data, record, index) => {
         return (
-          // <div className="text-center">{moment(data).format("DD-MM-YYYY")}</div>
-          <div
-            onClick={() => {
-              // navigate("detail/" + record.ma_KySoDeXuat);
-              setRecord(record)
-              setModalVisible(true)
-            }}>
-            <Button type="link">Ký</Button>
+          <div className="d-flex">
+            <div
+              onClick={() => {
+                setRecord(record);
+                setModalVisible(true);
+              }}>
+              <Button type="link">Ký</Button>
+            </div>
+
+            <Popconfirm
+              title="Bạn có chắc chắn muốn từ chối ký?"
+              onConfirm={() => handleTuChoi(record)}
+              okText="Đồng ý"
+              cancelText="Thoát">
+                <Button type="link">Từ chối</Button>
+            </Popconfirm>
           </div>
         );
       },
@@ -181,7 +189,7 @@ const KiDeXuat = () => {
                 message: "Vui lòng nhập passcode!",
               },
             ]}>
-            <Input autoFocus />
+            <Input.Password autoFocus />
           </Form.Item>
 
           <div className="d-flex justify-content-center gap-3 mt-2">

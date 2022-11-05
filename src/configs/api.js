@@ -51,8 +51,10 @@ export const KSDX_TU_CHOI = "KySoDeXuats/tuchoi";
 export const KSDX_CHUYEN_DUYET = 'KySoDeXuats/chuyenduyet'
 
 export const KSBD = "KySoBuocDuyets/buocduyet";
+export const KSDB_TU_CHOI = 'KySoBuocDuyets/tuchoi'
 
 // Ky so
 export const KS_KI_THU = "KySos/signtest";
 export const KS_BUOC_DUYET = "KySos/buocduyet";
 export const KS_KT_PASSCODE = 'KySos/checkpasscode'
+export const KS_KI_THAT = 'Kysos/sign';

@@ -21,11 +21,12 @@ import {
 } from "../../../constants/api";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
 import ContextMenu from "../../../components/ContextMenu";
-import { useLocation, useParams, useRoutes } from "react-router-dom";
+import { useLocation, useParams, useRoutes, useNavigate } from "react-router-dom";
 import { getThongSoNguoiDungSvc } from "../../../store/kyso_thongso/services";
-import { kyThuSvc } from "../../../store/kyso/services";
+import { kyThatSvc, kyThuSvc } from "../../../store/kyso/services";
 import { v4 as uuidv4 } from "uuid";
 import { Document } from 'react-pdf';
+import * as TAB from '../../../constants/tab'
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -67,10 +68,9 @@ const LionText = ({ onDragEnd, onChangePos, ...props }) => {
 const KiThu = () => {
   const params = useParams();
   const location = useLocation();
-
   const isKiThat = location.pathname.includes('ki-that');
   const _file_ = localStorage.getItem('ki-that')
-
+  const navigate = useNavigate()
 
   const [nguoiDungKi, setNguoiDungKi] = useState(null);
 
@@ -87,6 +87,7 @@ const KiThu = () => {
   const [xuatLoading, setXuatLoading] = useState(false);
 
   const [disableXuat, setDisableXuat] = useState(true);
+  const [loadingFile, setLoadingFile] = useState(false)
 
   const initializePageAndAttachments = (pdfDetails) => {
     initialize(pdfDetails);
@@ -225,21 +226,36 @@ const KiThu = () => {
         };
       });
 
+
+      if(isKiThat) {
+        // const res = await 
+        const res = await kyThatSvc({
+          inputFile: url,
+          id_NguoiDung: params?.id,
+          postPositionSigns: [...finalImages, ...finalTexts],
+          ma_BuocDuyet: parseInt(isNaN(params?.id) ? '0' : params?.id)
+        });
+
+        if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+          navigate('/' + TAB.KI_CHO_DUYET, {replace: true})
+        }
+      } else {
+        const res = await kyThuSvc({
+          inputFile: url,
+          id_NguoiDung: params?.id,
+          postPositionSigns: [...finalImages, ...finalTexts],
+        });
+  
+        if (res.status === SUCCESS && res.data.retCode === RETCODE_SUCCESS) {
+          const file = res.data.data;
+          setResFile(file);
+        } else {
+          message.error(res.data?.retText)
+        }
+      }
       
 
-      const res = await kyThuSvc({
-        inputFile: url,
-        id_NguoiDung: params?.id,
-        postPositionSigns: [...finalImages, ...finalTexts],
-      });
-
-      console.log(res)
-      if (res.status === SUCCESS && res.data.retCode === RETCODE_SUCCESS) {
-        const file = res.data.data;
-        setResFile(file);
-      } else {
-        message.error(res.data?.retText)
-      }
+      
     } catch (error) {
       console.log("error");
       console.log(error);
@@ -311,7 +327,6 @@ const KiThu = () => {
         var reader = new FileReader();
         reader.readAsDataURL(request.response);
         reader.onload =  function(e){
-          console.log('run')
           urltoFile(e.target.result, 'hello.pdf','application/pdf')
           .then(function(file){ 
     
@@ -398,7 +413,8 @@ const KiThu = () => {
                   setXuatLoading(true);
                   uploadToFireBase();
                 }}>
-                Xuất
+                {/* {isKiThat ? 'Ký' : 'Xuất'} */}
+                Ký
               </Button>
             </div>
           </div>

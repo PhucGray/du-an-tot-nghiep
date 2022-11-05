@@ -23,13 +23,15 @@ import { useSelector } from "react-redux";
 import { useRef } from "react";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
 
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getListKySoBuocDuyet, kiemTraPasscodeSvc } from "../../../store/kyso/services";
 
 const { TextArea } = Input;
 
 const KiDeXuat = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
 
   const [form] = Form.useForm()
 
@@ -137,10 +139,12 @@ const KiDeXuat = () => {
           <div className="d-flex">
             <div
               onClick={() => {
-                setRecord(record);
-                setModalVisible(true);
+                // setRecord(record);
+                // setModalVisible(true);
+                navigate('detail/' + record?.ma_KySoDeXuat);
+                
               }}>
-              <Button type="link">Ký</Button>
+              <Button type="link">Chi tiết</Button>
             </div>
 
             <Popconfirm

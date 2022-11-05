@@ -23,10 +23,12 @@ import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
 import ContextMenu from "../../../components/ContextMenu";
 import { useLocation, useParams, useRoutes, useNavigate } from "react-router-dom";
 import { getThongSoNguoiDungSvc } from "../../../store/kyso_thongso/services";
-import { kyThatSvc, kyThuSvc } from "../../../store/kyso/services";
+import { getChiTietBuocDuyetSvc, kyThatSvc, kyThuSvc } from "../../../store/kyso/services";
 import { v4 as uuidv4 } from "uuid";
 import { Document } from 'react-pdf';
 import * as TAB from '../../../constants/tab'
+import { nguoiDungSelector } from "../../../store/auth/selectors";
+import {useSelector} from 'react-redux'
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -72,6 +74,8 @@ const KiThu = () => {
   const _file_ = localStorage.getItem('ki-that')
   const navigate = useNavigate()
 
+  const nguoiDung  = useSelector(nguoiDungSelector)
+
   const [nguoiDungKi, setNguoiDungKi] = useState(null);
 
   const [pdfSizes, setPdfSizes] = useState([]);
@@ -88,6 +92,8 @@ const KiThu = () => {
 
   const [disableXuat, setDisableXuat] = useState(true);
   const [loadingFile, setLoadingFile] = useState(false)
+
+  const [chiTietBuocDuyet, setChiTietBuocDuyet] = useState(null)
 
   const initializePageAndAttachments = (pdfDetails) => {
     initialize(pdfDetails);
@@ -135,6 +141,16 @@ const KiThu = () => {
     use: UploadTypes.IMAGE,
     afterUploadAttachment: addAttachment,
   });
+
+  const getChiTietBuocDuyet = async () => {
+    try {
+      const res = await getChiTietBuocDuyetSvc({id: params?.id})
+
+      setChiTietBuocDuyet(res.data?.data)
+    } catch (error) {
+      
+    }
+  }
 
   const handleChonChuKy = (value, option) => {
     const key = option?.key;
@@ -228,16 +244,16 @@ const KiThu = () => {
 
 
       if(isKiThat) {
-        // const res = await 
         const res = await kyThatSvc({
-          inputFile: url,
-          id_NguoiDung: params?.id,
+          inputFile: _file_,
+          id_NguoiDung: nguoiDung?.ma_NguoiDung,
           postPositionSigns: [...finalImages, ...finalTexts],
           ma_BuocDuyet: parseInt(isNaN(params?.id) ? '0' : params?.id)
         });
 
         if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
-          navigate('/' + TAB.KI_CHO_DUYET, {replace: true})
+          message.success(res.data?.retText)
+          navigate('/' + TAB.KI_CHO_DUYET + '/detail/' + chiTietBuocDuyet?.ma_KySoDeXuat, {replace: true})
         }
       } else {
         const res = await kyThuSvc({
@@ -299,8 +315,7 @@ const KiThu = () => {
 
   const handleGetThongSo = async () => {
     try {
-      const res = await getThongSoNguoiDungSvc({ id: params?.id });
-
+      const res = await getThongSoNguoiDungSvc({ id: nguoiDung?.ma_NguoiDung });
       setNguoiDungKi(res.data?.data);
     } catch (error) {}
   };
@@ -308,6 +323,7 @@ const KiThu = () => {
   useEffect(() => {
     if (!!params?.id) {
       handleGetThongSo();
+      getChiTietBuocDuyet();
     }
   }, [params?.id]);
 
@@ -341,6 +357,7 @@ const KiThu = () => {
       aaaa(_file_)
     }
   },[isKiThat, _file_])
+
   return (
     <div className="mx-auto" style={{ width: "100%", minHeight: "100vh" }}>
      
@@ -379,6 +396,9 @@ const KiThu = () => {
               <div style={{ width: 300, marginTop: 10 }}>
                 <div>Nội dung</div>
                 <TextArea
+                  style={{
+                    borderRadius: 10
+                  }}
                   rows={4}
                   value={textarea}
                   onChange={(e) => setTextarea(e.currentTarget.value)}
@@ -386,7 +406,8 @@ const KiThu = () => {
                 <Button
                   disabled={!textarea.trim()}
                   type="primary"
-                  style={{ backgroundColor: "#2ec729", border: "none" }}
+                  className="mt-2 rounded"
+                  style={{ backgroundColor: "#6CD44A", border: "none", color: '#fff' }}
                   onClick={isEditing ? handleEditText : handleAddText}>
                   {isEditing ? "Sửa" : "Thêm"} nội dung
                 </Button>
@@ -397,7 +418,7 @@ const KiThu = () => {
               {!!resFile && (
                 <Button
                   type="primary"
-                  style={{ backgroundColor: "#ff8a2a", border: "none" }}
+                  style={{ backgroundColor: "#ff8a2a", border: "none", borderRadius: 10, width: 150 }}
                   onClick={() => {
                     window.open(API_DOMAIN + resFile);
                   }}>
@@ -409,12 +430,12 @@ const KiThu = () => {
                 disabled={disableXuat}
                 loading={xuatLoading}
                 type="primary"
+                style={{width: 150, borderRadius: 10}}
                 onClick={() => {
                   setXuatLoading(true);
                   uploadToFireBase();
                 }}>
-                {/* {isKiThat ? 'Ký' : 'Xuất'} */}
-                Ký
+                Ký duyệt
               </Button>
             </div>
           </div>
@@ -433,6 +454,7 @@ const KiThu = () => {
               display: "flex",
               justifyContent: "center",
               marginBottom: 10,
+              marginTop: 15
             }}>
             <Pagination
               firstItem={isFirstPage ? null : undefined}

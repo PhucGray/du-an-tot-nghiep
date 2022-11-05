@@ -21,7 +21,7 @@ const ModalBuocDuyet = ({
       <Form
         form={form}
         onFinish={values => {
-          onSubmit();
+          onSubmit(values);
           form.resetFields()
         }}
         name="buocduyet"

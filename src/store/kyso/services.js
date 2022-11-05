@@ -5,6 +5,10 @@ export const kyThuSvc = (payload) => {
   return api.post(API.KS_KI_THU, payload);
 };
 
+export const getChiTietBuocDuyetSvc = ({id}) => {
+  return api.get(API.KSBD_CHI_TIET + '/' + id)
+} 
+
 export const getListKySoBuocDuyet = () => {
   return api.get(API.KS_BUOC_DUYET);
 };

@@ -29,6 +29,7 @@ const SignIn = () => {
           Authorization: `Bearer ${token}`,
         };
         dispatch(setNguoiDung(res.data?.data));
+        navigate('/', {replace: true})
       } else {
         message.error(res.data?.retText);
       }

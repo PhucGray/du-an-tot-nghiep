@@ -5,6 +5,11 @@ export const getListNguoiDungDuyetSvc = () => {
   return api.get(API.KS_TS_NGUOI_DUNG_DUYET);
 };
 
+export const getListNguoiDungKySvc = () => {
+  return api.get(API.KS_TS_NGUOI_DUNG_KY);
+};
+
+
 export const themNguoiDungDuyetSvc = (payload) => {
   return api.post(API.KS_TS, payload);
 };

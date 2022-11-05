@@ -286,6 +286,16 @@ export default () => {
       title: "Họ và tên",
       dataIndex: "hoTen",
       key: "hoTen",
+      render: (_, record) => {
+        console.log(record);
+        return (
+          <div>
+            <div style={{fontSize: 16}}>{record?.hoTen}</div>
+            {!!record?.serial && <div style={{fontSize: 12, color: 'blue'}}>Serial: {record?.serial}</div>}
+            {!!record?.subject && <div style={{fontSize: 12, color: 'blue'}}>Subject: {record?.subject}</div>}
+          </div>
+        );
+      },
     },
     {
       title: "Chức danh",
@@ -423,14 +433,16 @@ export default () => {
                 width: "100%",
               }}>
               {isEdit
-                ? list.map((item, index) => (
+                ? list.map((item, index) =>{
+                  return (
                     <Option key={index} value={item?.ma_NguoiDung}>
-                      {item?.hoTen}
-                    </Option>
-                  ))
+                    {item?.nguoiDung?.hoTen}
+                  </Option>
+                  )
+                })
                 : listNguoiCanDuyet.map((item, index) => (
                     <Option key={index} value={item?.ma_NguoiDung}>
-                      {item?.hoTen}
+                          {item?.hoTen}
                     </Option>
                   ))}
             </Select>
@@ -457,13 +469,7 @@ export default () => {
               span: 5,
             }}
             label="Lý do"
-            name="lyDoMacDinh"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập lý do!",
-              },
-            ]}>
+            name="lyDoMacDinh">
             <Input />
           </Form.Item>
 
@@ -480,7 +486,7 @@ export default () => {
                   message: "Vui lòng nhập passcode!",
                 },
               ]}>
-              <Input />
+              <Input.Password/>
             </Form.Item>
           )}
 

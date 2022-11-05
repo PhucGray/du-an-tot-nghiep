@@ -13,6 +13,7 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import {
   EditOutlined,
+  EditTwoTone,
   LockOutlined,
   SettingOutlined,
   HistoryOutlined,
@@ -23,8 +24,10 @@ import {
   PlusCircleOutlined,
   ScheduleOutlined,
   FilePdfOutlined,
+  FilePdfTwoTone,
   CheckCircleTwoTone,
-  ClockCircleTwoTone
+  ClockCircleTwoTone,
+  CloseCircleTwoTone
 } from "@ant-design/icons";
 import { textToCharacter } from "../../../utils/strings";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
@@ -36,11 +39,12 @@ import {
 } from "../../../constants/api";
 import {
   getListNguoiDungDuyetSvc,
+  getListNguoiDungKySvc,
   suaCauHinhPfxSvc,
   suaPasscodeSvc,
 } from "../../../store/kyso_thongso/services";
 import { transformUser } from "../../../utils/user";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import * as TAB from "../../../constants/tab";
 import {
   chuyenDuyetSvc,
@@ -53,6 +57,9 @@ import {
 } from "../../../store/kysodexuat/service";
 import { useParams } from "react-router-dom";
 import ModalBuocDuyet from "./ModalBuocDuyet";
+import { kiemTraPasscodeSvc } from "../../../store/kyso/services";
+import { useSelector } from "react-redux";
+import { nguoiDungSelector } from "../../../store/auth/selectors";
 const { TextArea } = Input;
 const VUI_LONG_CHON_FILE = "Vui lòng chọn file pfx";
 
@@ -93,6 +100,10 @@ const CAU_HINH = "cauhinh";
 const KiSoChiTiet = () => {
   const params = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const nguoiDung = useSelector(nguoiDungSelector)
+  const pageChiTietKyChoDuyet = location.pathname.includes('ki-cho-duyet/detail')
 
   const data = null;
 
@@ -108,11 +119,18 @@ const KiSoChiTiet = () => {
   const [dsNguoiDungDuyet, setDsNguoiDungDuyet] = useState([]);
   const [themBuocLoading, seThemBuocLoading] = useState(false);
   const [modalBuocDuyetVisible, setModalBuocDuyetVisible] = useState(false);
+  const [modalPasscodeVisible, setModalPasscodeVisible] = useState(false)
 
   const [suaDeXuatLoading, setSuaDeXuatLoading] = useState(false);
   const [chuyenDuyetLoading, setChuyenDuyetLoading] = useState(false)
+  const [submitPasscodeLoading, setSubmitPasscodeLoading] = useState(false)
 
   const daChuyenDuyet = KSDXData?.trangThai;
+
+  const buocDuyetHienTai = KSDXData?.kySoBuocDuyets?.find(item => item?.order === KSDXData?.curentOrder)
+
+  const isNguoiKyHienTai = buocDuyetHienTai?.ma_NguoiKy === nguoiDung?.ma_NguoiDung
+
 
   const {
     percent,
@@ -126,13 +144,38 @@ const KiSoChiTiet = () => {
 
   const [form] = Form.useForm();
   const [formDeXuat] = Form.useForm();
+  const [formPasscode] = Form.useForm();
+
+  const handleKiemTraPasscode = async values => {
+    const data = {
+      ma_NguoiKy: nguoiDung?.ma_NguoiDung,
+      passcode: values?.passcode
+    }
+
+    try {
+      setSubmitPasscodeLoading(true);
+
+      const res = await kiemTraPasscodeSvc(data);
+
+      if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        localStorage.setItem('ki-that', KSDXData?.inputFile)
+        navigate("/ki-cho-duyet/ki-that/" + buocDuyetHienTai?.ma_BuocDuyet);
+      } else {
+        message.error(res.data?.retText)
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG)
+    } finally {
+      setSubmitPasscodeLoading(false)
+    }
+  }
 
   const getKSDX = async () => {
     try {
       const res = await getKSDXSvc({ id: params?.id });
 
       const data = res.data?.data;
-      console.log(data)
+      // console.log(data)
       setKSDXData({...data, tenFile: data?.inputFile, nguoiTao: data?.nguoiDung?.hoTen});
 
       formDeXuat.setFieldValue("ten_DeXuat", data?.ten_DeXuat);
@@ -167,7 +210,7 @@ const KiSoChiTiet = () => {
 
   const getDsNguoiDungDuyet = async () => {
     try {
-      const res = await getListNguoiDungDuyetSvc();
+      const res = await getListNguoiDungKySvc();
 
       setDsNguoiDungDuyet(res.data?.data);
     } catch (error) {
@@ -184,12 +227,13 @@ const KiSoChiTiet = () => {
         ma_KySoDeXuat: params?.id,
       };
 
-      // console.log(data);
       const res = await themBuocDuyetSvc(data);
 
-      // console.log(res.data);
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
-        getDsBuocDuyet();
+        message.success(res.data?.retText);
+    getDsBuocDuyet();
+      } else {
+        message.error(res.data?.retText)
       }
       // if(res.status === SUCCESS )
     } catch (error) {
@@ -203,9 +247,9 @@ const KiSoChiTiet = () => {
     try {
       const res = await xoaBuocDuyetSvc({ id: buocduyet?.ma_BuocDuyet });
 
-      console.log(res.data);
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText)
         getDsBuocDuyet();
       }
     } catch (error) {
@@ -226,12 +270,13 @@ const KiSoChiTiet = () => {
   const [modalDeXuatVisible, setModalDeXuatVisible] = useState(false);
 
   const handleSuaDeXuat = async (values) => {
-    if (!url) return setFileError(" Vui lòng nhập chọn file");
+    if (!KSDXData?.inputFile) return setFileError(" Vui lòng nhập chọn file");
 
     const data = {
       ...values,
-      inputFile: url,
-      ma_NguoiDeXuat: nguoiDung?.ma_NguoiDung,
+      inputFile: url || KSDXData?.inputFile,
+      ma_NguoiDeXuat: KSDXData?.ma_NguoiDeXuat,
+      ma_KySoDeXuat: KSDXData?.ma_KySoDeXuat
     };
 
     setSuaDeXuatLoading(true);
@@ -246,6 +291,10 @@ const KiSoChiTiet = () => {
         resetFile();
         setFileName("");
         setModalDeXuatVisible(false);
+
+        getKSDX();
+    getDsBuocDuyet();
+    getDsNguoiDungDuyet();
       } else {
         message.error(LOI);
       }
@@ -262,6 +311,9 @@ const KiSoChiTiet = () => {
       const res = await chuyenDuyetSvc({id: KSDXData?.ma_KySoDeXuat})
 
       if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        getKSDX();
+    getDsBuocDuyet();
+    getDsNguoiDungDuyet();
         message.success(res.data?.retText)
       } else {
         message.error(res.data?.retText)
@@ -303,7 +355,7 @@ const KiSoChiTiet = () => {
             window.open(_)
           }} className="d-flex align-items-center gap-2" style={{flex: 1}}>
           {_?.split('files%')?.[1]?.split('?alt')?.[0]}
-          <FilePdfOutlined />
+          <FilePdfTwoTone twoToneColor={'red'} />
          </div>
         )
       }
@@ -390,6 +442,56 @@ const KiSoChiTiet = () => {
 
   return (
     <>
+        <Modal
+        title={"Nhập passcode để ký"}
+        open={modalPasscodeVisible}
+        onOk={() => {}}
+        onCancel={() => {
+          setModalPasscodeVisible(false);
+          formPasscode.resetFields();
+        }}
+        footer={null}>
+        <Form
+          form={formPasscode}
+          name="suathongso"
+          onFinish={handleKiemTraPasscode}
+          autoComplete="off">
+          <Form.Item
+            labelCol={{
+              span: 5,
+            }}
+            label="Passcode"
+            name="passcode"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập passcode!",
+              },
+            ]}>
+            <Input.Password autoFocus />
+          </Form.Item>
+
+          <div className="d-flex justify-content-center gap-3 mt-2">
+            <Form.Item>
+              <Button
+                type="ghost"
+                htmlType="button"
+                onClick={() => setModalPasscodeVisible(false)}>
+                Bỏ qua
+              </Button>
+            </Form.Item>
+            <Form.Item>
+              <Button
+                loading={submitPasscodeLoading}
+                type="primary"
+                htmlType="submit">
+                Đồng ý
+              </Button>
+            </Form.Item>
+          </div>
+        </Form>
+      </Modal>
+
       <Modal
         title={"Sửa ký số đề xuất"}
         open={modalDeXuatVisible}
@@ -423,13 +525,7 @@ const KiSoChiTiet = () => {
               span: 5,
             }}
             label="Loại văn bản"
-            name="loaiVanBan"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập loại văn bản!",
-              },
-            ]}>
+            name="loaiVanBan">
             <Input />
           </Form.Item>
           <Form.Item
@@ -437,13 +533,7 @@ const KiSoChiTiet = () => {
               span: 5,
             }}
             label="Ghi chú"
-            name="ghiChu"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập ghi chú!",
-              },
-            ]}>
+            name="ghiChu">
             <TextArea cols={10} />
           </Form.Item>
 
@@ -536,15 +626,20 @@ const KiSoChiTiet = () => {
         <div className="d-flex justify-content-center">
           {!daChuyenDuyet && (
             <>
-              <Button
-                onClick={handleChuyenDuyet}
-                className="d-flex align-items-center text-black"
-                type="link"
-                loading={chuyenDuyetLoading}
-                disabled={dsBuocDuyet.length === 0}
-                icon={<ScheduleOutlined />}>
-                Chuyển duyệt
-              </Button>
+              <Popconfirm
+                title="Bạn có chắc chắn muốn chuyển duyệt đề xuất?"
+                onConfirm={handleChuyenDuyet}
+                okText="Đồng ý"
+                cancelText="Thoát">
+                <Button
+                  className="d-flex align-items-center text-black"
+                  type="link"
+                  loading={chuyenDuyetLoading}
+                  disabled={dsBuocDuyet.length === 0}
+                  icon={<ScheduleOutlined />}>
+                  Chuyển duyệt
+                </Button>
+              </Popconfirm>
               <Button
                 onClick={() => setModalDeXuatVisible(true)}
                 className="d-flex align-items-center text-black"
@@ -571,6 +666,44 @@ const KiSoChiTiet = () => {
               </Popconfirm>
             </>
           )}
+
+          {
+            pageChiTietKyChoDuyet && 
+            <>
+            {
+              isNguoiKyHienTai && 
+              <>
+               <Button
+                onClick={() => {
+                    setModalPasscodeVisible(true)
+                }}
+                className="d-flex align-items-center text-black"
+                type="link"
+                icon={<EditTwoTone twoToneColor='blue' />}>
+                Ký duyệt
+              </Button>
+              <Popconfirm
+                title="Bạn có chắc chắn muốn từ chối đề xuất?"
+                onConfirm={() => {
+
+                }}
+                okText="Đồng ý"
+                cancelText="Thoát">
+                <Button
+                  className="d-flex align-items-center text-black"
+                  type="link"
+                  loading={chuyenDuyetLoading}
+                  disabled={dsBuocDuyet.length === 0}
+                  icon={<CloseCircleTwoTone twoToneColor='red' />}>
+                  Từ chối
+                </Button>
+              </Popconfirm>
+              </>
+            }
+            
+             
+            </>
+          }
 
           <Button
             className="d-flex align-items-center text-black"

@@ -193,7 +193,7 @@ const KiDeXuat = () => {
       key: "ngayDeXuat",
       render: (data, record, index) => {
         return (
-          <div className="text-center">{moment(data).format("DD-MM-YYYY")}</div>
+          <div>{moment(data).format("DD-MM-YYYY")}</div>
         );
       },
     },
@@ -291,13 +291,7 @@ const KiDeXuat = () => {
               span: 5,
             }}
             label="Loại văn bản"
-            name="loaiVanBan"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập loại văn bản!",
-              },
-            ]}>
+            name="loaiVanBan">
             <Input />
           </Form.Item>
           <Form.Item
@@ -306,12 +300,7 @@ const KiDeXuat = () => {
             }}
             label="Ghi chú"
             name="ghiChu"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập ghi chú!",
-              },
-            ]}>
+           >
             <TextArea cols={10} />
           </Form.Item>
 

@@ -41,6 +41,7 @@ const Navigation = () => {
       <Route path="/" element={isLogin ? <MainLayout /> : <SignIn />}>
         <Route path={TAB.VAN_BAN} element={<VanBan />} />
         <Route path={TAB.KI_CHO_DUYET} element={<KiChoDuyet />} />
+        <Route path={TAB.KI_CHO_DUYET + '/detail/:id'} element={<KiSoChiTiet />} />
         <Route path={TAB.KI_CHO_DUYET + '/ki-that/:id'} element={<KiThu />} />
         <Route path={TAB.KI_DE_XUAT} element={<KiDeXuat />} />
         <Route

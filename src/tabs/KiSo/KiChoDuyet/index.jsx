@@ -56,11 +56,14 @@ const KiDeXuat = () => {
     }
   };
 
+  console.log(nguoiDung)
+
   const g = async () => {
     const res = await getListKySoBuocDuyet();
 
+
     setList(
-      res.data?.data?.map((item, index) => {
+      res.data?.data?.filter(item => item?.ma_NguoiKy === nguoiDung?.ma_NguoiDung)?.map((item, index) => {
         return {
           ...item,
           stt: index + 1,
@@ -146,7 +149,7 @@ const KiDeXuat = () => {
   ];
 
   useEffect(() => {
-    getList();
+    // getList();
     g();
   }, []);
 

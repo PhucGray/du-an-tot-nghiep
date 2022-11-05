@@ -11,6 +11,7 @@ const ModalBuocDuyet = ({
   onClose = () => {},
 }) => {
   const [form] = Form.useForm();
+
   return (
     <Modal
       open={visible}
@@ -19,7 +20,10 @@ const ModalBuocDuyet = ({
       onCancel={onClose}>
       <Form
         form={form}
-        onFinish={onSubmit}
+        onFinish={values => {
+          onSubmit();
+          form.resetFields()
+        }}
         name="buocduyet"
         layout="horizontal">
         <Form.Item
@@ -36,8 +40,8 @@ const ModalBuocDuyet = ({
           label="Người ký"
           rules={[{ required: true, message: "Vui lòng chọn người ký" }]}>
           <Select placeholder="Chọn người ký">
-            {dsNguoiDungDuyet.map((item) => (
-              <Option value={item?.ma_NguoiDung}>{item?.hoTen}</Option>
+            {dsNguoiDungDuyet.map((item,index) => (
+              <Option key={index} value={item?.nguoiDung?.ma_NguoiDung}>{item?.nguoiDung?.hoTen}</Option>
             ))}
           </Select>
         </Form.Item>

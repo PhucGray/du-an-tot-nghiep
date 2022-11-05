@@ -44,3 +44,7 @@ export const themBuocDuyetSvc = (payload) => {
 export const xoaBuocDuyetSvc = ({ id }) => {
   return api.delete(API.KSBD + "/" + id);
 };
+
+export const chuyenDuyetSvc = ({id}) => {
+  return api.put(API.KSDX_CHUYEN_DUYET + '/' + id)
+}

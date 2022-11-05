@@ -38,7 +38,7 @@ export const NGUOI_DUNG__VAI_TRO_IN = "NguoiDung_Roles/rolein";
 
 // Ky so - thong so
 export const KS_TS = "KySoThongSos/thongso";
-export const KS_TS_NGUOI_DUNG_DUYET = "KySoThongSos/nguoidungduyet";
+export const KS_TS_NGUOI_DUNG_DUYET = "KySoThongSos/nguoidungky";
 export const KS_TS_DOI_PASSCODE = "KySoThongSos/passcode";
 export const KS_TS_CAU_HINH_PFX = "KySoThongSos/cauhinhfile";
 
@@ -48,6 +48,7 @@ export const KSDX_CHUA_DE_XUAT = "KySoDeXuats/chuadexuat";
 export const KSDX_CHO_DUYET = "KySoDeXuats/choduyet";
 export const KSDX_DA_DUYET = "KySoDeXuats/daduyet";
 export const KSDX_TU_CHOI = "KySoDeXuats/tuchoi";
+export const KSDX_CHUYEN_DUYET = 'KySoDeXuats/chuyenduyet'
 
 export const KSBD = "KySoBuocDuyets/buocduyet";
 

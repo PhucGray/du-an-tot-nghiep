@@ -41,6 +41,7 @@ import { transformUser } from "../../../utils/user";
 import { useNavigate } from "react-router-dom";
 import * as TAB from "../../../constants/tab";
 import {
+  chuyenDuyetSvc,
   getDsBuocDuyetSvc,
   getKSDXSvc,
   suaKSDXSvc,
@@ -107,6 +108,7 @@ const KiSoChiTiet = () => {
   const [modalBuocDuyetVisible, setModalBuocDuyetVisible] = useState(false);
 
   const [suaDeXuatLoading, setSuaDeXuatLoading] = useState(false);
+  const [chuyenDuyetLoading, setChuyenDuyetLoading] = useState(false)
 
   const {
     percent,
@@ -126,14 +128,14 @@ const KiSoChiTiet = () => {
       const res = await getKSDXSvc({ id: params?.id });
 
       const data = res.data?.data;
-      setKSDXData(data);
-
-      console.log(data);
+      console.log(data)
+      setKSDXData({...data, tenFile: data?.inputFile, nguoiTao: data?.nguoiDung?.hoTen});
 
       formDeXuat.setFieldValue("ten_DeXuat", data?.ten_DeXuat);
       formDeXuat.setFieldValue("loaiVanBan", data?.loaiVanBan);
       formDeXuat.setFieldValue("ghiChu", data?.ghiChu);
     } catch (error) {
+      console.log(error)
       message.error(LOI);
     } finally {
     }
@@ -142,8 +144,6 @@ const KiSoChiTiet = () => {
   const getDsBuocDuyet = async () => {
     try {
       const res = await getDsBuocDuyetSvc({ id: params?.id });
-
-      console.log(res.data?.data)
 
       setDsBuocDuyet(
         res.data?.data?.map((item, index) => {
@@ -251,6 +251,24 @@ const KiSoChiTiet = () => {
     }
   };
 
+  const handleChuyenDuyet =  async () => {
+    setChuyenDuyetLoading(true)
+    try {
+      const res = await chuyenDuyetSvc({id: KSDXData?.ma_KySoDeXuat})
+
+      if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText)
+      } else {
+        message.error(res.data?.retText)
+      }
+    } catch (error) {
+      message.error(LOI_HE_THONG)
+    } finally {
+      setChuyenDuyetLoading(false)
+    }
+
+  }
+
   useEffect(() => {
     if (file) {
       uploadToFireBase();
@@ -274,13 +292,16 @@ const KiSoChiTiet = () => {
       title: "Tên file",
       dataIndex: "tenFile",
       key: "tenFile",
-      render: (_, record) => (
-        <div className="d-flex align-items-center gap-2">
-          {/* <Checkbox checked={_} /> */}
-          {_}
+      render: (_, record) => {
+        return (
+          <div onClick={() => {
+            window.open(_)
+          }} className="d-flex align-items-center gap-2" style={{flex: 1}}>
+          {_?.split('files%')?.[1]?.split('?alt')?.[0]}
           <FilePdfOutlined />
-        </div>
-      ),
+         </div>
+        )
+      }
     },
     {
       title: "Người tạo",
@@ -491,9 +512,11 @@ const KiSoChiTiet = () => {
 
         <div className="d-flex justify-content-center">
           <Button
-            // onClick={() => handleShowModalEdit(data)}
+            onClick={handleChuyenDuyet}
             className="d-flex align-items-center text-black"
             type="link"
+            loading={chuyenDuyetLoading}
+            disabled={dsBuocDuyet.length === 0}
             icon={<ScheduleOutlined />}>
             Chuyển duyệt
           </Button>
@@ -522,16 +545,6 @@ const KiSoChiTiet = () => {
             </Button>
           </Popconfirm>
 
-          {/* <Button
-            onClick={() => {
-              setModalVisible(true);
-              setModalType(PASSCODE);
-            }}
-            className="d-flex align-items-center text-black"
-            type="link"
-            icon={<DeleteOutlined />}>
-            Xoá đề xuất
-          </Button> */}
 
           <Button
             className="d-flex align-items-center text-black"
@@ -568,30 +581,16 @@ const KiSoChiTiet = () => {
           <Row label="Trạng thái">
             {KSDXData?.trangThai ? "Đang hiệu lực" : "Không hiệu lực"}
           </Row>
-
-          <Row label="Đề xuất" even={false}>
-            <div className="d-flex align-items-center">
-              <div>{data?.hoTen}</div>
-            </div>
-          </Row>
         </div>
 
         <Table
+          style={{
+            marginTop: 20
+          }}
           loading={false}
           columns={columns}
           dataSource={[
-            {
-              stt: 1,
-              tenFile: "Test.pdf",
-              nguoiTao: "Nguyen Van A",
-              kiSo: true,
-            },
-            {
-              stt: 2,
-              tenFile: "Test.pdf",
-              nguoiTao: "Nguyen Van A",
-              kiSo: false,
-            },
+            KSDXData
           ]}
           pagination={{ defaultPageSize: 5 }}
         />

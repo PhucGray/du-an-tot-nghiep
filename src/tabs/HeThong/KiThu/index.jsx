@@ -303,9 +303,6 @@ const KiThu = () => {
     );
 }
  
-  //  loadScannedImage("a.pdf","https://firebasestorage.googleapis.com/v0/b/tot-nghiep-csharp.appspot.com/o/files%2Fa98bccb2-17fd-43e5-9a0d-72e035a80b972022-Fall_Tai-lieu-dinh-huong-DATN.pdf?alt=media&token=01310f55-c634-4c80-ad33-243d9aabc813")
-  // const link = "https://firebasestorage.googleapis.com/v0/b/tot-nghiep-csharp.appspot.com/o/files%2Fa98bccb2-17fd-43e5-9a0d-72e035a80b972022-Fall_Tai-lieu-dinh-huong-DATN.pdf?alt=media&token=01310f55-c634-4c80-ad33-243d9aabc813"
-
   const aaaa = (link) => {
     var request = new XMLHttpRequest();
     request.open('GET', link, true);

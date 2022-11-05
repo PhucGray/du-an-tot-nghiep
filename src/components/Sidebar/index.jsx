@@ -40,8 +40,8 @@ const items = [
     // getItem("Ký thử", TAB.KI_THU),
   ]),
   getItem("Thông tin", "thong-tin", <SolutionOutlined />, [
-    getItem("Cá nhân @", TAB.CA_NHAN),
-    getItem("Mật khẩu @", TAB.MAT_KHAU),
+    getItem("Cá nhân", TAB.CA_NHAN),
+    getItem("Mật khẩu", TAB.MAT_KHAU),
   ]),
   getItem("Đăng xuất", TAB.DANG_XUAT, <LoginOutlined />),
 ];

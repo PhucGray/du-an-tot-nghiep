@@ -143,6 +143,8 @@ const KiSoChiTiet = () => {
     try {
       const res = await getDsBuocDuyetSvc({ id: params?.id });
 
+      console.log(res.data?.data)
+
       setDsBuocDuyet(
         res.data?.data?.map((item, index) => {
           return {

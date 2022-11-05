@@ -101,6 +101,7 @@ export default ({
     try {
       const res = await getDsVaiTroSvc();
 
+
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         const subList = res.data?.data
           ?.filter((i) => i?.isDeleted === false)
@@ -119,7 +120,7 @@ export default ({
           res_2.data?.retCode === RETCODE_SUCCESS
         ) {
           const selectedList = res_2.data?.data;
-          getTransferData(subList, selectedList);
+          getTransferData(subList, selectedList, 'ma_Role');
         }
       } else {
         message.error(LOI);
@@ -158,8 +159,8 @@ export default ({
     );
   };
 
-  const getTransferData = (list, selectedList = []) => {
-    const maSo = subListName === PHONG_BAN ? "ma_PhongBan" : "ma_Role";
+  const getTransferData = (list, selectedList = [], maSo = 'ma_PhongBan') => {
+    // const maSo = subListName === PHONG_BAN ? "ma_PhongBan" : "ma_Role";
 
     const targetKeys = [];
     const transferData = [];
@@ -305,10 +306,10 @@ export default ({
               <Button
                 type="link"
                 onClick={() => {
+                  setSubListName(VAI_TRO);
                   setSelectedItem(record);
                   setIsShowTransfer(true);
                   handleGetSubListVT(record?.maSo);
-                  setSubListName(VAI_TRO);
                 }}>
                 Vai trò
               </Button>
@@ -316,10 +317,10 @@ export default ({
               <Button
                 type="link"
                 onClick={() => {
+                  setSubListName(PHONG_BAN);
                   setSelectedItem(record);
                   setIsShowTransfer(true);
                   handleGetSubListPB(record?.maSo);
-                  setSubListName(PHONG_BAN);
                 }}>
                 Phân nhóm
               </Button>

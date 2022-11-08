@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Radio, Upload, message } from "antd";
+import { Button, Form, Input, Modal, Radio, Upload, message, Table } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import {
   EditOutlined,
@@ -24,6 +24,8 @@ import {
 import { transformUser } from "../../../utils/user";
 import { useNavigate } from "react-router-dom";
 import * as TAB from "../../../constants/tab";
+import { logThongSoSvc } from "../../../store/log/service";
+import moment from "moment";
 const VUI_LONG_CHON_FILE = "Vui lòng chọn file pfx";
 
 const Row = ({ label, children, even = true }) => {
@@ -182,7 +184,7 @@ const _Modal = ({
                   message: "Vui lòng nhập passcode cũ!",
                 },
               ]}>
-              <Input />
+              <Input.Password />
             </Form.Item>
 
             <Form.Item
@@ -194,7 +196,7 @@ const _Modal = ({
                   message: "Vui lòng nhập passcode mới!",
                 },
               ]}>
-              <Input />
+              <Input.Password />
             </Form.Item>
           </>
         )}
@@ -323,8 +325,52 @@ const ThongSoChiTiet = ({
     }
   }, [file]);
 
+  const [log, setLog] = useState(null)
+
+  const logThongSo = async (id) => {
+    try {
+      const res = await logThongSoSvc({id})
+      setLog(res?.data?.data?.map(item => {
+        return {
+          ...item,
+          hoTen: item?.nguoiDung?.hoTen,
+        }
+      }))
+    } catch (error) {
+      
+    }
+  }
+
+  const columns = [
+    {
+      title: "Người thực hiện",
+      dataIndex: "hoTen",
+      key: "hoTen",
+    },
+    {
+      title: "Hành động",
+      dataIndex: "ten_Log",
+      key: "ten_Log",
+    },
+    {
+      title: "Thời gian thực hiện",
+      dataIndex: "thoiGianThucHien",
+      key: "thoiGianThucHien",
+      render: (_, record) => {
+        return <>{moment(_).format('DD-MM-YYYY')}</>
+      }
+    },
+  ];
+
   return (
     <>
+      <Modal open={!!log} title='Lịch sử' onCancel={() => setLog(null)}>
+        <Table 
+          columns={columns}
+          dataSource={log}
+        />
+      </Modal>
+
       <input
         style={{ position: "absolute", left: "-100vw" }}
         className="input-file"
@@ -420,6 +466,7 @@ const ThongSoChiTiet = ({
           </Button>
 
           <Button
+            onClick={() => logThongSo(data?.ma_NguoiDung)}
             className="d-flex align-items-center text-black"
             type="link"
             icon={<HistoryOutlined />}>

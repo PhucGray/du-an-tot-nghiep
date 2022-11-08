@@ -387,6 +387,56 @@ const KiSoChiTiet = () => {
     },
   ];
 
+  const renderRow = (item, bg = 'gray') => {
+    return (
+      <div className="d-flex">
+        <div className="py-1" style={{width: 40}}>
+          <div className="text-center">STT</div>
+          <div className="text-center" style={{background: bg, borderRadius: 5, color: '#fff', height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{item?.order}</div>
+        </div>
+
+        <div className="flex-grow-1 ps-3 py-1">
+          <div>Người duyệt</div>
+          <div style={{height: 40, display: 'flex', alignItems: 'center'}}>{item?.hoTen}</div>
+        </div>
+
+        <div  className="py-1" >
+          <div>Trạng thái</div>
+          <div style={{height: 40, display: 'flex', alignItems: 'center'}} className="d-flex align-items-center gap-2">
+            {item?.trangThai ? (
+              <>
+                <CheckCircleTwoTone twoToneColor="#52c41a" />
+                <div>Đã thực hiện</div>
+              </>
+            ) : (
+              <>
+                <ClockCircleTwoTone />
+                <div>Chưa thực hiện</div>
+              </>
+            )}
+        </div>
+        </div>
+
+        {!daChuyenDuyet && <div className="ms-2">
+          <div>Hành động</div>
+          <div className="d-flex justify-content-center">
+          <>
+          {
+            <Popconfirm
+            title="Bạn có chắc chắn muốn xoá?"
+            onConfirm={() => handleXoaBuocDuyet(item)}
+            okText="Đồng ý"
+            cancelText="Thoát">
+            <Button icon={<DeleteOutlined />} />
+          </Popconfirm>
+          }
+          </>
+          </div>
+        </div>}
+      </div>
+    )
+  }
+
   const columns_2 = [
     {
       title: "STT",
@@ -440,6 +490,7 @@ const KiSoChiTiet = () => {
     },
   ];
 
+  console.log(dsBuocDuyet)
   return (
     <>
         <Modal
@@ -753,12 +804,35 @@ const KiSoChiTiet = () => {
               Thêm bước
             </Button>
 
-            <Table
+            {/* <Table
               loading={false}
               columns={columns_2}
               dataSource={dsBuocDuyet}
               pagination={{ defaultPageSize: 5 }}
-            />
+            /> */}
+            {dsBuocDuyet.map(
+              (item, index) => 
+              //
+  // 
+
+            {
+              const bg= item?.trangThai === true ? 'blue' : ( KSDXData?.curentOrder === item?.order ? 'green' : 'gray'); 
+              return (
+                <div key={index} style={{paddingLeft: 20, borderTop: '1px solid gray', paddingTop: 20, paddingBottom: 20}}>
+                <div style={{
+                  height: 40,
+                  background: bg,
+                  color: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  paddingLeft: 10,
+                  borderRadius: 5
+                }}>{item?.order}. {item?.ten_Buoc}</div>
+                {renderRow(item, bg)}
+              </div>
+              )
+            }
+            )}
           </div>
 
           <div className="flex-grow-1">

@@ -2,7 +2,7 @@ export const API_URL = "https://localhost:44388/api/";
 export const API_DOMAIN = "https://localhost:44388/";
 
 // Authentication
-export const DANG_NHAP = "Token";
+export const DANG_NHAP = "Token/login";
 
 // Phong ban
 export const PHONG_BAN = "PhongBans/phongban";
@@ -60,3 +60,7 @@ export const KS_KI_THU = "KySos/signtest";
 export const KS_BUOC_DUYET = "KySos/buocduyet";
 export const KS_KT_PASSCODE = 'KySos/checkpasscode'
 export const KS_KI_THAT = 'Kysos/sign';
+
+
+export const LOG_THONG_SO = 'Token/logthongso'
+export const LOG_DE_XUAT = 'Token/logdexuat'

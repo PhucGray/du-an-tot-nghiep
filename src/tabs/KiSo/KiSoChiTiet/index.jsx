@@ -60,6 +60,8 @@ import ModalBuocDuyet from "./ModalBuocDuyet";
 import { kiemTraPasscodeSvc } from "../../../store/kyso/services";
 import { useSelector } from "react-redux";
 import { nguoiDungSelector } from "../../../store/auth/selectors";
+import { logDeXuatSvc } from "../../../store/log/service";
+import moment from "moment";
 const { TextArea } = Input;
 const VUI_LONG_CHON_FILE = "Vui lòng chọn file pfx";
 
@@ -156,6 +158,8 @@ const KiSoChiTiet = () => {
       setSubmitPasscodeLoading(true);
 
       const res = await kiemTraPasscodeSvc(data);
+
+      console.log(KSDXData)
 
       if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         localStorage.setItem('ki-that', KSDXData?.inputFile)
@@ -276,7 +280,8 @@ const KiSoChiTiet = () => {
       ...values,
       inputFile: url || KSDXData?.inputFile,
       ma_NguoiDeXuat: KSDXData?.ma_NguoiDeXuat,
-      ma_KySoDeXuat: KSDXData?.ma_KySoDeXuat
+      ma_KySoDeXuat: KSDXData?.ma_KySoDeXuat,
+      ten_FileGoc: fileName
     };
 
     setSuaDeXuatLoading(true);
@@ -490,9 +495,50 @@ const KiSoChiTiet = () => {
     },
   ];
 
-  console.log(dsBuocDuyet)
+  // console.log(dsBuocDuyet)
+  const columns_33 = [
+    {
+      title: "Người thực hiện",
+      dataIndex: "hoTen",
+      key: "hoTen",
+    },
+    {
+      title: "Hành động",
+      dataIndex: "ten_Log",
+      key: "ten_Log",
+    },
+    {
+      title: "Thời gian thực hiện",
+      dataIndex: "thoiGianThucHien",
+      key: "thoiGianThucHien",
+      render: (_, record) => {
+        return <>{moment(_).format('DD-MM-YYYY')}</>
+      }
+    },
+  ];
+  const [log, setLog] = useState(null)
+  const logDeXuat = async (id) => {
+    try {
+      const res = await logDeXuatSvc({id})
+      setLog(res?.data?.data?.map(item => {
+        return {
+          ...item,
+          hoTen: item?.nguoiDung?.hoTen,
+        }
+      }))
+    } catch (error) {
+      
+    }
+  }
   return (
     <>
+    <Modal footer={null} open={!!log} title='Lịch sử' onCancel={() => setLog(null)} onOk={() => setLog(null)}>
+        <Table
+          columns={columns_33}
+          dataSource={log}
+        />
+      </Modal>
+
         <Modal
         title={"Nhập passcode để ký"}
         open={modalPasscodeVisible}
@@ -757,6 +803,7 @@ const KiSoChiTiet = () => {
           }
 
           <Button
+            onClick={() => logDeXuat(KSDXData?.ma_KySoDeXuat)}
             className="d-flex align-items-center text-black"
             type="link"
             icon={<HistoryOutlined />}>

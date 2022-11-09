@@ -136,6 +136,7 @@ const KiDeXuat = () => {
       ...values,
       inputFile: url,
       ma_NguoiDeXuat: nguoiDung?.ma_NguoiDung,
+      ten_FileGoc: fileName
     };
 
     setAddLoading(true);

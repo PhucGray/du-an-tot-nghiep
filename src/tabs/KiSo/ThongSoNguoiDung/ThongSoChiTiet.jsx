@@ -364,7 +364,7 @@ const ThongSoChiTiet = ({
 
   return (
     <>
-      <Modal open={!!log} title='Lịch sử' onCancel={() => setLog(null)}>
+      <Modal footer={null} open={!!log} title='Lịch sử' onCancel={() => setLog(null)}>
         <Table 
           columns={columns}
           dataSource={log}

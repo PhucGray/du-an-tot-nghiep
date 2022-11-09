@@ -69,7 +69,9 @@ const KiDeXuat = () => {
     try {
       setSubmitLoading(true);
 
+
       const res = await kiemTraPasscodeSvc(data)
+
 
       if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         localStorage.setItem('ki-that', record?.kySoDeXuat?.inputFile)

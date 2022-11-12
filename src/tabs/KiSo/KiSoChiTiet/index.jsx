@@ -62,6 +62,7 @@ import { useSelector } from "react-redux";
 import { nguoiDungSelector } from "../../../store/auth/selectors";
 import { logDeXuatSvc } from "../../../store/log/service";
 import moment from "moment";
+import {API_DOMAIN} from '../../../configs/api'
 const { TextArea } = Input;
 const VUI_LONG_CHON_FILE = "Vui lòng chọn file pfx";
 
@@ -357,7 +358,8 @@ const KiSoChiTiet = () => {
       render: (_, record) => {
         return (
           <div onClick={() => {
-            window.open(_)
+            // window.open(_)
+            window.open(API_DOMAIN + _, '_BLANK')
           }} className="d-flex align-items-center gap-2" style={{flex: 1}}>
           {_?.split('files%')?.[1]?.split('?alt')?.[0]}
           <FilePdfTwoTone twoToneColor={'red'} />

@@ -168,7 +168,7 @@ const KiDeXuat = () => {
   }, []);
 
   return (
-    <div>
+    <div className="px-3 mt-3">
       <Modal
         title={"Nhập passcode để ký"}
         open={modalVisible}

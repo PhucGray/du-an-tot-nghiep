@@ -150,6 +150,7 @@ const KiDeXuat = () => {
         resetFile();
         setFileName("");
         setIsModalOpen(false);
+        inputFileRef.current.value = null;
         switch (activeKey) {
           case "1":
             getList_1();
@@ -245,7 +246,9 @@ const KiDeXuat = () => {
         accept="application/pdf"
         multiple={false}
         onChange={async (e) => {
+          console.log('chay 1111')
           if (e.target.files && e.target.files.length > 0) {
+            console.log('chay 2222')
             const selectedFiles = e.target.files;
             const file = selectedFiles[0];
 

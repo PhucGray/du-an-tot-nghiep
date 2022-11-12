@@ -68,7 +68,7 @@ export default () => {
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         setList(
           res.data?.data
-            ?.filter((i) => i?.isDeleted === false)
+            ?.filter((i) => i?.isDeleted === false && i?.ma_ChucDanh !== 1)
             ?.map((i) => {
               return {
                 maSo: i?.ma_ChucDanh,

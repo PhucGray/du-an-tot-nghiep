@@ -43,6 +43,8 @@ const useUploadFileToFireBase = ({ file }) => {
 
   const resetFile = () => {
     setUrl("");
+    setUploading(false)
+    setPercent(0);
   };
 
   return {

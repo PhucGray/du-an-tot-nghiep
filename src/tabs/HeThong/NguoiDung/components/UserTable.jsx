@@ -86,10 +86,10 @@ export default ({
           getTransferData(subList, selectedList);
         }
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setGetSubListLoading(false);
     }
@@ -123,10 +123,10 @@ export default ({
           getTransferData(subList, selectedList, 'ma_Role');
         }
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setGetSubListLoading(false);
     }
@@ -140,10 +140,10 @@ export default ({
         message.success(res.data?.retText);
         getListUser();
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     }
   };
 
@@ -209,10 +209,10 @@ export default ({
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setAddSubLoading(false);
     }
@@ -234,10 +234,10 @@ export default ({
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setAddSubLoading(false);
     }

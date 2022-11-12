@@ -216,7 +216,7 @@ const KiThu = () => {
   const handleXuatFile = async () => {
     try {
       if (!url) {
-        message.error(LOI);
+        //message.error(LOI);
         return;
       }
 
@@ -275,7 +275,7 @@ const KiThu = () => {
     } catch (error) {
       console.log("error");
       console.log(error);
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setXuatLoading(false);
     }

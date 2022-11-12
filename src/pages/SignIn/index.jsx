@@ -10,6 +10,7 @@ import { SUCCESS, RETCODE_SUCCESS, LOI_HE_THONG } from "../../constants/api";
 import { useDispatch } from "react-redux";
 import { setNguoiDung } from "../../store/auth/actions";
 import api from "../../api";
+import LoginImg from "../../assets/images/login.png";
 
 const SignIn = () => {
   const dispatch = useDispatch();
@@ -29,12 +30,13 @@ const SignIn = () => {
           Authorization: `Bearer ${token}`,
         };
         dispatch(setNguoiDung(res.data?.data));
-        navigate('/', {replace: true})
+        message.success(res.data?.retText)
+        navigate("/", { replace: true });
       } else {
         message.error(res.data?.retText);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setSubmitLoading(false);
     }
@@ -45,64 +47,94 @@ const SignIn = () => {
   };
 
   return (
-    <div className="auth-container">
-      <Form
-        className="form"
-        name="basic"
-        initialValues={{
-          remember: true,
-        }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-        autoComplete="off"
-        layout="vertical">
-        <div className="form-title">Đăng nhập</div>
+    <div className="d-flex">
+      <div
+        style={{
+          background: "#0099ff",
+          height: "100vh",
+          width: "50vw",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
 
-        <Form.Item
-          label="Email"
-          name="email"
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng nhập email!",
-            },
-            {
-              type: "email",
-              message: "Email sai định dạng",
-            },
-          ]}>
-          <Input size="large" placeholder="Nhập email" />
-        </Form.Item>
+          background: "linear-gradient(to bottom, #3366ff 0%, #0099ff 100%)",
+        }}>
+        <img src={LoginImg} style={{ width: "80%" }} />
+      </div>
+      <div
+        style={{
+          height: "100vh",
+          width: "50vw",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}>
+        <Form
+          className="form"
+          name="basic"
+          initialValues={{
+            remember: true,
+          }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          autoComplete="off"
+          layout="vertical">
+          <div className="form-title">Đăng nhập</div>
 
-        <Form.Item
-          label="Mật khẩu"
-          name="passWord"
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng nhập mật khẩu!",
-            },
-          ]}>
-          <Input.Password size="large" placeholder="Nhập mật khẩu" />
-        </Form.Item>
-
-        <div className="d-flex justify-content-between">
-          <Form.Item name="remember">
-            <Checkbox>Ghi nhớ đăng nhập</Checkbox>
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập email!",
+              },
+              {
+                type: "email",
+                message: "Email sai định dạng",
+              },
+            ]}>
+            <Input
+              style={{ borderRadius: 10 }}
+              size="large"
+              placeholder="Nhập email"
+            />
           </Form.Item>
 
-          <Link to="forgot-password">Quên mật khẩu ?</Link>
-        </div>
+          <Form.Item
+            label="Mật khẩu"
+            name="passWord"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập mật khẩu!",
+              },
+            ]}>
+            <Input.Password
+              style={{ borderRadius: 10 }}
+              size="large"
+              placeholder="Nhập mật khẩu"
+            />
+          </Form.Item>
 
-        <Button
-          loading={submitLoading}
-          type="primary"
-          htmlType="submit"
-          className="submit-btn"
-          size="large">
-          Đăng nhập
-        </Button>
-      </Form>
+          <div className="d-flex justify-content-between">
+            <Form.Item name="remember">
+              <Checkbox>Ghi nhớ đăng nhập</Checkbox>
+            </Form.Item>
+
+            <Link to="forgot-password">Quên mật khẩu ?</Link>
+          </div>
+
+          <Button
+            loading={submitLoading}
+            type="primary"
+            htmlType="submit"
+            className="submit-btn"
+            size="large">
+            Đăng nhập
+          </Button>
+        </Form>
+      </div>
     </div>
   );
 };

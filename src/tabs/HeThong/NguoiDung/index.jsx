@@ -62,10 +62,10 @@ export default () => {
         setListUser(list);
         _list = list;
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setGetListLoading(false);
     }

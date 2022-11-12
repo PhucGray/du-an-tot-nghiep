@@ -66,11 +66,11 @@ export default ({ userData, userFormState, resetFormTab }) => {
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
       } else {
-        message.error(res.data?.retText);
+        //message.error(res.data?.retText);
       }
       form.resetFields();
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setAddLoading(false);
     }
@@ -104,10 +104,10 @@ export default ({ userData, userFormState, resetFormTab }) => {
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
       } else {
-        message.error(res.data?.retText);
+        //message.error(res.data?.retText);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setAddLoading(false);
     }
@@ -138,10 +138,10 @@ export default ({ userData, userFormState, resetFormTab }) => {
             }),
         );
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setGetListChucDanhLoading(false);
     }
@@ -348,6 +348,7 @@ export default ({ userData, userFormState, resetFormTab }) => {
                 cursor: isDetail ? "not-allowed" : "pointer",
                 position: "relative",
                 backgroundColor: isDetail ? "#d9d9d9" : undefined,
+                borderRadius: 10
               }}>
               {!url && <PlusSquareTwoTone />}
 

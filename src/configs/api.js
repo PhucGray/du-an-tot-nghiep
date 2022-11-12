@@ -1,5 +1,8 @@
-export const API_URL = "https://localhost:44388/api/";
-export const API_DOMAIN = "https://localhost:44388/";
+export const BASE_REAL = 'http://sonnguyen0803-001-site1.btempurl.com/'
+export const BASE_LOCAL = 'https://localhost:44388/'
+
+export const API_URL = BASE_LOCAL + 'api';
+export const API_DOMAIN = BASE_LOCAL;
 
 // Authentication
 export const DANG_NHAP = "Token/login";

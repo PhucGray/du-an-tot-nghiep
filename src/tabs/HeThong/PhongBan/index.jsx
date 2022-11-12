@@ -92,10 +92,10 @@ export default () => {
             }),
         );
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setGetListLoading(false);
     }
@@ -110,10 +110,10 @@ export default () => {
         message.success(res.data?.retText);
         form.resetFields(["tenPhongBan"]);
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setAddLoading(false);
     }
@@ -127,10 +127,10 @@ export default () => {
         message.success(res.data?.retText);
         handleGetList();
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
     }
   };
@@ -148,10 +148,10 @@ export default () => {
         handleGetList();
         setModalEditVisible(false);
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setEditLoading(false);
     }
@@ -169,10 +169,10 @@ export default () => {
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setSortListLoading(false);
     }
@@ -219,10 +219,10 @@ export default () => {
 
         setListUser(list);
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setGetListUserLoading(false);
     }

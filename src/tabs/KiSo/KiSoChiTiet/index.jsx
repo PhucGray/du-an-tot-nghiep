@@ -168,7 +168,7 @@ const KiSoChiTiet = () => {
         message.error(res.data?.retText)
       }
     } catch (error) {
-      message.error(LOI_HE_THONG)
+      //message.error(LOI_HE_THONG)
     } finally {
       setSubmitPasscodeLoading(false)
     }
@@ -187,7 +187,7 @@ const KiSoChiTiet = () => {
       formDeXuat.setFieldValue("ghiChu", data?.ghiChu);
     } catch (error) {
       console.log(error)
-      message.error(LOI);
+      //message.error(LOI);
     } finally {
     }
   };
@@ -207,7 +207,7 @@ const KiSoChiTiet = () => {
         }),
       );
     } catch (error) {
-      message.error(LOI);
+      //message.error(LOI);
     } finally {
     }
   };
@@ -218,7 +218,7 @@ const KiSoChiTiet = () => {
 
       setDsNguoiDungDuyet(res.data?.data);
     } catch (error) {
-      message.error(LOI);
+      //message.error(LOI);
     } finally {
     }
   };
@@ -257,7 +257,7 @@ const KiSoChiTiet = () => {
         getDsBuocDuyet();
       }
     } catch (error) {
-      message.error(LOI);
+      //message.error(LOI);
     }
   };
 
@@ -267,7 +267,7 @@ const KiSoChiTiet = () => {
 
       navigate("/" + TAB.KI_DE_XUAT);
     } catch (error) {
-      message.error(LOI);
+      //message.error(LOI);
     }
   };
 
@@ -301,10 +301,10 @@ const KiSoChiTiet = () => {
     getDsBuocDuyet();
     getDsNguoiDungDuyet();
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setSuaDeXuatLoading(false);
     }
@@ -324,7 +324,7 @@ const KiSoChiTiet = () => {
         message.error(res.data?.retText)
       }
     } catch (error) {
-      message.error(LOI_HE_THONG)
+      //message.error(LOI_HE_THONG)
     } finally {
       setChuyenDuyetLoading(false)
     }

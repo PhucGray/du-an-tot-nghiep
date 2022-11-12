@@ -87,7 +87,7 @@ const CaNhan = () => {
         message.error(res.data?.retText);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setEditLoading(false);
     }
@@ -110,10 +110,10 @@ const CaNhan = () => {
           }),
         );
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setGetListChucDanhLoading(false);
     }

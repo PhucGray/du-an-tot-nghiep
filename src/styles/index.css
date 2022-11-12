@@ -6,6 +6,13 @@ body {
   min-height: 100vh;
   width: 100vw;
   overflow: auto;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+}
+
+button {
+  font-weight: 700 !important;
+  border-radius: 10px !important;
 }
 
 .ant-btn-loading-icon {
@@ -36,4 +43,25 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.ant-menu-sub.ant-menu-inline {
+  background: transparent !important;
+}
+
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  background: #5ab1ff !important;
+}
+
+.ant-menu-item-selected {
+  color: #fff !important;
+}
+
+.ant-input, .ant-input-affix-wrapper {
+  border-radius: 10px !important;
+}
+
+.ant-table-thead > tr > th {
+  background-color: #0099ff !important;
+  color: #fff !important;
 }

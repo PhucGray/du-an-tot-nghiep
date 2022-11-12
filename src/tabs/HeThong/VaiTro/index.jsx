@@ -77,10 +77,10 @@ export default () => {
 
         setList(list);
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setGetListLoading(false);
     }
@@ -114,10 +114,10 @@ export default () => {
           getTransferData(subList, selectedList);
         }
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setGetSubListLoading(false);
     }
@@ -132,10 +132,10 @@ export default () => {
         message.success(res.data?.retText);
         form.resetFields(["itemName"]);
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setAddLoading(false);
     }
@@ -149,10 +149,10 @@ export default () => {
         message.success(res.data?.retText);
         handleGetList();
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
     }
   };
@@ -170,10 +170,10 @@ export default () => {
         handleGetList();
         setModalEditVisible(false);
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setEditLoading(false);
     }
@@ -240,10 +240,10 @@ export default () => {
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setAddSubLoading(false);
     }

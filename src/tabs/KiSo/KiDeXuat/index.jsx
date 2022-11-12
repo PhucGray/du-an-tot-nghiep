@@ -66,10 +66,10 @@ const KiDeXuat = () => {
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         setList_1(res.data?.data);
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setGetListLoading(false);
     }
@@ -84,10 +84,10 @@ const KiDeXuat = () => {
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         setList_2(res.data?.data);
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setGetListLoading(false);
     }
@@ -102,10 +102,10 @@ const KiDeXuat = () => {
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         setList_3(res.data?.data);
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setGetListLoading(false);
     }
@@ -120,10 +120,10 @@ const KiDeXuat = () => {
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         setList_4(res.data?.data);
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setGetListLoading(false);
     }
@@ -165,10 +165,10 @@ const KiDeXuat = () => {
             break;
         }
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setAddLoading(false);
     }

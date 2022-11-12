@@ -140,10 +140,10 @@ export default () => {
           );
         }
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setGetListLoading(false);
     }
@@ -155,10 +155,10 @@ export default () => {
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         setListNguoiCanDuyet(res.data?.data);
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
     }
   };
@@ -202,7 +202,7 @@ export default () => {
         form.resetFields();
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setThemNguoiDungDuyetLoading(false);
       setChange1(false);
@@ -235,7 +235,7 @@ export default () => {
         setCurrentUserDetail(transformUser(res.data?.data));
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setThemNguoiDungDuyetLoading(false);
       setChange1(false);
@@ -252,10 +252,10 @@ export default () => {
         getListThongSo();
         getListNguoiDungCanDuyet();
       } else {
-        message.error(LOI);
+        //message.error(LOI);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     }
   };
 

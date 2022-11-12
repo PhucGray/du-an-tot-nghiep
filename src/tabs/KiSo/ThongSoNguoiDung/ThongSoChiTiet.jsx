@@ -113,7 +113,7 @@ const _Modal = ({
         message.error(res.data?.retText);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setSubmitLoading(false);
     }
@@ -150,7 +150,7 @@ const _Modal = ({
         message.error(res.data?.retText);
       }
     } catch (error) {
-      message.error(LOI_HE_THONG);
+      //message.error(LOI_HE_THONG);
     } finally {
       setSubmitLoading(false);
     }

@@ -52,7 +52,7 @@ axiosInstance.interceptors.request.use(
     config.headers = {
       Authorization: `Bearer ${JSON.parse(savedNguoiDung?.token)}`,
       // Accept: "application/json",
-      // "Content-Type": "application/json",
+      "Content-Type": "application/json",
     };
     return config;
   },

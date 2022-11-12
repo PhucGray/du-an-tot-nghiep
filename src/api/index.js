@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL } from "../configs/api";
+import { API_URL, API_DOMAIN } from "../configs/api";
 
 const axiosInstance = axios.create({ baseURL: API_URL });
 
@@ -51,7 +51,7 @@ axiosInstance.interceptors.request.use(
     // const keys = JSON.parse(value);
     config.headers = {
       Authorization: `Bearer ${JSON.parse(savedNguoiDung?.token)}`,
-      // Accept: "application/json",
+      'Access-Control-Allow-Origin': API_DOMAIN,
       "Content-Type": "application/json",
     };
     return config;

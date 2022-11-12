@@ -47,12 +47,12 @@ const SignIn = () => {
   };
 
   useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/posts', {
+    fetch('https://apidevv2.stnhd.com/api/vi-VN/User/Login', {
   method: 'POST',
   body: JSON.stringify({
-    title: 'foo',
-    body: 'bar',
-    userId: 1,
+    "userName": "p700@gmail.com",
+    "password": "000000",
+    "appName": "5PTB"
   }),
   headers: {
     'Content-type': 'application/json; charset=UTF-8',

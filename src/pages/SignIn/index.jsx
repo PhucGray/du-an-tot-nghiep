@@ -1,7 +1,7 @@
 import "../../styles/auth.scss";
 import "../../styles/common.scss";
 
-import React from "react";
+import React, {useEffect} from "react";
 import { Button, Checkbox, Form, Input, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -45,6 +45,12 @@ const SignIn = () => {
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/todos/1')
+    .then(response => response.json())
+    .then(json => console.log(json))
+  }, []);
 
   return (
     <div className="d-flex">

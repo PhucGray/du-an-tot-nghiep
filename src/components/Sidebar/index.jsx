@@ -31,7 +31,7 @@ function getItem(label, key, icon, children, type) {
 }
 
 const items = [
-  getItem("Ký số 123", "ki-so", <EditOutlined />, [
+  getItem("Ký số", "ki-so", <EditOutlined />, [
     getItem("Văn bản", TAB.VAN_BAN, <HiOutlineDocumentText />),
     getItem("Ký số chờ duyệt", TAB.KI_CHO_DUYET, <RiMapPinTimeLine />),
     getItem("Ký số đề xuất", TAB.KI_DE_XUAT, <FaRegLightbulb />),

@@ -12,7 +12,7 @@ import * as TAB from "../../constants/tab";
 import { useLocation } from "react-router-dom";
 import {HiOutlineDocumentText} from 'react-icons/hi'
 import {FaRegLightbulb} from 'react-icons/fa'
-import {RiMapPinTimeLine,RiUserSettingsLine, RiLockPasswordLine} from 'react-icons/ri'
+import {RiMapPinTimeLine,RiUserSettingsLine, RiLockPasswordLine, RiQrCodeLine} from 'react-icons/ri'
 import {FiUsers} from 'react-icons/fi'
 import {BsSliders} from 'react-icons/bs'
 import {MdOutlineSubtitles} from 'react-icons/md'
@@ -44,8 +44,7 @@ const items = [
     getItem("Phòng ban", TAB.PHONG_BAN, <TbBuildingWarehouse />),
     getItem("Chức danh", TAB.CHUC_DANH, <MdOutlineSubtitles />),
     getItem("Vai trò", TAB.VAI_TRO, <RiUserSettingsLine />),
-    // getItem("Quyền", TAB.QUYEN),
-    // getItem("Ký thử", TAB.KI_THU),
+    getItem("Mã QR", TAB.QR, <RiQrCodeLine />),
   ]),
   getItem("Thông tin", "thong-tin", <SolutionOutlined />, [
     getItem("Cá nhân", TAB.CA_NHAN, <BsInfoCircle />),

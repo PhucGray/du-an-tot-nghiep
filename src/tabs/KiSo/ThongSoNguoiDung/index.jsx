@@ -200,6 +200,9 @@ export default () => {
         getListThongSo();
         message.success(res.data?.retText);
         form.resetFields();
+        setHinh1(null)
+        setHinh2(null)
+        setHinh3(null)
       }
     } catch (error) {
       //message.error(LOI_HE_THONG);

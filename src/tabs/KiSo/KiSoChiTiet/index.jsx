@@ -275,7 +275,7 @@ const KiSoChiTiet = () => {
   const [modalDeXuatVisible, setModalDeXuatVisible] = useState(false);
 
   const handleSuaDeXuat = async (values) => {
-    if (!KSDXData?.inputFile) return setFileError(" Vui lòng nhập chọn file");
+    if (!file) return setFileError(" Vui lòng nhập chọn file");
 
     const data = {
       ...values,
@@ -284,7 +284,6 @@ const KiSoChiTiet = () => {
       ma_KySoDeXuat: KSDXData?.ma_KySoDeXuat,
       ten_FileGoc: fileName
     };
-
     setSuaDeXuatLoading(true);
 
     try {
@@ -299,8 +298,9 @@ const KiSoChiTiet = () => {
         setModalDeXuatVisible(false);
 
         getKSDX();
-    getDsBuocDuyet();
-    getDsNguoiDungDuyet();
+        getDsBuocDuyet();
+        getDsNguoiDungDuyet();
+        inputFileRef.current.value = null;
       } else {
         //message.error(LOI);
       }
@@ -444,60 +444,6 @@ const KiSoChiTiet = () => {
     )
   }
 
-  const columns_2 = [
-    {
-      title: "STT",
-      dataIndex: "stt",
-      key: "stt",
-    },
-    {
-      title: "Người duyệt",
-      dataIndex: "hoTen",
-      key: "hoTen",
-    },
-
-    {
-      title: "Trạng thái",
-      dataIndex: "trangThai",
-      key: "trangThai",
-      render: (_, record) => (
-        <div className="d-flex align-items-center gap-2">
-          {_ ? (
-            <>
-              <CheckCircleTwoTone twoToneColor="#52c41a" />
-              <div>Đã thực hiện</div>
-            </>
-          ) : (
-            <>
-              <ClockCircleTwoTone />
-              <div>Chưa thực hiện</div>
-            </>
-          )}
-        </div>
-      ),
-    },
-
-    {
-      title: "",
-      dataIndex: "hanhDong",
-      key: "hanhDong",
-      render: (_, record) => (
-        <>
-          {
-           !daChuyenDuyet &&  <Popconfirm
-            title="Bạn có chắc chắn muốn xoá?"
-            onConfirm={() => handleXoaBuocDuyet(record)}
-            okText="Đồng ý"
-            cancelText="Thoát">
-            <Button icon={<DeleteOutlined />} />
-          </Popconfirm>
-          }
-        </>
-      ),
-    },
-  ];
-
-  // console.log(dsBuocDuyet)
   const columns_33 = [
     {
       title: "Người thực hiện",
@@ -672,7 +618,7 @@ const KiSoChiTiet = () => {
             </Form.Item>
             <Form.Item>
               <Button
-                loading={suaDeXuatLoading}
+                loading={suaDeXuatLoading || uploading}
                 type="primary"
                 htmlType="submit">
                 Đồng ý
@@ -853,12 +799,6 @@ const KiSoChiTiet = () => {
               Thêm bước
             </Button>
 
-            {/* <Table
-              loading={false}
-              columns={columns_2}
-              dataSource={dsBuocDuyet}
-              pagination={{ defaultPageSize: 5 }}
-            /> */}
             {dsBuocDuyet.map(
               (item, index) => 
               //

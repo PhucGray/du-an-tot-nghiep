@@ -9,6 +9,7 @@ export const NGUOI_DUNG = "nguoi-dung";
 // export const CHI_TIET_NGUOI_DUNG = "chi-tiet-nguoi-dung";
 export const KI_THU = "ki-thu";
 export const PHAN_NHOM = "phan-nhom";
+export const QR = 'ma-qr'
 
 export const PHONG_BAN = "phong-ban";
 export const CHUC_DANH = "chuc-danh";

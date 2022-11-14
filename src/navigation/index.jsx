@@ -22,6 +22,7 @@ import CaNhan from "../tabs/ThongTin/CaNhan";
 import MatKhau from "../tabs/ThongTin/MatKhau";
 import KiSoChiTiet from "../tabs/KiSo/KiSoChiTiet";
 import Haha from "../tabs/Haha";
+import MaQR from "../tabs/HeThong/QR";
 
 const Navigation = () => {
   const nguoiDung = useSelector(nguoiDungSelector);
@@ -67,6 +68,7 @@ const Navigation = () => {
         <Route path={TAB.PHONG_BAN + "/detail/:id"} element={<PhongBan />} />
         <Route path={TAB.CHUC_DANH} element={<ChucDanh />} />
         <Route path={TAB.VAI_TRO} element={<VaiTro />} />
+        <Route path={TAB.QR} element={<MaQR />} />
 
         <Route path={TAB.CA_NHAN} element={<CaNhan />} />
         <Route path={TAB.MAT_KHAU} element={<MatKhau />} />

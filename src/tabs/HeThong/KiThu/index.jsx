@@ -74,6 +74,7 @@ const KiThu = () => {
   const _file_ = localStorage.getItem('ki-that')
   const navigate = useNavigate()
 
+
   const nguoiDung  = useSelector(nguoiDungSelector)
 
   const [nguoiDungKi, setNguoiDungKi] = useState(null);
@@ -245,7 +246,7 @@ const KiThu = () => {
 
       if(isKiThat) {
         const res = await kyThatSvc({
-          inputFile: _file_,
+          inputFile: API_DOMAIN + _file_,
           id_NguoiDung: nguoiDung?.ma_NguoiDung,
           postPositionSigns: [...finalImages, ...finalTexts],
           ma_BuocDuyet: parseInt(isNaN(params?.id) ? '0' : params?.id)
@@ -354,7 +355,7 @@ const KiThu = () => {
   }
    useEffect(()=>{
     if(isKiThat && !!_file_) {
-      aaaa(_file_)
+      aaaa( API_DOMAIN + _file_)
     }
   },[isKiThat, _file_])
 

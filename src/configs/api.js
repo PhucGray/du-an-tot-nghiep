@@ -1,4 +1,5 @@
-export const BASE_REAL = 'http://sonnguyen0803-001-site1.btempurl.com/'
+// export const BASE_REAL = 'http://sonnguyen0803-001-site1.btempurl.com/'
+export const BASE_REAL = 'http://apichukysoflames.xyz/'
 export const BASE_LOCAL = 'https://localhost:44388/'
 
 export const API_URL = BASE_LOCAL + 'api';

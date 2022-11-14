@@ -2,8 +2,8 @@
 export const BASE_REAL = 'http://apichukysoflames.xyz/'
 export const BASE_LOCAL = 'https://localhost:44388/'
 
-export const API_URL = BASE_REAL + 'api';
-export const API_DOMAIN = BASE_REAL;
+export const API_URL = BASE_LOCAL + 'api';
+export const API_DOMAIN = BASE_LOCAL;
 
 // Authentication
 export const DANG_NHAP = "Token/login";

@@ -46,21 +46,21 @@ const SignIn = () => {
     console.log("Failed:", errorInfo);
   };
 
-  useEffect(() => {
-    fetch('https://apidevv2.stnhd.com/api/vi-VN/User/Login', {
-  method: 'POST',
-  body: JSON.stringify({
-    "userName": "p700@gmail.com",
-    "password": "000000",
-    "appName": "5PTB"
-  }),
-  headers: {
-    'Content-type': 'application/json; charset=UTF-8',
-  },
-})
-  .then((response) => response.json())
-  .then((json) => console.log(json));
-  }, []);
+//   useEffect(() => {
+//     fetch('https://apidevv2.stnhd.com/api/vi-VN/User/Login', {
+//   method: 'POST',
+//   body: JSON.stringify({
+//     "userName": "p700@gmail.com",
+//     "password": "000000",
+//     "appName": "5PTB"
+//   }),
+//   headers: {
+//     'Content-type': 'application/json; charset=UTF-8',
+//   },
+// })
+//   .then((response) => response.json())
+//   .then((json) => console.log(json));
+//   }, []);
 
   return (
     <div className="d-flex">

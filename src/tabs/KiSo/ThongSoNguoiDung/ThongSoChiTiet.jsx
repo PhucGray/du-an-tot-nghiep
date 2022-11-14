@@ -91,6 +91,8 @@ const _Modal = ({
       break;
   }
 
+  const [cauhinhType, setCauhinhType] = useState(0);
+
   const [submitLoading, setSubmitLoading] = useState(false);
 
   const handleDoiPasscode = async (values) => {
@@ -156,6 +158,10 @@ const _Modal = ({
     }
   };
 
+  const handleSmartSign = () => {
+
+  }
+
   return (
     <Modal
       getListThongSo={getListThongSo}
@@ -169,8 +175,8 @@ const _Modal = ({
       <Form
         form={form}
         name="suapassword"
-        onFinish={type === PASSCODE ? handleDoiPasscode : handleDoiCauHinh}
-        initialValues={{ loaiChuKy: true }}
+        onFinish={type === PASSCODE ? handleDoiPasscode : (cauhinhType === 0 ? handleDoiCauHinh : handleSmartSign)}
+        initialValues={{ loaiChuKy: 0 }}
         autoComplete="off"
         layout={type === PASSCODE ? "vertical" : "horizontal"}>
         {type === PASSCODE && (
@@ -209,27 +215,79 @@ const _Modal = ({
               labelCol={{
                 span: 5,
               }}>
-              <Radio.Group defaultValue={true}>
-                <Radio value={true}>File chữ ký</Radio>
-                <Radio value={false}>SmartSign VNPT</Radio>
+              <Radio.Group onChange={e => {
+                setCauhinhType(e.target.value)
+              }}>
+                <Radio checked value={0}>File chữ ký</Radio>
+                <Radio value={1}>SmartSign VNPT</Radio>
               </Radio.Group>
             </Form.Item>
 
-            {/* <Form.Item
-              labelCol={{
-                span: 5,
-              }}
-              name="pfx"
-              label="Chọn file"
-              valuePropName="fileList">
-              <Upload name="logo" listType="picture">
-                <Button
-                  className="d-flex align-items-center"
-                  icon={<UploadOutlined />}>
-                  Thêm file
-                </Button>
-              </Upload>
-            </Form.Item> */}
+           {cauhinhType === 1 &&  <>
+              <Form.Item
+                label="Client id"
+                name="client_id"
+                labelCol={{
+                  span: 7,
+                }}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập client id!",
+                  },
+                ]}>
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="Client secret"
+                name="client_secret"
+                labelCol={{
+                  span: 7,
+                }}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập client secret!",
+                  },
+                ]}>
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="Customer email"
+                name="customerEmail"
+                labelCol={{
+                  span: 7,
+                }}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập customer email!",
+                  },
+                ]}>
+                <Input />
+
+             
+              </Form.Item>
+
+              <Form.Item
+                label="Customer pass"
+                name="customerPass"
+                labelCol={{
+                  span: 7,
+                }}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập customer pass",
+                  },
+                ]}>
+                <Input />
+              </Form.Item>
+            </>}
+
+           {cauhinhType === 0 && <>
             <div className="ms-3 d-flex flex-column" style={{ marginTop: -10 }}>
               <div className="d-flex align-items-center">
                 <Button
@@ -264,6 +322,7 @@ const _Modal = ({
               ]}>
               <Input.Password />
             </Form.Item>
+            </>}
           </>
         )}
 

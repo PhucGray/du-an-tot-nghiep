@@ -38,13 +38,14 @@ const items = [
     getItem("Thông số người dùng", TAB.THONG_SO_NGUOI_DUNG, <BsSliders />),
     // getItem("Thông số đơn vị", TAB.THONG_SO_DON_VI),
     // getItem("Kí số chi tiết", TAB.KI_SO_CHI_TIET),
+    getItem("Mã QR", TAB.QR, <RiQrCodeLine />),
+
   ]),
   getItem("Hệ thống", "he-thong", <SettingOutlined />, [
     getItem("Người dùng", TAB.NGUOI_DUNG, <FiUsers />),
     getItem("Phòng ban", TAB.PHONG_BAN, <TbBuildingWarehouse />),
     getItem("Chức danh", TAB.CHUC_DANH, <MdOutlineSubtitles />),
     getItem("Vai trò", TAB.VAI_TRO, <RiUserSettingsLine />),
-    getItem("Mã QR", TAB.QR, <RiQrCodeLine />),
   ]),
   getItem("Thông tin", "thong-tin", <SolutionOutlined />, [
     getItem("Cá nhân", TAB.CA_NHAN, <BsInfoCircle />),

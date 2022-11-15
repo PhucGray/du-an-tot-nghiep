@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Radio, Upload, message, Table } from "antd";
+import { Button, Form, Input, Modal, Radio, Upload, message, Table, Checkbox } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import {
   EditOutlined,
@@ -132,16 +132,12 @@ const _Modal = ({
       ...values,
       ma_NguoiDung: detailData?.ma_NguoiDung,
       filePfx: filePfxUrl,
+      loaiChuKy: true
     };
-
-    console.log(data);
 
     try {
       const res = await suaCauHinhPfxSvc(data);
 
-      // console.log(data);
-      // console.log(res.data);
-      //
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
         form.resetFields();
@@ -152,14 +148,35 @@ const _Modal = ({
         message.error(res.data?.retText);
       }
     } catch (error) {
-      //message.error(LOI_HE_THONG);
     } finally {
       setSubmitLoading(false);
     }
   };
 
-  const handleSmartSign = () => {
+  const handleSmartSign = async (values) => {
+    setSubmitLoading(true);
 
+    const data = {
+      ...values,
+      ma_NguoiDung: detailData?.ma_NguoiDung,
+      loaiChuKy: false
+    };
+
+    try {
+      const res = await suaCauHinhPfxSvc(data);
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+        form.resetFields();
+        setCurrentUserDetail(transformUser(res.data?.data));
+        onClose();
+      } else {
+        message.error(res.data?.retText);
+      }
+    } catch (error) {
+    } finally {
+      setSubmitLoading(false);
+    }
   }
 
   return (
@@ -226,7 +243,7 @@ const _Modal = ({
            {cauhinhType === 1 &&  <>
               <Form.Item
                 label="Client id"
-                name="client_id"
+                name="client_ID"
                 labelCol={{
                   span: 7,
                 }}
@@ -241,7 +258,7 @@ const _Modal = ({
 
               <Form.Item
                 label="Client secret"
-                name="client_secret"
+                name="client_Secret"
                 labelCol={{
                   span: 7,
                 }}
@@ -255,15 +272,15 @@ const _Modal = ({
               </Form.Item>
 
               <Form.Item
-                label="Customer email"
-                name="customerEmail"
+                label="Uid"
+                name="uid"
                 labelCol={{
                   span: 7,
                 }}
                 rules={[
                   {
                     required: true,
-                    message: "Vui lòng nhập customer email!",
+                    message: "Vui lòng nhập uid!",
                   },
                 ]}>
                 <Input />
@@ -273,7 +290,7 @@ const _Modal = ({
 
               <Form.Item
                 label="Customer pass"
-                name="customerPass"
+                name="passwordSmartSign"
                 labelCol={{
                   span: 7,
                 }}
@@ -283,7 +300,17 @@ const _Modal = ({
                     message: "Vui lòng nhập customer pass",
                   },
                 ]}>
-                <Input />
+                <Input.Password />
+              </Form.Item>
+
+              <Form.Item
+                 label="Display valid"
+                 name="isDislayValid"
+                 valuePropName="checked"
+                 labelCol={{
+                   span: 7,
+                 }}>
+                <Checkbox> </Checkbox>
               </Form.Item>
             </>}
 

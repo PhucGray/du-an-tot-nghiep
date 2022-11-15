@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Form, Input, Modal, Table, Button, message } from "antd";
+import { Form, Input, Modal, Table, Button, message, Popconfirm } from "antd";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
 import { PlusOutlined, CloudUploadOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { nguoiDungSelector } from "../../../store/auth/selectors";
 import { RETCODE_SUCCESS, SUCCESS } from "../../../constants/api";
-import {themVanBanSvc} from '../../../store/vanban/services'
+import {getListVanBan, suaVanBanSvc, themVanBanSvc, xoaVanBanSvc} from '../../../store/vanban/services'
+import moment from "moment";
 const {TextArea} = Input 
 
 const VanBan = () => {
@@ -17,6 +18,10 @@ const VanBan = () => {
   const [fileError, setFileError] = useState(false);
   const [fileName, setFileName] = useState("");
   const [addLoading, setAddLoading] = useState(false)
+  const [getListLoading, setGetListLoading] = useState(false);
+  const [editedVanBan, setEditedVanBan] = useState(null)
+
+  const [list, setList] = useState([])
 
   const [form] = Form.useForm();
 
@@ -40,6 +45,21 @@ const VanBan = () => {
     //   ),
     // );
   };
+
+  const handleGetList = async () => {
+    setGetListLoading(true)
+    try {
+      const res = await getListVanBan();
+
+      if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        setList(res.data?.data?.map((item, index) => ({...item, stt: index+1})))
+      }
+    } catch (error) {
+      
+    } finally {
+      setGetListLoading(false)
+    }
+  }
   
   const handleThemVanBan = async (values) => {
     setAddLoading(true);
@@ -62,7 +82,6 @@ const VanBan = () => {
 
       // console.log(data)
       const res = await themVanBanSvc(data)
-      console.log(res.data)
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText)
         form.resetFields();
@@ -71,6 +90,7 @@ const VanBan = () => {
         setFileName('')
         setIsModalOpen(false)
         inputFileRef.current.value = null;
+        handleGetList();
       } else {
 
       }
@@ -84,6 +104,62 @@ const VanBan = () => {
      }
   }
 
+  const handleSuaVanBan = async () => {
+    setAddLoading(true);
+    try {
+      let data;
+      if(url) {
+        data = {
+          ...editedVanBan,
+          ma_NguoiTao: nguoiDung?.ma_NguoiDung,
+          file: url
+        }
+      } else {
+        data = {
+          ...editedVanBan,
+          ma_NguoiTao: nguoiDung?.ma_NguoiDung,
+        }
+      }
+
+
+
+      // console.log(data)
+      const res = await suaVanBanSvc(data)
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText)
+        form.resetFields();
+        setFile(null)
+        resetFile();
+        setFileName('')
+        setIsModalOpen(false)
+        inputFileRef.current.value = null;
+        handleGetList();
+        setEditedVanBan(false)
+      } else {
+
+      }
+
+      
+    } catch (error) {
+      
+    } 
+     finally {
+      setAddLoading(false)
+     }
+  }
+
+  const handleDeleteVanBan = async (vanban) => {
+    // console.log(vanban)
+    try {
+      const res = await xoaVanBanSvc({id: vanban?.ma_VanBan})
+
+      handleGetList();
+      message.success(res.data?.retText)
+    } catch (error) {
+      
+    }
+  }
+
   const columns = [
     {
       title: "STT",
@@ -92,13 +168,16 @@ const VanBan = () => {
     },
     {
       title: "Mã số",
-      dataIndex: "maSo",
-      key: "maSo",
+      dataIndex: "ma_VanBan",
+      key: "ma_VanBan",
     },
     {
       title: "Ngày nhận",
-      dataIndex: "ngayNhan",
-      key: "ngayNhan",
+      dataIndex: "ngayTao",
+      key: "ngayTao",
+      render: (_, record) => {
+        return <>{moment(record).format('DD/MM/YYYY')}</>
+      }
     },
     {
       title: "Chủ đề",
@@ -107,8 +186,35 @@ const VanBan = () => {
     },
     {
       title: "Loại văn bản",
-      dataIndex: "loaiVB",
-      key: "loaiVB",
+      dataIndex: "loaiVanBan",
+      key: "loaiVanBan",
+    },
+    {
+      title: "Hành động",
+      key: "hanhDong",
+      render: (_, record) => (
+        <div>
+          <div>
+            <Button
+              onClick={() => {
+                setEditedVanBan(record);
+                form.setFieldValue('chuDe', record?.chuDe)
+                form.setFieldValue('loaiVanBan', record?.loaiVanBan)
+              }}
+              type="link">
+              Sửa
+            </Button>
+            <Button type="link">Chi tiết</Button>
+            <Popconfirm
+              title="Bạn có chắc chắn muốn xoá?"
+              onConfirm={() => handleDeleteVanBan(record)}
+              okText="Đồng ý"
+              cancelText="Thoát">
+              <Button type="link">Xoá</Button>
+            </Popconfirm>
+          </div>
+        </div>
+      ),
     },
   ];
 
@@ -124,6 +230,10 @@ const VanBan = () => {
       setFile(null);
     }
   }, [url]);
+
+  useEffect(() => {
+    handleGetList()
+  }, []);
 
   return (
     <div>
@@ -157,17 +267,18 @@ const VanBan = () => {
 
          <Modal
         title={"Thêm văn bản"}
-        open={isModalOpen}
+        open={isModalOpen || !!editedVanBan}
         onOk={() => {}}
         onCancel={() => {
           setIsModalOpen(false);
           form.resetFields();
+          setEditedVanBan(null)
         }}
         footer={null}>
         <Form
           form={form}
           name="suathongso"
-          onFinish={handleThemVanBan}
+          onFinish={!!editedVanBan ? handleSuaVanBan:  handleThemVanBan}
           autoComplete="off">
           <Form.Item
             labelCol={{
@@ -257,8 +368,9 @@ const VanBan = () => {
           <Button type="primary" onClick={() => setIsModalOpen(true)}>Thêm văn bản</Button>
         </div>
         <Table
+          loading={getListLoading}
           columns={columns}
-          dataSource={[]}
+          dataSource={list}
           pagination={{ defaultPageSize: 5 }}
         />
       </div>

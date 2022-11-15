@@ -17,13 +17,22 @@ const SignIn = () => {
   const navigate = useNavigate();
   const [submitLoading, setSubmitLoading] = useState(false);
 
+  const remember = !!localStorage.getItem('remember')
+
+  // console.log(localStorage.getItem('rememberUser'))
+  const rememberUser = JSON.parse(localStorage.getItem('rememberUser'))
+
   const onFinish = async (values) => {
     setSubmitLoading(true);
     try {
       const res = await dangNhap(values);
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
-        // console.log(res.data?.data);
+        if(values.remember) {
+          localStorage.setItem('rememberUser', JSON.stringify(values))
+        } else {
+          localStorage.removeItem('rememberUser');
+        }
 
         const token = res.data?.data?.token;
         api.defaults.headers.common = {
@@ -88,9 +97,7 @@ const SignIn = () => {
         <Form
           className="form"
           name="basic"
-          initialValues={{
-            remember: true,
-          }}
+          initialValues={rememberUser ? {...rememberUser} : {}}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -134,8 +141,10 @@ const SignIn = () => {
           </Form.Item>
 
           <div className="d-flex justify-content-between">
-            <Form.Item name="remember">
-              <Checkbox>Ghi nhớ đăng nhập</Checkbox>
+            <Form.Item name="remember" valuePropName="checked">
+              <Checkbox onChange={e => {
+              
+              }}>Ghi nhớ đăng nhập</Checkbox>
             </Form.Item>
 
             <Link to="forgot-password">Quên mật khẩu ?</Link>

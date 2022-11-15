@@ -31,7 +31,6 @@ const MainLayout = () => {
     dispatch(clearNguoiDung());
     setModalLogoutVisible(false);
     navigate('/', {replace: true});
-    window.location.reload();
   };
 
   const onTabClick = (e) => {

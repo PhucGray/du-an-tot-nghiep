@@ -10,7 +10,6 @@ const initState = {
 const Reducer = (state = initState, action = {}) => {
   switch (action.type) {
     case Actions.SET_NGUOI_DUNG:
-      console.log({ ...state, ...action?.payload });
       return { ...state, ...action?.payload };
     case Actions.CLEAR_NGUOI_DUNG:
       return initState;

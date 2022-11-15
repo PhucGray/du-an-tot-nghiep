@@ -74,7 +74,6 @@ const KiThu = () => {
   const _file_ = localStorage.getItem('ki-that')
   const navigate = useNavigate()
 
-
   const nguoiDung  = useSelector(nguoiDungSelector)
 
   const [nguoiDungKi, setNguoiDungKi] = useState(null);
@@ -316,7 +315,7 @@ const KiThu = () => {
 
   const handleGetThongSo = async () => {
     try {
-      const res = await getThongSoNguoiDungSvc({ id: nguoiDung?.ma_NguoiDung });
+      const res = await getThongSoNguoiDungSvc({ id:isKiThat ?  nguoiDung?.ma_NguoiDung : params?.id });
       setNguoiDungKi(res.data?.data);
     } catch (error) {}
   };

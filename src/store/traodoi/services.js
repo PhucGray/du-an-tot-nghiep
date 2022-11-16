@@ -9,10 +9,10 @@ export const getTraoDoiSvc = ({id}) => {
   return api.get(API.TRAO_DOI_CHI_TIET + '/' + id);
 } 
 
-export const themVanBanSvc = (payload) => {
+export const themTraoDoiSvc = (payload) => {
   return api.post(API.TRAO_DOI, payload);
 };
 
-export const xoaVanBanSvc = ({id}) => {
+export const xoaTraoDoiSvc = ({id}) => {
   return api.delete(API.TRAO_DOI + '/' + id);
 };

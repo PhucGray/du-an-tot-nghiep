@@ -27,7 +27,9 @@ import {
   FilePdfTwoTone,
   CheckCircleTwoTone,
   ClockCircleTwoTone,
-  CloseCircleTwoTone
+  CloseCircleTwoTone,
+  FileOutlined,
+  FileTwoTone
 } from "@ant-design/icons";
 import { textToCharacter } from "../../../utils/strings";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
@@ -61,8 +63,14 @@ import { kiemTraPasscodeSvc } from "../../../store/kyso/services";
 import { useSelector } from "react-redux";
 import { nguoiDungSelector } from "../../../store/auth/selectors";
 import { logDeXuatSvc } from "../../../store/log/service";
+import {
+  getListTraoDoiSvc,
+  themTraoDoiSvc,
+  xoaTraoDoiSvc,
+} from "../../../store/traodoi/services";
 import moment from "moment";
-import {API_DOMAIN} from '../../../configs/api'
+import { API_DOMAIN } from "../../../configs/api";
+import vi from "moment/locale/vi";
 const { TextArea } = Input;
 const VUI_LONG_CHON_FILE = "Vui lòng chọn file pfx";
 
@@ -105,10 +113,10 @@ const KiSoChiTiet = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const nguoiDung = useSelector(nguoiDungSelector)
-  const pageChiTietKyChoDuyet = location.pathname.includes('ki-cho-duyet/detail')
-
-  const data = null;
+  const nguoiDung = useSelector(nguoiDungSelector);
+  const pageChiTietKyChoDuyet = location.pathname.includes(
+    "ki-cho-duyet/detail",
+  );
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(CAU_HINH);
@@ -117,23 +125,32 @@ const KiSoChiTiet = () => {
   const [fileName, setFileName] = useState("");
   const [fileError, setFileError] = useState("");
 
+  const [fileTraoDoi, setFileTraoDoi] = useState(null);
+  const [fileTraoDoiName, setFileTraoDoiName] = useState("");
+  const [fileTraoDoiError, setFileTraoDoiError] = useState("");
+
+  const [listTraoDoi, setListTraoDoi] = useState([]);
+
   const [KSDXData, setKSDXData] = useState(null);
   const [dsBuocDuyet, setDsBuocDuyet] = useState([]);
   const [dsNguoiDungDuyet, setDsNguoiDungDuyet] = useState([]);
   const [themBuocLoading, seThemBuocLoading] = useState(false);
   const [modalBuocDuyetVisible, setModalBuocDuyetVisible] = useState(false);
-  const [modalPasscodeVisible, setModalPasscodeVisible] = useState(false)
+  const [modalPasscodeVisible, setModalPasscodeVisible] = useState(false);
 
   const [suaDeXuatLoading, setSuaDeXuatLoading] = useState(false);
-  const [chuyenDuyetLoading, setChuyenDuyetLoading] = useState(false)
-  const [submitPasscodeLoading, setSubmitPasscodeLoading] = useState(false)
+  const [chuyenDuyetLoading, setChuyenDuyetLoading] = useState(false);
+  const [submitPasscodeLoading, setSubmitPasscodeLoading] = useState(false);
+  const [addTraoDoiLoading, setAddTraoDoiLoading] = useState(false);
 
   const daChuyenDuyet = KSDXData?.trangThai;
 
-  const buocDuyetHienTai = KSDXData?.kySoBuocDuyets?.find(item => item?.order === KSDXData?.curentOrder)
+  const buocDuyetHienTai = KSDXData?.kySoBuocDuyets?.find(
+    (item) => item?.order === KSDXData?.curentOrder,
+  );
 
-  const isNguoiKyHienTai = buocDuyetHienTai?.ma_NguoiKy === nguoiDung?.ma_NguoiDung
-
+  const isNguoiKyHienTai =
+    buocDuyetHienTai?.ma_NguoiKy === nguoiDung?.ma_NguoiDung;
 
   const {
     percent,
@@ -143,37 +160,47 @@ const KiSoChiTiet = () => {
     resetFile,
   } = useUploadFileToFireBase({ file });
 
+  const {
+    percent: percenterTraoDoi,
+    uploading: uploadingTraoDoi,
+    uploadFile: uploadToFirebaseTraoDoi,
+    url: urlTraoDoi,
+    resetFile: resetFileTraoDoi,
+  } = useUploadFileToFireBase({ file: fileTraoDoi });
+
   const inputFileRef = useRef();
+  const inputTraoDoiRef = useRef();
 
   const [form] = Form.useForm();
   const [formDeXuat] = Form.useForm();
   const [formPasscode] = Form.useForm();
+  const [formTraoDoi] = Form.useForm();
 
-  const handleKiemTraPasscode = async values => {
+  const handleKiemTraPasscode = async (values) => {
     const data = {
       ma_NguoiKy: nguoiDung?.ma_NguoiDung,
-      passcode: values?.passcode
-    }
+      passcode: values?.passcode,
+    };
 
     try {
       setSubmitPasscodeLoading(true);
 
       const res = await kiemTraPasscodeSvc(data);
 
-      console.log(KSDXData)
+      console.log(KSDXData);
 
-      if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
-        localStorage.setItem('ki-that', KSDXData?.inputFile)
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        localStorage.setItem("ki-that", KSDXData?.inputFile);
         navigate("/ki-cho-duyet/ki-that/" + buocDuyetHienTai?.ma_BuocDuyet);
       } else {
-        message.error(res.data?.retText)
+        message.error(res.data?.retText);
       }
     } catch (error) {
       //message.error(LOI_HE_THONG)
     } finally {
-      setSubmitPasscodeLoading(false)
+      setSubmitPasscodeLoading(false);
     }
-  }
+  };
 
   const getKSDX = async () => {
     try {
@@ -181,13 +208,17 @@ const KiSoChiTiet = () => {
 
       const data = res.data?.data;
       // console.log(data)
-      setKSDXData({...data, tenFile: data?.inputFile, nguoiTao: data?.nguoiDung?.hoTen});
+      setKSDXData({
+        ...data,
+        tenFile: data?.inputFile,
+        nguoiTao: data?.nguoiDung?.hoTen,
+      });
 
       formDeXuat.setFieldValue("ten_DeXuat", data?.ten_DeXuat);
       formDeXuat.setFieldValue("loaiVanBan", data?.loaiVanBan);
       formDeXuat.setFieldValue("ghiChu", data?.ghiChu);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       //message.error(LOI);
     } finally {
     }
@@ -203,7 +234,7 @@ const KiSoChiTiet = () => {
             ...item,
             stt: index + 1,
             hoTen: item?.nguoiDung?.hoTen,
-            trangThai: item?.isDaKy
+            trangThai: item?.isDaKy,
           };
         }),
       );
@@ -236,9 +267,9 @@ const KiSoChiTiet = () => {
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
-    getDsBuocDuyet();
+        getDsBuocDuyet();
       } else {
-        message.error(res.data?.retText)
+        message.error(res.data?.retText);
       }
       // if(res.status === SUCCESS )
     } catch (error) {
@@ -252,9 +283,8 @@ const KiSoChiTiet = () => {
     try {
       const res = await xoaBuocDuyetSvc({ id: buocduyet?.ma_BuocDuyet });
 
-
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
-        message.success(res.data?.retText)
+        message.success(res.data?.retText);
         getDsBuocDuyet();
       }
     } catch (error) {
@@ -272,7 +302,18 @@ const KiSoChiTiet = () => {
     }
   };
 
+  const getListTraoDoi = async () => {
+    try {
+      const res = await getListTraoDoiSvc({ id: KSDXData?.ma_KySoDeXuat });
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        setListTraoDoi(res.data?.data);
+      }
+    } catch (error) {}
+  };
+
   const [modalDeXuatVisible, setModalDeXuatVisible] = useState(false);
+  const [modalTraoDoiVisible, setModalTraoDoiVisible] = useState(false);
 
   const handleSuaDeXuat = async (values) => {
     if (!file) return setFileError(" Vui lòng nhập chọn file");
@@ -282,7 +323,7 @@ const KiSoChiTiet = () => {
       inputFile: url || KSDXData?.inputFile,
       ma_NguoiDeXuat: KSDXData?.ma_NguoiDeXuat,
       ma_KySoDeXuat: KSDXData?.ma_KySoDeXuat,
-      ten_FileGoc: fileName
+      ten_FileGoc: fileName,
     };
     setSuaDeXuatLoading(true);
 
@@ -311,26 +352,77 @@ const KiSoChiTiet = () => {
     }
   };
 
-  const handleChuyenDuyet =  async () => {
-    setChuyenDuyetLoading(true)
-    try {
-      const res = await chuyenDuyetSvc({id: KSDXData?.ma_KySoDeXuat})
+  const handleAddTraoDoi = async (values) => {
+    const data = urlTraoDoi
+      ? {
+          ...values,
+          ma_DeXuat: KSDXData?.ma_KySoDeXuat,
+          ma_NguoiDung: nguoiDung?.ma_NguoiDung,
+          fileDinhKem: urlTraoDoi,
+        }
+      : {
+          ...values,
+          ma_DeXuat: KSDXData?.ma_KySoDeXuat,
+          ma_NguoiDung: nguoiDung?.ma_NguoiDung,
+        };
 
-      if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+    setAddTraoDoiLoading(true);
+    try {
+      const res = await themTraoDoiSvc(data);
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+        formTraoDoi.resetFields();
+        setFileTraoDoi(null);
+        resetFileTraoDoi();
+        setFileTraoDoiName("");
+        setModalTraoDoiVisible(false);
         getKSDX();
-    getDsBuocDuyet();
-    getDsNguoiDungDuyet();
-        message.success(res.data?.retText)
+        inputTraoDoiRef.current.value = null;
+        getListTraoDoi()
       } else {
-        message.error(res.data?.retText)
+      }
+    } catch (error) {
+    } finally {
+      setAddTraoDoiLoading(false);
+    }
+  };
+
+  const handleXoaTraoDoi = async (traoDoi) => {
+    try {
+      const res = await xoaTraoDoiSvc({id: traoDoi?.ma_Message});
+      message.success(res.data?.retText)
+      getListTraoDoi();
+    } catch (error) {
+      
+    }
+  }
+
+  const handleChuyenDuyet = async () => {
+    setChuyenDuyetLoading(true);
+    try {
+      const res = await chuyenDuyetSvc({ id: KSDXData?.ma_KySoDeXuat });
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        getKSDX();
+        getDsBuocDuyet();
+        getDsNguoiDungDuyet();
+        message.success(res.data?.retText);
+      } else {
+        message.error(res.data?.retText);
       }
     } catch (error) {
       //message.error(LOI_HE_THONG)
     } finally {
-      setChuyenDuyetLoading(false)
+      setChuyenDuyetLoading(false);
     }
+  };
 
-  }
+  useEffect(() => {
+    if (!modalTraoDoiVisible) {
+      resetFileTraoDoi();
+      inputFileRef.current.value = null;
+    }
+  }, [modalTraoDoiVisible]);
 
   useEffect(() => {
     if (file) {
@@ -340,10 +432,23 @@ const KiSoChiTiet = () => {
   }, [file]);
 
   useEffect(() => {
+    if (fileTraoDoi) {
+      uploadToFirebaseTraoDoi();
+      setFileTraoDoiError("");
+    }
+  }, [fileTraoDoi]);
+
+  useEffect(() => {
     getKSDX();
     getDsBuocDuyet();
     getDsNguoiDungDuyet();
   }, []);
+
+  useEffect(() => {
+    if (KSDXData) {
+      getListTraoDoi();
+    }
+  }, [KSDXData]);
 
   const columns = [
     {
@@ -357,15 +462,18 @@ const KiSoChiTiet = () => {
       key: "tenFile",
       render: (_, record) => {
         return (
-          <div onClick={() => {
-            // window.open(_)
-            window.open(API_DOMAIN + _, '_BLANK')
-          }} className="d-flex align-items-center gap-2" style={{flex: 1}}>
-          {_?.split('files%')?.[1]?.split('?alt')?.[0]}
-          <FilePdfTwoTone twoToneColor={'red'} />
-         </div>
-        )
-      }
+          <div
+            onClick={() => {
+              // window.open(_)
+              window.open(API_DOMAIN + _, "_BLANK");
+            }}
+            className="d-flex align-items-center gap-2"
+            style={{ flex: 1 }}>
+            {_?.split("files%")?.[1]?.split("?alt")?.[0]}
+            <FilePdfTwoTone twoToneColor={"red"} />
+          </div>
+        );
+      },
     },
     {
       title: "Người tạo",
@@ -394,22 +502,38 @@ const KiSoChiTiet = () => {
     },
   ];
 
-  const renderRow = (item, bg = 'gray') => {
+  const renderRow = (item, bg = "gray") => {
     return (
       <div className="d-flex">
-        <div className="py-1" style={{width: 40}}>
+        <div className="py-1" style={{ width: 40 }}>
           <div className="text-center">STT</div>
-          <div className="text-center" style={{background: bg, borderRadius: 5, color: '#fff', height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{item?.order}</div>
+          <div
+            className="text-center"
+            style={{
+              background: bg,
+              borderRadius: 5,
+              color: "#fff",
+              height: 40,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}>
+            {item?.order}
+          </div>
         </div>
 
         <div className="flex-grow-1 ps-3 py-1">
           <div>Người duyệt</div>
-          <div style={{height: 40, display: 'flex', alignItems: 'center'}}>{item?.hoTen}</div>
+          <div style={{ height: 40, display: "flex", alignItems: "center" }}>
+            {item?.hoTen}
+          </div>
         </div>
 
-        <div  className="py-1" >
+        <div className="py-1">
           <div>Trạng thái</div>
-          <div style={{height: 40, display: 'flex', alignItems: 'center'}} className="d-flex align-items-center gap-2">
+          <div
+            style={{ height: 40, display: "flex", alignItems: "center" }}
+            className="d-flex align-items-center gap-2">
             {item?.trangThai ? (
               <>
                 <CheckCircleTwoTone twoToneColor="#52c41a" />
@@ -421,28 +545,30 @@ const KiSoChiTiet = () => {
                 <div>Chưa thực hiện</div>
               </>
             )}
-        </div>
+          </div>
         </div>
 
-        {!daChuyenDuyet && <div className="ms-2">
-          <div>Hành động</div>
-          <div className="d-flex justify-content-center">
-          <>
-          {
-            <Popconfirm
-            title="Bạn có chắc chắn muốn xoá?"
-            onConfirm={() => handleXoaBuocDuyet(item)}
-            okText="Đồng ý"
-            cancelText="Thoát">
-            <Button icon={<DeleteOutlined />} />
-          </Popconfirm>
-          }
-          </>
+        {!daChuyenDuyet && (
+          <div className="ms-2">
+            <div>Hành động</div>
+            <div className="d-flex justify-content-center">
+              <>
+                {
+                  <Popconfirm
+                    title="Bạn có chắc chắn muốn xoá?"
+                    onConfirm={() => handleXoaBuocDuyet(item)}
+                    okText="Đồng ý"
+                    cancelText="Thoát">
+                    <Button icon={<DeleteOutlined />} />
+                  </Popconfirm>
+                }
+              </>
+            </div>
           </div>
-        </div>}
+        )}
       </div>
-    )
-  }
+    );
+  };
 
   const columns_33 = [
     {
@@ -460,34 +586,36 @@ const KiSoChiTiet = () => {
       dataIndex: "thoiGianThucHien",
       key: "thoiGianThucHien",
       render: (_, record) => {
-        return <>{moment(_).format('DD-MM-YYYY')}</>
-      }
+        return <>{moment(_).format("DD-MM-YYYY")}</>;
+      },
     },
   ];
-  const [log, setLog] = useState(null)
+  const [log, setLog] = useState(null);
   const logDeXuat = async (id) => {
     try {
-      const res = await logDeXuatSvc({id})
-      setLog(res?.data?.data?.map(item => {
-        return {
-          ...item,
-          hoTen: item?.nguoiDung?.hoTen,
-        }
-      }))
-    } catch (error) {
-      
-    }
-  }
+      const res = await logDeXuatSvc({ id });
+      setLog(
+        res?.data?.data?.map((item) => {
+          return {
+            ...item,
+            hoTen: item?.nguoiDung?.hoTen,
+          };
+        }),
+      );
+    } catch (error) {}
+  };
   return (
     <>
-    <Modal footer={null} open={!!log} title='Lịch sử' onCancel={() => setLog(null)} onOk={() => setLog(null)}>
-        <Table
-          columns={columns_33}
-          dataSource={log}
-        />
+      <Modal
+        footer={null}
+        open={!!log}
+        title="Lịch sử"
+        onCancel={() => setLog(null)}
+        onOk={() => setLog(null)}>
+        <Table columns={columns_33} dataSource={log} />
       </Modal>
 
-        <Modal
+      <Modal
         title={"Nhập passcode để ký"}
         open={modalPasscodeVisible}
         onOk={() => {}}
@@ -628,6 +756,81 @@ const KiSoChiTiet = () => {
         </Form>
       </Modal>
 
+      <Modal
+        title={"Thêm trao đổi"}
+        open={modalTraoDoiVisible}
+        onOk={() => {}}
+        onCancel={() => {
+          setModalTraoDoiVisible(false);
+          formTraoDoi.resetFields();
+        }}
+        footer={null}>
+        <Form
+          form={formTraoDoi}
+          name="suathongso"
+          onFinish={handleAddTraoDoi}
+          autoComplete="off">
+          <Form.Item
+            labelCol={{
+              span: 5,
+            }}
+            label="Nội dung"
+            name="y_Kien"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập trao đổi!",
+              },
+            ]}>
+            <Input autoFocus />
+          </Form.Item>
+
+          <div
+            className="ms-3 d-flex flex-column"
+            style={{ marginTop: -10 }}
+            onClick={() => {
+              setFileTraoDoi(null);
+              inputTraoDoiRef.current?.click();
+            }}>
+            <div className="d-flex align-items-center">
+              <Button
+                className="d-flex align-items-center"
+                type="link"
+                icon={<CloudUploadOutlined />}>
+                Đính kèm file
+              </Button>
+
+              {fileTraoDoiName}
+            </div>
+
+            {!!fileError && (
+              <div className="ms-3 ant-form-item-explain-error">
+                {fileTraoDoiError}
+              </div>
+            )}
+          </div>
+
+          <div className="d-flex justify-content-center gap-3 mt-2">
+            <Form.Item>
+              <Button
+                type="ghost"
+                htmlType="button"
+                onClick={() => setModalTraoDoiVisible(false)}>
+                Bỏ qua
+              </Button>
+            </Form.Item>
+            <Form.Item>
+              <Button
+                loading={addTraoDoiLoading || uploadingTraoDoi}
+                type="primary"
+                htmlType="submit">
+                Đồng ý
+              </Button>
+            </Form.Item>
+          </div>
+        </Form>
+      </Modal>
+
       <ModalBuocDuyet
         visible={modalBuocDuyetVisible}
         loading={themBuocLoading}
@@ -652,6 +855,36 @@ const KiSoChiTiet = () => {
             } else {
               setFile(file);
               setFileName(file.name);
+            }
+          }
+        }}
+      />
+
+      <input
+        style={{ position: "absolute", left: "-100vw" }}
+        className="input-file"
+        ref={inputTraoDoiRef}
+        type="file"
+        // accept="application/pdf"
+        multiple={false}
+        onChange={async (e) => {
+          if (e.target.files && e.target.files.length > 0) {
+            const selectedFiles = e.target.files;
+            const file = selectedFiles[0];
+
+            if (
+              !file.type.includes("application/pdf") &&
+              !file.type.includes(
+                "vnd.openxmlformats-officedocument.wordprocessingml.document",
+              ) &&
+              !file.type.includes("application/msword") &&
+              !file.type.includes("image/png") &&
+              !file.type.includes("image/jpeg")
+            ) {
+              setFileTraoDoiError("Vui lòng chọn file pdf, word hoặc ảnh");
+            } else {
+              setFileTraoDoi(file);
+              setFileTraoDoiName(file.name);
             }
           }
         }}
@@ -712,43 +945,37 @@ const KiSoChiTiet = () => {
             </>
           )}
 
-          {
-            pageChiTietKyChoDuyet && 
+          {pageChiTietKyChoDuyet && (
             <>
-            {
-              isNguoiKyHienTai && 
-              <>
-               <Button
-                onClick={() => {
-                    setModalPasscodeVisible(true)
-                }}
-                className="d-flex align-items-center text-black"
-                type="link"
-                icon={<EditTwoTone twoToneColor='blue' />}>
-                Ký duyệt
-              </Button>
-              <Popconfirm
-                title="Bạn có chắc chắn muốn từ chối đề xuất?"
-                onConfirm={() => {
-
-                }}
-                okText="Đồng ý"
-                cancelText="Thoát">
-                <Button
-                  className="d-flex align-items-center text-black"
-                  type="link"
-                  loading={chuyenDuyetLoading}
-                  disabled={dsBuocDuyet.length === 0}
-                  icon={<CloseCircleTwoTone twoToneColor='red' />}>
-                  Từ chối
-                </Button>
-              </Popconfirm>
-              </>
-            }
-            
-             
+              {isNguoiKyHienTai && (
+                <>
+                  <Button
+                    onClick={() => {
+                      setModalPasscodeVisible(true);
+                    }}
+                    className="d-flex align-items-center text-black"
+                    type="link"
+                    icon={<EditTwoTone twoToneColor="blue" />}>
+                    Ký duyệt
+                  </Button>
+                  <Popconfirm
+                    title="Bạn có chắc chắn muốn từ chối đề xuất?"
+                    onConfirm={() => {}}
+                    okText="Đồng ý"
+                    cancelText="Thoát">
+                    <Button
+                      className="d-flex align-items-center text-black"
+                      type="link"
+                      loading={chuyenDuyetLoading}
+                      disabled={dsBuocDuyet.length === 0}
+                      icon={<CloseCircleTwoTone twoToneColor="red" />}>
+                      Từ chối
+                    </Button>
+                  </Popconfirm>
+                </>
+              )}
             </>
-          }
+          )}
 
           <Button
             onClick={() => logDeXuat(KSDXData?.ma_KySoDeXuat)}
@@ -788,7 +1015,7 @@ const KiSoChiTiet = () => {
         />
 
         <div className="d-flex">
-          <div className="flex-grow-1">
+          <div className="" style={{ width: "50%" }}>
             <Button
               onClick={() => {
                 setModalBuocDuyetVisible(true);
@@ -799,33 +1026,104 @@ const KiSoChiTiet = () => {
               Thêm bước
             </Button>
 
-            {dsBuocDuyet.map(
-              (item, index) => 
+            {dsBuocDuyet.map((item, index) =>
               //
-  // 
+              //
 
-            {
-              const bg= item?.trangThai === true ? 'blue' : ( KSDXData?.curentOrder === item?.order ? 'green' : 'gray'); 
-              return (
-                <div key={index} style={{paddingLeft: 20, borderTop: '1px solid gray', paddingTop: 20, paddingBottom: 20}}>
-                <div style={{
-                  height: 40,
-                  background: bg,
-                  color: '#fff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  paddingLeft: 10,
-                  borderRadius: 5
-                }}>{item?.order}. {item?.ten_Buoc}</div>
-                {renderRow(item, bg)}
-              </div>
-              )
-            }
+              {
+                const bg =
+                  item?.trangThai === true
+                    ? "blue"
+                    : KSDXData?.curentOrder === item?.order
+                    ? "green"
+                    : "gray";
+                return (
+                  <div
+                    key={index}
+                    style={{
+                      paddingLeft: 20,
+                      borderTop: "1px solid gray",
+                      paddingTop: 20,
+                      paddingBottom: 20,
+                    }}>
+                    <div
+                      style={{
+                        height: 40,
+                        background: bg,
+                        color: "#fff",
+                        display: "flex",
+                        alignItems: "center",
+                        paddingLeft: 10,
+                        borderRadius: 5,
+                      }}>
+                      {item?.order}. {item?.ten_Buoc}
+                    </div>
+                    {renderRow(item, bg)}
+                  </div>
+                );
+              },
             )}
           </div>
 
-          <div className="flex-grow-1">
-            <div>Trao đổi</div>
+          <div className=" pe-4" style={{ width: "50%" }}>
+            <div className="d-flex align-items-center justify-content-between">
+              <div
+                style={
+                  {
+                    // borderBottom: "1px solid gray",
+                  }
+                }>
+                Trao đổi
+              </div>
+
+              <Button
+                type="primary"
+                onClick={() => setModalTraoDoiVisible(true)}>
+                Trao đổi
+              </Button>
+            </div>
+
+            <div className="mt-2 mb-5">
+              {listTraoDoi.map((item, index) => (
+                <div
+                  style={{ border: "1px solid #f0f0f0", padding: "10px 20px" }}>
+                  <div className="d-flex align-items-center justify-content-between">
+                    <div
+                      style={{
+                        fontSize: 16,
+                        color: "blue",
+                      }}>
+                      {item?.nguoiDung?.hoTen}
+                    </div>
+
+                    <div className="d-flex align-items-center gap-2">
+                      <div>{moment(item?.thoiGian).fromNow()}</div>
+
+                      <Popconfirm
+                        title="Bạn có chắc chắn muốn xoá?"
+                        onConfirm={() => handleXoaTraoDoi(item)}
+                        okText="Đồng ý"
+                        cancelText="Thoát">
+                        <Button type="link" icon={<DeleteOutlined />}></Button>
+                      </Popconfirm>
+                    </div>
+                  </div>
+
+                  <div className="mt-1">{item?.y_Kien}</div>
+
+                  {!!item?.fileDinhKem && (
+                    <div
+                      className="d-flex align-items-center gap-2"
+                      style={{ cursor: "pointer" }}>
+                      <FileTwoTone twoToneColor={'blue'} />
+                      <div style={{ fontStyle: "italic", fontSize: 12 }}>
+                        {item.fileDinhKem}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

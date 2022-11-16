@@ -207,7 +207,7 @@ export default ({ userData, userFormState, resetFormTab }) => {
                 message: "Email sai định dạng",
               },
             ]}>
-            <Input placeholder="Nhập email" />
+            <Input disabled={isEdit} placeholder="Nhập email" />
           </Form.Item>
         </div>
 

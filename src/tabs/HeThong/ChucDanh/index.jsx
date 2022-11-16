@@ -136,6 +136,7 @@ export default () => {
         setModalEditVisible(false);
       } else {
         //message.error(LOI);
+        message.error(res.data?.retText)
       }
     } catch (error) {
       //message.error(LOI_HE_THONG);

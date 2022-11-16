@@ -148,7 +148,7 @@ export default () => {
         handleGetList();
         setModalEditVisible(false);
       } else {
-        //message.error(LOI);
+        message.error(res.data?.retText);
       }
     } catch (error) {
       //message.error(LOI_HE_THONG);
@@ -261,14 +261,14 @@ export default () => {
               type="link">
               Sửa
             </Button>
-            <Button
+            {/* <Button
               type="link"
               onClick={() => {
                 setIsDetail(true);
                 handleGetListUser(record?.maSo);
               }}>
               Chi tiết
-            </Button>
+            </Button> */}
             <Popconfirm
               title="Bạn có chắc chắn muốn xoá?"
               onConfirm={() => handleDelete(record)}

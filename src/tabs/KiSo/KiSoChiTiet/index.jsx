@@ -321,14 +321,14 @@ const KiSoChiTiet = () => {
   const [modalTraoDoiVisible, setModalTraoDoiVisible] = useState(false);
 
   const handleSuaDeXuat = async (values) => {
-    if (!file) return setFileError(" Vui lòng nhập chọn file");
+    // if (!file) return setFileError(" Vui lòng nhập chọn file");
 
     const data = {
       ...values,
-      inputFile: url || KSDXData?.inputFile,
+      inputFile: url || null,
       ma_NguoiDeXuat: KSDXData?.ma_NguoiDeXuat,
       ma_KySoDeXuat: KSDXData?.ma_KySoDeXuat,
-      ten_FileGoc: fileName,
+      ten_FileGoc: url ? fileName : null,
     };
     setSuaDeXuatLoading(true);
 
@@ -1059,7 +1059,7 @@ const KiSoChiTiet = () => {
           />
         </div>}
 
-        <div className="d-flex gap-4">
+        <div className="d-flex gap-4 mt-4">
           <div className="" style={{ width: "50%" }}>
             {!KSDXData?.trangThai && <Button
               onClick={() => {
@@ -1165,11 +1165,14 @@ const KiSoChiTiet = () => {
 
                   {!!item?.fileDinhKem && (
                     <div
+                      onClick={() => {
+                        window.open(item?.fileDinhKem, '_BLANK')
+                      }}
                       className="d-flex align-items-center gap-2"
                       style={{ cursor: "pointer" }}>
                       <FileTwoTone twoToneColor={"blue"} />
                       <div style={{ fontStyle: "italic", fontSize: 12 }}>
-                        {item.fileDinhKem}
+                        {item?.fileDinhKem}
                       </div>
                     </div>
                   )}

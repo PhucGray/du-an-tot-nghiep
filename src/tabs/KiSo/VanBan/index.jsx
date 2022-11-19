@@ -7,6 +7,8 @@ import { nguoiDungSelector } from "../../../store/auth/selectors";
 import { RETCODE_SUCCESS, SUCCESS } from "../../../constants/api";
 import {getListVanBan, suaVanBanSvc, themVanBanSvc, xoaVanBanSvc} from '../../../store/vanban/services'
 import moment from "moment";
+import {AiOutlineFile} from 'react-icons/ai'
+import { API_DOMAIN } from "../../../configs/api";
 const {TextArea} = Input 
 
 const VanBan = () => {
@@ -20,6 +22,7 @@ const VanBan = () => {
   const [addLoading, setAddLoading] = useState(false)
   const [getListLoading, setGetListLoading] = useState(false);
   const [editedVanBan, setEditedVanBan] = useState(null)
+  const [fileType, setFileType] = useState(0)
 
   const [list, setList] = useState([])
 
@@ -69,12 +72,14 @@ const VanBan = () => {
         data = {
           ...values,
           ma_NguoiTao: nguoiDung?.ma_NguoiDung,
-          file: url
+          file: url,
+          ten_FileGoc: fileName
         }
       } else {
         data = {
           ...values,
           ma_NguoiTao: nguoiDung?.ma_NguoiDung,
+          ten_FileGoc: fileName
         }
       }
 
@@ -104,27 +109,33 @@ const VanBan = () => {
      }
   }
 
-  const handleSuaVanBan = async () => {
+  const handleSuaVanBan = async (values) => {
     setAddLoading(true);
     try {
       let data;
       if(url) {
         data = {
-          ...editedVanBan,
+          ...values,
           ma_NguoiTao: nguoiDung?.ma_NguoiDung,
-          file: url
+          file: url,
+          ma_VanBan: editedVanBan?.ma_VanBan,
+          ten_FileGoc: fileName
         }
       } else {
         data = {
-          ...editedVanBan,
+          ...values,
           ma_NguoiTao: nguoiDung?.ma_NguoiDung,
+          ma_VanBan: editedVanBan?.ma_VanBan,
+          file: null,
+          ten_FileGoc: null
         }
       }
 
+      console.log(data)
 
-
-      // console.log(data)
       const res = await suaVanBanSvc(data)
+
+      // console.log(res)
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText)
         form.resetFields();
@@ -134,7 +145,7 @@ const VanBan = () => {
         setIsModalOpen(false)
         inputFileRef.current.value = null;
         handleGetList();
-        setEditedVanBan(false)
+        setEditedVanBan(null)
       } else {
 
       }
@@ -161,11 +172,11 @@ const VanBan = () => {
   }
 
   const columns = [
-    {
-      title: "STT",
-      dataIndex: "stt",
-      key: "stt",
-    },
+    // {
+    //   title: "STT",
+    //   dataIndex: "stt",
+    //   key: "stt",
+    // },
     {
       title: "Mã số",
       dataIndex: "ma_VanBan",
@@ -190,6 +201,28 @@ const VanBan = () => {
       key: "loaiVanBan",
     },
     {
+      title: "Tên file",
+      dataIndex: "fileDaKy",
+      key: "fileDaKy",
+      render: (_, record) => {
+        // console.log(record)
+        return (
+          <div
+            onClick={() => {
+              // window.open(API_DOMAIN +  (pageChiTietKyDaDuyet ? KSDD?.fileDaKy : _ ), "_BLANK");
+              window.open(API_DOMAIN + record?.file)
+            }}
+            className="d-flex align-items-center gap-2"
+            style={{ flex: 1 }}>
+            {/* {record.ten_FileGoc?.split('.pdf').join('_daky.pdf')} */}
+            {/* <FilePdfTwoTone twoToneColor={"red"} /> */}
+            <AiOutlineFile size={30} style={{color: 'blue'}} />
+            {record?.ten_FileGoc}
+          </div>
+        );
+      },
+    },
+    {
       title: "Hành động",
       key: "hanhDong",
       render: (_, record) => (
@@ -204,7 +237,7 @@ const VanBan = () => {
               type="link">
               Sửa
             </Button>
-            <Button type="link">Chi tiết</Button>
+            {/* <Button type="link">Chi tiết</Button> */}
             <Popconfirm
               title="Bạn có chắc chắn muốn xoá?"
               onConfirm={() => handleDeleteVanBan(record)}

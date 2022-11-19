@@ -29,7 +29,8 @@ import {
   ClockCircleTwoTone,
   CloseCircleTwoTone,
   FileOutlined,
-  FileTwoTone
+  FileTwoTone,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import { textToCharacter } from "../../../utils/strings";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
@@ -117,6 +118,10 @@ const KiSoChiTiet = () => {
   const pageChiTietKyChoDuyet = location.pathname.includes(
     "ki-cho-duyet/detail",
   );
+
+  const pageChiTietKyDaDuyet = location.pathname.includes(
+    "ki-da-duyet/detail"
+  )
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(CAU_HINH);
@@ -207,11 +212,11 @@ const KiSoChiTiet = () => {
       const res = await getKSDXSvc({ id: params?.id });
 
       const data = res.data?.data;
-      // console.log(data)
       setKSDXData({
         ...data,
-        tenFile: data?.inputFile,
+        tenFile: data?.ten_FileGoc,
         nguoiTao: data?.nguoiDung?.hoTen,
+        stt: 1,
       });
 
       formDeXuat.setFieldValue("ten_DeXuat", data?.ten_DeXuat);
@@ -378,7 +383,7 @@ const KiSoChiTiet = () => {
         setModalTraoDoiVisible(false);
         getKSDX();
         inputTraoDoiRef.current.value = null;
-        getListTraoDoi()
+        getListTraoDoi();
       } else {
       }
     } catch (error) {
@@ -389,13 +394,11 @@ const KiSoChiTiet = () => {
 
   const handleXoaTraoDoi = async (traoDoi) => {
     try {
-      const res = await xoaTraoDoiSvc({id: traoDoi?.ma_Message});
-      message.success(res.data?.retText)
+      const res = await xoaTraoDoiSvc({ id: traoDoi?.ma_Message });
+      message.success(res.data?.retText);
       getListTraoDoi();
-    } catch (error) {
-      
-    }
-  }
+    } catch (error) {}
+  };
 
   const handleChuyenDuyet = async () => {
     setChuyenDuyetLoading(true);
@@ -450,6 +453,7 @@ const KiSoChiTiet = () => {
     }
   }, [KSDXData]);
 
+
   const columns = [
     {
       title: "STT",
@@ -465,11 +469,12 @@ const KiSoChiTiet = () => {
           <div
             onClick={() => {
               // window.open(_)
-              window.open(API_DOMAIN + _, "_BLANK");
+              window.open(API_DOMAIN + record?.inputFile, "_BLANK");
             }}
             className="d-flex align-items-center gap-2"
             style={{ flex: 1 }}>
-            {_?.split("files%")?.[1]?.split("?alt")?.[0]}
+            {/* {_?.split("files%")?.[1]?.split("?alt")?.[0]} */}
+            {_}
             <FilePdfTwoTone twoToneColor={"red"} />
           </div>
         );
@@ -480,29 +485,39 @@ const KiSoChiTiet = () => {
       dataIndex: "nguoiTao",
       key: "nguoiTao",
     },
-    {
-      title: "Ký số",
-      dataIndex: "kiSo",
-      key: "kiSo",
-      render: (_, record) => (
-        <div>
-          <Checkbox checked={_} />
-        </div>
-      ),
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: "trangThai",
-      key: "trangThai",
-      render: (_, record) => (
-        <div>
-          <Checkbox checked={_} />
-        </div>
-      ),
-    },
   ];
 
-  const renderRow = (item, bg = "gray") => {
+  const columns_daky = [
+    {
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+    },
+    {
+      title: "Tên file",
+      dataIndex: "fileDaKy",
+      key: "fileDaKy",
+      render: (_, record) => {
+        return (
+          <div
+            onClick={() => {
+              window.open(API_DOMAIN +  (pageChiTietKyDaDuyet ? KSDD?.fileDaKy : _ ), "_BLANK");
+            }}
+            className="d-flex align-items-center gap-2"
+            style={{ flex: 1 }}>
+            {record.ten_FileGoc?.split('.pdf').join('_daky.pdf')}
+            <FilePdfTwoTone twoToneColor={"red"} />
+          </div>
+        );
+      },
+    },
+    {
+      title: "Người tạo",
+      dataIndex: "nguoiTao",
+      key: "nguoiTao",
+    },
+  ];
+  const renderRow = (item, bg = "gray", dangThucHien = false) => {
     return (
       <div className="d-flex">
         <div className="py-1" style={{ width: 40 }}>
@@ -538,6 +553,13 @@ const KiSoChiTiet = () => {
               <>
                 <CheckCircleTwoTone twoToneColor="#52c41a" />
                 <div>Đã thực hiện</div>
+              </>
+            ) : dangThucHien ? (
+              <>
+                <>
+                  <LoadingOutlined style={{color: 'orange'}} />
+                  <div>Đang thực hiện</div>
+                </>
               </>
             ) : (
               <>
@@ -604,6 +626,8 @@ const KiSoChiTiet = () => {
       );
     } catch (error) {}
   };
+
+  const KSDD = KSDXData?.kySoBuocDuyets?.find(i => i?.ma_NguoiKy === nguoiDung?.ma_NguoiDung);
   return (
     <>
       <Modal
@@ -947,7 +971,7 @@ const KiSoChiTiet = () => {
 
           {pageChiTietKyChoDuyet && (
             <>
-              {isNguoiKyHienTai && (
+              {isNguoiKyHienTai && !buocDuyetHienTai?.isDaKy && (
                 <>
                   <Button
                     onClick={() => {
@@ -1004,19 +1028,40 @@ const KiSoChiTiet = () => {
           </Row>
         </div>
 
-        <Table
-          style={{
-            marginTop: 20,
-          }}
-          loading={false}
-          columns={columns}
-          dataSource={[KSDXData]}
-          pagination={{ defaultPageSize: 5 }}
-        />
+        <div style={{paddingInline: 20}}>
+        <div style={{ marginTop: 20, fontSize: 16, fontWeight: 'bold' }}>File gốc</div>
 
-        <div className="d-flex">
+          <Table
+            style={
+              {
+              }
+            }
+            loading={false}
+            columns={columns}
+            dataSource={[KSDXData]}
+            // pagination={{ defaultPageSize: 5 }}
+            pagination={false}
+          />
+        </div>
+        
+        {(!!KSDXData?.fileDaKy || !!KSDD?.fileDaKy) && <div style={{paddingInline: 20}}>
+          <div style={{ marginTop: 20, fontSize: 16, fontWeight: 'bold' }}>File đã ký</div>
+
+          <Table
+            style={
+              {
+              }
+            }
+            loading={false}
+            columns={columns_daky}
+            dataSource={[KSDXData]}
+            pagination={false}
+          />
+        </div>}
+
+        <div className="d-flex gap-4">
           <div className="" style={{ width: "50%" }}>
-            <Button
+            {!KSDXData?.trangThai && <Button
               onClick={() => {
                 setModalBuocDuyetVisible(true);
               }}
@@ -1024,7 +1069,7 @@ const KiSoChiTiet = () => {
               type="link"
               icon={<PlusCircleOutlined />}>
               Thêm bước
-            </Button>
+            </Button>}
 
             {dsBuocDuyet.map((item, index) =>
               //
@@ -1033,9 +1078,10 @@ const KiSoChiTiet = () => {
               {
                 const bg =
                   item?.trangThai === true
-                    ? "blue"
-                    : KSDXData?.curentOrder === item?.order
                     ? "green"
+                    : KSDXData?.curentOrder === item?.order &&
+                      KSDXData?.trangThai === true
+                    ? "orange"
                     : "gray";
                 return (
                   <div
@@ -1058,7 +1104,12 @@ const KiSoChiTiet = () => {
                       }}>
                       {item?.order}. {item?.ten_Buoc}
                     </div>
-                    {renderRow(item, bg)}
+                    {renderRow(
+                      item,
+                      bg,
+                      KSDXData?.curentOrder === item?.order &&
+                        KSDXData?.trangThai === true,
+                    )}
                   </div>
                 );
               },
@@ -1084,8 +1135,9 @@ const KiSoChiTiet = () => {
             </div>
 
             <div className="mt-2 mb-5">
-              {listTraoDoi.map((item, index) => (
-                <div
+              {listTraoDoi.map((item, index) => {
+                return (
+                  <div
                   style={{ border: "1px solid #f0f0f0", padding: "10px 20px" }}>
                   <div className="d-flex align-items-center justify-content-between">
                     <div
@@ -1099,13 +1151,13 @@ const KiSoChiTiet = () => {
                     <div className="d-flex align-items-center gap-2">
                       <div>{moment(item?.thoiGian).fromNow()}</div>
 
-                      <Popconfirm
+                     {item?.ma_NguoiDung === nguoiDung?.ma_NguoiDung && <Popconfirm
                         title="Bạn có chắc chắn muốn xoá?"
                         onConfirm={() => handleXoaTraoDoi(item)}
                         okText="Đồng ý"
                         cancelText="Thoát">
                         <Button type="link" icon={<DeleteOutlined />}></Button>
-                      </Popconfirm>
+                      </Popconfirm>}
                     </div>
                   </div>
 
@@ -1115,14 +1167,15 @@ const KiSoChiTiet = () => {
                     <div
                       className="d-flex align-items-center gap-2"
                       style={{ cursor: "pointer" }}>
-                      <FileTwoTone twoToneColor={'blue'} />
+                      <FileTwoTone twoToneColor={"blue"} />
                       <div style={{ fontStyle: "italic", fontSize: 12 }}>
                         {item.fileDinhKem}
                       </div>
                     </div>
                   )}
                 </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </div>

@@ -28,7 +28,7 @@ const ImageModal = ({
 
       {image && (
         <div className="d-flex justify-content-center mt-2">
-          <img src={API_DOMAIN + image} />
+          <img src={image} />
         </div>
       )}
 

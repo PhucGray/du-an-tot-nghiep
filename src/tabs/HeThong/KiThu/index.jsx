@@ -226,7 +226,7 @@ const KiThu = () => {
           x: image.finalX,
           img_w: image.width,
           img_h: image.height,
-          imgSign: image.src,
+          imgSign: image.src?.split(API_DOMAIN).join(''),
           pageSign: image.pageIndex + 1,
         };
       });
@@ -242,10 +242,19 @@ const KiThu = () => {
         };
       });
 
+     
+
 
       if(isKiThat) {
+        // console.log(_file_)
+        console.log({
+          inputFile: _file_,
+          id_NguoiDung: nguoiDung?.ma_NguoiDung,
+          postPositionSigns: [...finalImages, ...finalTexts],
+          ma_BuocDuyet: parseInt(isNaN(params?.id) ? '0' : params?.id)
+        })
         const res = await kyThatSvc({
-          inputFile: API_DOMAIN + _file_,
+          inputFile: _file_,
           id_NguoiDung: nguoiDung?.ma_NguoiDung,
           postPositionSigns: [...finalImages, ...finalTexts],
           ma_BuocDuyet: parseInt(isNaN(params?.id) ? '0' : params?.id)
@@ -253,14 +262,17 @@ const KiThu = () => {
 
         if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
           message.success(res.data?.retText)
-          navigate('/' + TAB.KI_CHO_DUYET + '/detail/' + chiTietBuocDuyet?.ma_KySoDeXuat, {replace: true})
+          navigate('/' + TAB.KI_DA_DUYET + '/detail/' + chiTietBuocDuyet?.ma_KySoDeXuat, {replace: true})
         }
       } else {
+
         const res = await kyThuSvc({
           inputFile: url,
           id_NguoiDung: params?.id,
           postPositionSigns: [...finalImages, ...finalTexts],
         });
+
+        
   
         if (res.status === SUCCESS && res.data.retCode === RETCODE_SUCCESS) {
           const file = res.data.data;
@@ -316,7 +328,13 @@ const KiThu = () => {
   const handleGetThongSo = async () => {
     try {
       const res = await getThongSoNguoiDungSvc({ id:isKiThat ?  nguoiDung?.ma_NguoiDung : params?.id });
-      setNguoiDungKi(res.data?.data);
+      const currentUser = res.data?.data;
+      setNguoiDungKi({
+        ...currentUser,
+        hinh1: currentUser?.hinh1 ? API_DOMAIN + currentUser?.hinh1 : null,
+        hinh2: currentUser?.hinh2 ? API_DOMAIN + currentUser?.hinh2 : null,
+        hinh3: currentUser?.hinh3 ? API_DOMAIN + currentUser?.hinh3 : null,
+      });
     } catch (error) {}
   };
 

@@ -13,6 +13,10 @@ export const getListKySoBuocDuyet = () => {
   return api.get(API.KS_BUOC_DUYET);
 };
 
+export const getListKySoDaDuyetSvc = () => {
+  return api.get(API.KS_DA_DUYET)
+}
+
 export const kiemTraPasscodeSvc = (payload) => {
   return api.put(API.KS_KT_PASSCODE, payload);
 };

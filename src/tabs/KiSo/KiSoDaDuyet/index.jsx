@@ -24,7 +24,7 @@ import { useRef } from "react";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
 
 import { useLocation, useNavigate } from "react-router-dom";
-import { getListKySoBuocDuyet, kiemTraPasscodeSvc } from "../../../store/kyso/services";
+import { getListKySoBuocDuyet, kiemTraPasscodeSvc, getListKySoDaDuyetSvc } from "../../../store/kyso/services";
 
 const { TextArea } = Input;
 
@@ -44,7 +44,9 @@ const KiDeXuat = () => {
   const [record, setRecord] = useState(null)
 
   const g = async () => {
-    const res = await getListKySoBuocDuyet();
+    const res = await getListKySoDaDuyetSvc();
+
+    console.log(res.data?.data)
 
     setList(
       res.data?.data?.filter(item => item?.ma_NguoiKy === nguoiDung?.ma_NguoiDung)?.map((item, index) => {
@@ -148,13 +150,13 @@ const KiDeXuat = () => {
               <Button type="link">Chi tiết</Button>
             </div>
 
-            <Popconfirm
+            {/* <Popconfirm
               title="Bạn có chắc chắn muốn từ chối ký?"
               onConfirm={() => handleTuChoi(record)}
               okText="Đồng ý"
               cancelText="Thoát">
                 <Button type="link">Từ chối</Button>
-            </Popconfirm>
+            </Popconfirm> */}
           </div>
         );
       },

@@ -11,6 +11,7 @@ import {
 import * as TAB from "../../constants/tab";
 import { useLocation } from "react-router-dom";
 import {HiOutlineDocumentText} from 'react-icons/hi'
+import {AiOutlineFileDone} from 'react-icons/ai'
 import {FaRegLightbulb} from 'react-icons/fa'
 import {RiMapPinTimeLine,RiUserSettingsLine, RiLockPasswordLine, RiQrCodeLine} from 'react-icons/ri'
 import {FiUsers} from 'react-icons/fi'
@@ -34,6 +35,7 @@ const items = [
   getItem("Ký số", "ki-so", <EditOutlined />, [
     getItem("Văn bản", TAB.VAN_BAN, <HiOutlineDocumentText />),
     getItem("Ký số chờ duyệt", TAB.KI_CHO_DUYET, <RiMapPinTimeLine />),
+    getItem("Ký số đã duyệt", TAB.KI_DA_DUYET, <AiOutlineFileDone />),
     getItem("Ký số đề xuất", TAB.KI_DE_XUAT, <FaRegLightbulb />),
     getItem("Thông số người dùng", TAB.THONG_SO_NGUOI_DUNG, <BsSliders />),
     // getItem("Thông số đơn vị", TAB.THONG_SO_DON_VI),

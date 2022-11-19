@@ -11,6 +11,7 @@ import api from "../api";
 import ThongSoNguoiDung from "../tabs/KiSo/ThongSoNguoiDung";
 import VanBan from "../tabs/KiSo/VanBan";
 import KiChoDuyet from "../tabs/KiSo/KiChoDuyet";
+import KiDaDuyet from '../tabs/KiSo/KiSoDaDuyet'
 import KiDeXuat from "../tabs/KiSo/KiDeXuat";
 import ThongSoDonVi from "../tabs/KiSo/ThongSoDonVi";
 import NguoiDung from "../tabs/HeThong/NguoiDung";
@@ -45,6 +46,8 @@ const Navigation = () => {
         <Route path={TAB.VAN_BAN} element={<VanBan />} />
         <Route path={TAB.KI_CHO_DUYET} element={<KiChoDuyet />} />
         <Route path={TAB.KI_CHO_DUYET + '/detail/:id'} element={<KiSoChiTiet />} />
+        <Route path={TAB.KI_DA_DUYET} element={<KiDaDuyet />} />
+        <Route path={TAB.KI_DA_DUYET + '/detail/:id'} element={<KiSoChiTiet />} />
         <Route path={TAB.KI_CHO_DUYET + '/ki-that/:id'} element={<KiThu />} />
         <Route path={TAB.KI_DE_XUAT} element={<KiDeXuat />} />
         <Route

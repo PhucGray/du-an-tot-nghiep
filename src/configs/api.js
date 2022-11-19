@@ -65,6 +65,7 @@ export const KS_KI_THU = "KySos/signtest";
 export const KS_BUOC_DUYET = "KySos/buocduyet";
 export const KS_KT_PASSCODE = 'KySos/checkpasscode'
 export const KS_KI_THAT = 'Kysos/sign';
+export const KS_DA_DUYET = 'KySos/daduyet'
 
 
 export const LOG_THONG_SO = 'Token/logthongso'

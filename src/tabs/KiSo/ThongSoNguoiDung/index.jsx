@@ -53,6 +53,8 @@ import ImageModal from "./ImageModal";
 import { transformUser } from "../../../utils/user";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import * as TAB from "../../../constants/tab";
+import { API_DOMAIN } from "../../../configs/api";
+import { useMemo } from "react";
 
 const { Option } = Select;
 
@@ -64,7 +66,13 @@ export default () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  const isDetail = !!params?.id && location.pathname?.includes("detail");
+  // const [isDetail, setisDetail] = useState(() => !!params?.id && location.pathname?.includes("detail"))
+  const isDetail = useMemo(() => {
+    return !!params?.id && location.pathname?.includes("detail")
+  }, [location.pathname])
+
+  // console.log(isDetail)
+
 
   const [form] = Form.useForm();
   const nguoiDung = useSelector(nguoiDungSelector);
@@ -134,9 +142,31 @@ export default () => {
 
         setList(list);
 
+        const currentUser = list?.find((u) => u?.ma_NguoiDung == params?.id);
+
+        // console.log(currentUser?.hinh1)
+        // console.log(currentUser?.hinh2)
+        // console.log(currentUser?.hinh3)
+        // console.log({...currentUser, 
+        //   hinh1: currentUser?.hinh1 ? API_DOMAIN + currentUser?.hinh1 : null,
+        //   hinh2: currentUser?.hinh2 ? API_DOMAIN + currentUser?.hinh2 : null,
+        //   hinh3: currentUser?.hinh3 ? API_DOMAIN + currentUser?.hinh3 : null,
+        // })
+        // console.log(isDetail)
+        // console.log(  {...currentUser, 
+        //   hinh1: currentUser?.hinh1 ? API_DOMAIN + currentUser?.hinh1?.split("\\").join('/') : null,
+        //   hinh2: currentUser?.hinh2 ? API_DOMAIN + currentUser?.hinh2?.split("\\").join('/') : null,
+        //   hinh3: currentUser?.hinh3 ? API_DOMAIN + currentUser?.hinh3?.split("\\").join('/') : null,
+        // },)
+
         if (isDetail) {
+         
           setCurrentUserDetail(
-            list?.find((u) => u?.ma_NguoiDung == params?.id),
+            {...currentUser, 
+              hinh1: currentUser?.hinh1 ? API_DOMAIN + currentUser?.hinh1?.split("\\").join('/') : null,
+              hinh2: currentUser?.hinh2 ? API_DOMAIN + currentUser?.hinh2?.split("\\").join('/') : null,
+              hinh3: currentUser?.hinh3 ? API_DOMAIN + currentUser?.hinh3?.split("\\").join('/') : null,
+            },
           );
         }
       } else {
@@ -219,9 +249,9 @@ export default () => {
 
     const data = {
       ma_NguoiDung: values?.ma_NguoiDung,
-      hinh1,
-      hinh2,
-      hinh3,
+      hinh1:hinh1?.includes(API_DOMAIN) ? null : hinh1, 
+      hinh2:hinh2?.includes(API_DOMAIN) ? null : hinh2, 
+      hinh3:hinh3?.includes(API_DOMAIN) ? null : hinh3, 
       lyDoMacDinh: values.lyDoMacDinh,
       ma_NguoiCapNhatCuoi: nguoiDung?.ma_NguoiDung,
       trangThai: values?.trangThai,
@@ -232,18 +262,26 @@ export default () => {
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         setIsModalOpen(false);
-        getListThongSo();
+
+        const currentUser = res?.data?.data;
+       
+        setCurrentUserDetail(
+          {...currentUser, 
+            hinh1: currentUser?.hinh1 ? API_DOMAIN + currentUser?.hinh1?.split("\\").join('/') : null,
+            hinh2: currentUser?.hinh2 ? API_DOMAIN + currentUser?.hinh2?.split("\\").join('/') : null,
+            hinh3: currentUser?.hinh3 ? API_DOMAIN + currentUser?.hinh3?.split("\\").join('/') : null,
+          },
+        );
         message.success(res.data?.retText);
-        form.resetFields();
-        setCurrentUserDetail(transformUser(res.data?.data));
+        window.location.reload();
       }
     } catch (error) {
       //message.error(LOI_HE_THONG);
     } finally {
       setThemNguoiDungDuyetLoading(false);
-      setChange1(false);
-      setChange2(false);
-      setChange3(false);
+      // setChange1(false);
+      // setChange2(false);
+      // setChange3(false);
     }
   };
 
@@ -269,16 +307,15 @@ export default () => {
 
     form.setFieldValue("trangThai", item?.trangThai);
     form.setFieldValue("lyDoMacDinh", item?.lyDoMacDinh);
-    form.setFieldValue("hinh1", item?.hinh1);
-    form.setFieldValue("hinh2", item?.hinh2);
-    form.setFieldValue("hinh3", item?.hinh3);
+    form.setFieldValue("hinh1",API_DOMAIN +  item?.hinh1);
+    form.setFieldValue("hinh2",API_DOMAIN +  item?.hinh2);
+    form.setFieldValue("hinh3",API_DOMAIN +  item?.hinh3);
     form.setFieldValue("ma_NguoiDung", item?.ma_NguoiDung);
 
-    setHinh1(item?.hinh1 || null);
-    setHinh2(item?.hinh2 || null);
-    setHinh3(item?.hinh3 || null);
-  };
-
+    setHinh1(item?.hinh1 ? (API_DOMAIN +  item?.hinh1) : null);
+    setHinh2(item?.hinh2 ? (API_DOMAIN +  item?.hinh2) : null);
+    setHinh3(item?.hinh3 ? (API_DOMAIN +  item?.hinh3) : null);
+  }
   const columns = [
     {
       title: "Mã số",
@@ -346,13 +383,15 @@ export default () => {
             <Button
               type="link"
               onClick={() => {
-                setCurrentUserDetail(record);
+                // setCurrentUserDetail(record);
                 navigate(
                   "/" +
                     TAB.THONG_SO_NGUOI_DUNG +
                     "/detail/" +
                     record?.ma_NguoiDung,
                 );
+                // setisDetail(true)
+                // window.location.reload();
               }}>
               Chi tiết
             </Button>
@@ -372,7 +411,7 @@ export default () => {
   useEffect(() => {
     getListThongSo();
     getListNguoiDungCanDuyet();
-  }, []);
+  }, [location.pathname]);
 
   return (
     <>
@@ -411,6 +450,7 @@ export default () => {
             }
           }}
           initialValues={{
+            hinh1: null,
             hinh2: null,
             hinh3: null,
             trangThai: true,
@@ -493,6 +533,7 @@ export default () => {
           )}
 
           <ImageModal
+            number={1}
             required
             onClick={() => file1Ref.current?.click()}
             error={hinh1Error}
@@ -606,12 +647,11 @@ export default () => {
         }}
       />
 
-      {currentUserDetail ? (
+      {isDetail ? (
         <ThongSoChiTiet
           handleShowModalEdit={handleShowModalEdit}
           currentUserDetail={currentUserDetail}
           setCurrentUserDetail={setCurrentUserDetail}
-          getListThongSo={getListThongSo}
         />
       ) : (
         <div style={{ width: "95%", marginInline: "auto" }}>

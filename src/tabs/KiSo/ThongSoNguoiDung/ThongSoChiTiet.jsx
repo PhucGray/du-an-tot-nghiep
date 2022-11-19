@@ -109,9 +109,10 @@ const _Modal = ({
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
         form.resetFields();
-        setCurrentUserDetail(transformUser(res.data?.data));
+        // setCurrentUserDetail(transformUser(res.data?.data));
         // console.log(transformUser(res.data?.data));
         onClose();
+        // window.location.reload();
       } else {
         message.error(res.data?.retText);
       }
@@ -140,11 +141,12 @@ const _Modal = ({
       const res = await suaCauHinhPfxSvc(data);
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
-        message.success(res.data?.retText);
         form.resetFields();
-        setCurrentUserDetail(transformUser(res.data?.data));
+        // setCurrentUserDetail(transformUser(res.data?.data));
         resetFilePfx();
         onClose();
+        message.success(res.data?.retText);
+        // window.location.reload();
       } else {
         message.error(res.data?.retText);
       }
@@ -169,7 +171,7 @@ const _Modal = ({
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
         form.resetFields();
-        setCurrentUserDetail(transformUser(res.data?.data));
+        // setCurrentUserDetail(transformUser(res.data?.data));
         onClose();
       } else {
         message.error(res.data?.retText);
@@ -449,6 +451,8 @@ const ThongSoChiTiet = ({
     },
   ];
 
+  // console.log(data)
+
   return (
     <>
       <Modal footer={null} open={!!log} title='Lịch sử' onCancel={() => setLog(null)}>
@@ -575,7 +579,7 @@ const ThongSoChiTiet = ({
           <Row label="Lý do">{data?.lyDoMacDinh}</Row>
 
           <Row label="Hình 1" even={false}>
-            {data?.hinh1 && <img src={API_DOMAIN + data.hinh1} style={{}} />}
+            {data?.hinh1 && <img src={data.hinh1} style={{}} />}
           </Row>
           <Row label="Hình 2">
             {data?.hinh2 && <img src={data.hinh2} style={{}} />}

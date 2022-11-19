@@ -1,5 +1,5 @@
 import { Modal } from "antd";
-import React, { Fragment, createContext, useState } from "react";
+import React, { Fragment, createContext, useState, useEffect } from "react";
 import { useReducer } from "react";
 import Sidebar from "../../components/Sidebar";
 import * as TAB from "../../constants/tab";
@@ -12,15 +12,19 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import { clearNguoiDung } from "../../store/auth/actions";
+import { clearNguoiDung, setNguoiDung } from "../../store/auth/actions";
 import ThongSoNguoiDung from "../../tabs/KiSo/ThongSoNguoiDung";
 import VaiTro from "../../tabs/HeThong/VaiTro";
-
+import { getQuyenSvc } from "../../store/nguoidung_vaitro/service";
+import {useSelector} from 'react-redux'
+import { nguoiDungSelector } from "../../store/auth/selectors";
 export const TabContext = createContext(null);
 
 const MainLayout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const nguoiDung = useSelector(nguoiDungSelector)
 
   const [modalLogoutVisible, setModalLogoutVisible] = useState(false);
 
@@ -41,6 +45,21 @@ const MainLayout = () => {
 
     navigate(`/${e.key}`);
   };
+
+  useEffect(() => {
+    const g = async () => {
+      try {
+        const res = await getQuyenSvc({id: nguoiDung?.ma_NguoiDung})
+        dispatch(setNguoiDung({...nguoiDung, dsQuyen: res.data?.map(i => i?.ma_Quyen)}))
+      } catch (error) {
+        
+      }
+      // console.log(res.data)
+
+    }
+
+    g();
+  }, []);
 
   return (
     <>

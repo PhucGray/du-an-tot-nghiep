@@ -11,15 +11,12 @@ import { useDispatch } from "react-redux";
 import { setNguoiDung } from "../../store/auth/actions";
 import api from "../../api";
 import LoginImg from "../../assets/images/login.png";
-
+import {getQuyenSvc} from '../../store/nguoidung_vaitro/service'
 const SignIn = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [submitLoading, setSubmitLoading] = useState(false);
 
-  const remember = !!localStorage.getItem('remember')
-
-  // console.log(localStorage.getItem('rememberUser'))
   const rememberUser = JSON.parse(localStorage.getItem('rememberUser'))
 
   const onFinish = async (values) => {
@@ -39,7 +36,8 @@ const SignIn = () => {
           Authorization: `Bearer ${token}`,
         };
         dispatch(setNguoiDung(res.data?.data));
-        message.success(res.data?.retText)
+        message.success(res.data?.retText);
+
         navigate("/", { replace: true });
       } else {
         message.error(res.data?.retText);

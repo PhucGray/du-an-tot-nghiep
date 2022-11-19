@@ -26,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import * as TAB from "../../../constants/tab";
 import { logThongSoSvc } from "../../../store/log/service";
 import moment from "moment";
+import { API_DOMAIN } from "../../../configs/api";
 const VUI_LONG_CHON_FILE = "Vui lòng chọn file pfx";
 
 const Row = ({ label, children, even = true }) => {
@@ -109,7 +110,7 @@ const _Modal = ({
         message.success(res.data?.retText);
         form.resetFields();
         setCurrentUserDetail(transformUser(res.data?.data));
-        console.log(transformUser(res.data?.data));
+        // console.log(transformUser(res.data?.data));
         onClose();
       } else {
         message.error(res.data?.retText);
@@ -574,7 +575,7 @@ const ThongSoChiTiet = ({
           <Row label="Lý do">{data?.lyDoMacDinh}</Row>
 
           <Row label="Hình 1" even={false}>
-            {data?.hinh1 && <img src={data.hinh1} style={{}} />}
+            {data?.hinh1 && <img src={API_DOMAIN + data.hinh1} style={{}} />}
           </Row>
           <Row label="Hình 2">
             {data?.hinh2 && <img src={data.hinh2} style={{}} />}

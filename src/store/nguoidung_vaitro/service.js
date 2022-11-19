@@ -8,3 +8,7 @@ export const themNguoiDung_VaiTroSvc = (payload) => {
 export const getNguoiDung_VaiTroSvc = ({ id }) => {
   return api.get(API.NGUOI_DUNG__VAI_TRO_IN + "/" + id);
 };
+
+export const getQuyenSvc = ({id}) => {
+  return api.get(API.NGUOI_DUNG_QUYEN + '/' + id)
+}

@@ -39,6 +39,7 @@ export const NGUOI_DUNG__PHONG_BAN_IN = "NguoiDung_PhongBans/phongbanin";
 // Nguoi dung - Vai tro
 export const NGUOI_DUNG__VAI_TRO = "NguoiDung_Roles/rolenguoidung";
 export const NGUOI_DUNG__VAI_TRO_IN = "NguoiDung_Roles/rolein";
+export const NGUOI_DUNG_QUYEN = 'NguoiDung_Roles/nguoidungquyen'
 
 // Ky so - thong so
 export const KS_TS = "KySoThongSos/thongso";
@@ -68,3 +69,10 @@ export const KS_KI_THAT = 'Kysos/sign';
 
 export const LOG_THONG_SO = 'Token/logthongso'
 export const LOG_DE_XUAT = 'Token/logdexuat'
+
+// Van ban
+export const VAN_BAN = 'VanBans'
+
+// Trao doi
+export const TRAO_DOI = 'Messages/message'
+export const TRAO_DOI_CHI_TIET = 'Messages/details'

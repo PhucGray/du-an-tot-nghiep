@@ -290,7 +290,6 @@ export default () => {
       dataIndex: "hoTen",
       key: "hoTen",
       render: (_, record) => {
-        console.log(record);
         return (
           <div>
             <div style={{fontSize: 16}}>{record?.hoTen}</div>

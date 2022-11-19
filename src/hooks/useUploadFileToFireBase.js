@@ -32,7 +32,8 @@ const useUploadFileToFireBase = ({ file }) => {
       () => {
         getDownloadURL(uploadTask.snapshot.ref)
           .then((url) => {
-            setUrl(url?.replace('%', ''));
+            // setUrl(url?.replace('%', ''));
+            setUrl(url)
           })
           .finally(() => {
             setUploading(false);

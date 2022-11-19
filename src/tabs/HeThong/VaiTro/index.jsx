@@ -132,7 +132,8 @@ export default () => {
         message.success(res.data?.retText);
         form.resetFields(["itemName"]);
       } else {
-        //message.error(LOI);
+        message.error(res.data?.retText);
+        
       }
     } catch (error) {
       //message.error(LOI_HE_THONG);

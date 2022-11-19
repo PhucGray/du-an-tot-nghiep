@@ -1,6 +1,7 @@
 import { Button } from "antd";
 import React from "react";
 import { CloudUploadOutlined } from "@ant-design/icons";
+import { API_DOMAIN } from "../../../configs/api";
 
 const ImageModal = ({
   number = 1,
@@ -27,7 +28,7 @@ const ImageModal = ({
 
       {image && (
         <div className="d-flex justify-content-center mt-2">
-          <img src={image} />
+          <img src={API_DOMAIN + image} />
         </div>
       )}
 

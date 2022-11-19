@@ -108,7 +108,7 @@ export default () => {
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
-        form.resetFields(["tenPhongBan"]);
+        form.resetFields();
       } else {
         message.error(res.data?.retText);
       }
@@ -140,13 +140,14 @@ export default () => {
     try {
       const res = await suaPhongBanSvc({
         ma_PhongBan: selectedItem?.maSo,
-        ten_PhongBan: editText,
+        ten_PhongBan: editText?.trim(),
       });
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
         handleGetList();
         setModalEditVisible(false);
+        setNewEditText('')
       } else {
         message.error(res.data?.retText);
       }

@@ -95,7 +95,7 @@ export default () => {
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
-        form.resetFields(["tenChucDanh"]);
+        form.resetFields();
       } else {
         message.error(res.data?.retText);
       }
@@ -127,13 +127,14 @@ export default () => {
     try {
       const res = await suaChucDanhSvc({
         ma_ChucDanh: selectedItem?.maSo,
-        ten_ChucDanh: editText,
+        ten_ChucDanh: editText?.trim(),
       });
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
         handleGetList();
         setModalEditVisible(false);
+        setNewEditText('')
       } else {
         //message.error(LOI);
         message.error(res.data?.retText)

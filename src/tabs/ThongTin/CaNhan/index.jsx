@@ -217,7 +217,7 @@ const CaNhan = () => {
               message: "Email sai định dạng!",
             },
           ]}>
-          <Input />
+          <Input disabled />
         </Form.Item>
 
         <Form.Item

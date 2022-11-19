@@ -130,7 +130,7 @@ export default () => {
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
-        form.resetFields(["itemName"]);
+        form.resetFields();
       } else {
         message.error(res.data?.retText);
         
@@ -163,13 +163,14 @@ export default () => {
     try {
       const res = await suaVaiTroSvc({
         ma_Role: selectedItem?.maSo,
-        ten_Role: editText,
+        ten_Role: editText?.trim(),
       });
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
         handleGetList();
         setModalEditVisible(false);
+        setNewEditText('')
       } else {
         message.error(res.data?.retText);
       }

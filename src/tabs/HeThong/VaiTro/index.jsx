@@ -126,7 +126,7 @@ export default () => {
   const handleAdd = async (values) => {
     setAddLoading(true);
     try {
-      const res = await themVaiTroSvc({ ten_Role: values.itemName });
+      const res = await themVaiTroSvc({ ten_Role: values.itemName?.trim() });
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);

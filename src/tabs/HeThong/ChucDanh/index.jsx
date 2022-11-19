@@ -91,7 +91,7 @@ export default () => {
   const handleAdd = async (values) => {
     setAddLoading(true);
     try {
-      const res = await themChucDanhSvc({ ten_ChucDanh: values.tenChucDanh });
+      const res = await themChucDanhSvc({ ten_ChucDanh: values.tenChucDanh?.trim() });
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);

@@ -104,7 +104,7 @@ export default () => {
   const handleAdd = async (values) => {
     setAddLoading(true);
     try {
-      const res = await themPhongBanSvc({ ten_PhongBan: values.tenPhongBan });
+      const res = await themPhongBanSvc({ ten_PhongBan: values.tenPhongBan?.trim() });
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);

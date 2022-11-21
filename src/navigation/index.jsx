@@ -50,6 +50,7 @@ const Navigation = () => {
         <Route path={TAB.KI_DA_DUYET + '/detail/:id'} element={<KiSoChiTiet />} />
         <Route path={TAB.KI_CHO_DUYET + '/ki-that/:id'} element={<KiThu />} />
         <Route path={TAB.KI_DE_XUAT} element={<KiDeXuat />} />
+        <Route path={TAB.GAN_MA_QR + '/:id'} element={<KiThu />} />
         <Route
           path={TAB.KI_DE_XUAT + "/detail/:id"}
           element={<KiSoChiTiet />}

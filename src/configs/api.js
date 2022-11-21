@@ -77,3 +77,7 @@ export const VAN_BAN = 'VanBans'
 // Trao doi
 export const TRAO_DOI = 'Messages/message'
 export const TRAO_DOI_CHI_TIET = 'Messages/details'
+
+// MaQR
+
+export const MA_QR = 'MaQRs'

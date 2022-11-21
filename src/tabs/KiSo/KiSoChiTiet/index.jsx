@@ -31,7 +31,9 @@ import {
   FileOutlined,
   FileTwoTone,
   LoadingOutlined,
+  QrcodeOutlined 
 } from "@ant-design/icons";
+import {AiOutlineQrcode, AiOutlineSetting} from 'react-icons/ai'
 import { textToCharacter } from "../../../utils/strings";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
 import {
@@ -142,6 +144,7 @@ const KiSoChiTiet = () => {
   const [themBuocLoading, seThemBuocLoading] = useState(false);
   const [modalBuocDuyetVisible, setModalBuocDuyetVisible] = useState(false);
   const [modalPasscodeVisible, setModalPasscodeVisible] = useState(false);
+  const [modalCauHinhQr, setModalCauHinhQr] = useState(false)
 
   const [suaDeXuatLoading, setSuaDeXuatLoading] = useState(false);
   const [chuyenDuyetLoading, setChuyenDuyetLoading] = useState(false);
@@ -180,6 +183,7 @@ const KiSoChiTiet = () => {
   const [formDeXuat] = Form.useForm();
   const [formPasscode] = Form.useForm();
   const [formTraoDoi] = Form.useForm();
+  const [formCauHinhQR] = Form.useForm();
 
   const handleKiemTraPasscode = async (values) => {
     const data = {
@@ -191,8 +195,6 @@ const KiSoChiTiet = () => {
       setSubmitPasscodeLoading(true);
 
       const res = await kiemTraPasscodeSvc(data);
-
-      console.log(KSDXData);
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         localStorage.setItem("ki-that", KSDXData?.inputFile);
@@ -640,6 +642,58 @@ const KiSoChiTiet = () => {
       </Modal>
 
       <Modal
+        width={550}
+        title={"Cấu hình QR"}
+        open={modalCauHinhQr}
+        onOk={() => {}}
+        onCancel={() => {
+          // setModalPasscodeVisible(false);
+          // formPasscode.resetFields();
+        }}
+        footer={null}>
+        <Form
+          form={formCauHinhQR}
+          name="formCauHinhQR"
+          onFinish={(values) => {
+            localStorage.setItem('cau-hinh-qr', values?.state)
+            setModalCauHinhQr(false)
+          }}
+          autoComplete="off"
+          initialValues={{
+            state: 1
+          }}
+          >
+           <Form.Item label="" name='state'>
+             <Radio.Group onChange={e => {
+             }}>
+               <Radio value={1}>Xem file với mã QR</Radio>
+               <Radio value={2}>Đăng nhập + Mã QR</Radio>
+               <Radio value={3}>Không cho xem</Radio>
+             </Radio.Group>
+           </Form.Item>
+
+          <div className="d-flex justify-content-center gap-3 mt-4">
+            <Form.Item>
+              <Button
+                type="ghost"
+                htmlType="button"
+                onClick={() => setModalCauHinhQr(false)}>
+                Bỏ qua
+              </Button>
+            </Form.Item>
+            <Form.Item>
+              <Button
+                loading={submitPasscodeLoading}
+                type="primary"
+                htmlType="submit">
+                Đồng ý
+              </Button>
+            </Form.Item>
+          </div>
+        </Form>
+      </Modal>
+
+      <Modal
         title={"Nhập passcode để ký"}
         open={modalPasscodeVisible}
         onOk={() => {}}
@@ -948,6 +1002,33 @@ const KiSoChiTiet = () => {
                 type="link"
                 icon={<EditOutlined />}>
                 Sửa đề xuất
+              </Button>
+
+              <Button
+                // onClick={() => setModalDeXuatVisible(true)}
+                onClick={() => {
+                  // navigate('/' + TAB.GAN_MA_QR)
+                  setModalCauHinhQr(true)
+                }}
+                className="d-flex align-items-center text-black"
+                type="link"
+                icon={<AiOutlineSetting />}>
+                Cấu hình QR
+              </Button>
+
+              <Button
+                // onClick={() => setModalDeXuatVisible(true)}
+                onClick={() => {
+                  // console.log(KSDXData)
+                  console.log(KSDXData?.inputFile)
+                  localStorage.setItem('gan-ma-qr', KSDXData?.inputFile)
+                  navigate('/' + TAB.GAN_MA_QR + '/' + KSDXData?.ma_KySoDeXuat)
+
+                }}
+                className="d-flex align-items-center text-black"
+                type="link"
+                icon={<AiOutlineQrcode />}>
+                Gắn mã QR
               </Button>
 
               <Popconfirm

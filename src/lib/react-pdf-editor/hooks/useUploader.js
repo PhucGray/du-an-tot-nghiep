@@ -92,7 +92,6 @@ export default ({ use, afterUploadPdf, afterUploadAttachment }) => {
 file = _file
    }
 
-   console.log(file)
     setFile(file);
 
     const result = await handlers[use](file);

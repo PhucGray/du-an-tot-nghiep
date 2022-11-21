@@ -29,7 +29,8 @@ import { Document } from 'react-pdf';
 import * as TAB from '../../../constants/tab'
 import { nguoiDungSelector } from "../../../store/auth/selectors";
 import {useSelector} from 'react-redux'
-
+import QrImg from '../../../assets/images/qr.png'
+import {ganMaQrSvc} from '../../../store/maQR/service'
 const { Option } = Select;
 const { TextArea } = Input;
 
@@ -71,7 +72,10 @@ const KiThu = () => {
   const params = useParams();
   const location = useLocation();
   const isKiThat = location.pathname.includes('ki-that');
+  const isGanMaQR = location.pathname.includes('gan-ma-qr')
   const _file_ = localStorage.getItem('ki-that')
+  const _file_gan_ma_ = localStorage.getItem('gan-ma-qr');
+
   const navigate = useNavigate()
 
   const nguoiDung  = useSelector(nguoiDungSelector)
@@ -222,10 +226,10 @@ const KiThu = () => {
 
       const finalImages = images.map((image) => {
         return {
-          y: image.finalY,
-          x: image.finalX,
-          img_w: image.width,
-          img_h: image.height,
+          y: Math.round(image.finalY),
+          x: Math.round(image.finalX),
+          img_w: Math.round(image.width),
+          img_h: Math.round(image.height),
           imgSign: image.src?.split(API_DOMAIN).join(''),
           pageSign: image.pageIndex + 1,
         };
@@ -233,10 +237,10 @@ const KiThu = () => {
 
       const finalTexts = texts.map((text) => {
         return {
-          y: text.finalY,
-          x: text.finalX,
-          img_w: text.width,
-          img_h: text.height,
+          y: Math.round(text.finalY),
+          x: Math.round(text.finalX),
+          img_w: Math.round(text.width),
+          img_h: Math.round(text.height),
           pageSign: text.pageIndex + 1,
           textSign: text.content,
         };
@@ -271,6 +275,12 @@ const KiThu = () => {
           id_NguoiDung: params?.id,
           postPositionSigns: [...finalImages, ...finalTexts],
         });
+
+        console.log({
+          inputFile: url,
+          id_NguoiDung: params?.id,
+          postPositionSigns: [...finalImages, ...finalTexts],
+        })
 
         
   
@@ -338,6 +348,63 @@ const KiThu = () => {
     } catch (error) {}
   };
 
+  const a = 1.388888889
+
+
+  const handleXacNhan = async () => {
+    // const finalImages = images.map((image) => {
+    //   return {
+    //     y: image.finalY,
+    //     x: image.finalX,
+    //     img_w: image.width,
+    //     img_h: image.height,
+    //     pageSign: image.pageIndex + 1,
+    //   };
+    // });
+    // console.log(localStorage.getItem('cau-hinh-qr'))
+    const mucDoStr = localStorage.getItem('cau-hinh-qr');
+
+    const ma_DeXuat = parseInt(params?.id)
+    const ma_NguoiTao = nguoiDung?.ma_NguoiDung;
+    const image = images?.[0];
+    const left = image.finalX
+    const top = image.finalY
+    const page = image.pageIndex + 1
+    const inputFile = _file_gan_ma_;
+    const mucDo = mucDoStr ? parseInt(mucDoStr) : 1;
+
+    // console.log(left, top)
+    // console.log(image.finalX, image.finalY)
+
+    const data = {
+      ma_DeXuat,
+      ma_NguoiTao,
+      left,
+      top,
+      page,
+      inputFile,
+      mucDo
+    }
+
+    try {
+      setXuatLoading(true)
+
+      const res = await ganMaQrSvc(data);
+
+      if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText)
+        navigate(-1)
+      } else {
+        message.error(res.data?.retText)
+      }
+    } catch (error) {
+      
+    } finally {
+      setXuatLoading(false)
+    }
+  
+  }
+
   useEffect(() => {
     if (!!params?.id) {
       handleGetThongSo();
@@ -376,6 +443,49 @@ const KiThu = () => {
     }
   },[isKiThat, _file_])
 
+  const [first, setFirst] = useState(true)
+
+
+  useEffect(() => {
+    if(isGanMaQR && !!_file_gan_ma_) {
+      setFirst(false)
+      aaaa(API_DOMAIN + _file_gan_ma_)
+      setImages([{
+          id: uuidv4(),
+          x: 0,
+          y: 0,
+          isDragging: false,
+          src: QrImg,
+          pageIndex: 0,
+      }]) 
+    }
+  }, [isGanMaQR, _file_gan_ma_]);
+
+  useEffect(() => {
+    const a = async () => {
+      const pageIndex = (await currentPage).pageIndex;
+
+      setImages([...images].map(item => {
+        return {
+          ...item,
+          pageIndex,
+        }
+      }))
+    //   setImages([{
+    //     id: uuidv4(),
+    //     x: 0,
+    //     y: 0,
+    //     isDragging: false,
+    //     src: QrImg,
+    //     pageIndex: (await currentPage).pageIndex,
+    // }]) 
+    }
+
+    if(currentPage && isGanMaQR && !first) {
+      a()
+    }
+  }, [currentPage]);
+
   return (
     <div className="mx-auto" style={{ width: "100%", minHeight: "100vh" }}>
      
@@ -384,7 +494,7 @@ const KiThu = () => {
           <div
             className="d-flex justify-content-between mx-auto mt-3"
             style={{ width: "95%" }}>
-            <div>
+            {!isGanMaQR && <div>
               <div>Chữ Ký</div>
               <Select
                 placeholder="Chọn chữ Ký"
@@ -430,9 +540,11 @@ const KiThu = () => {
                   {isEditing ? "Sửa" : "Thêm"} nội dung
                 </Button>
               </div>
-            </div>
+            </div>}
 
-            <div className="d-flex justify-content-end mt-3 me-4 gap-3">
+            <div className="d-flex justify-content-end mt-3 me-4 gap-3" style={{
+              marginLeft: isGanMaQR ? 'auto' : undefined
+            }}>
               {!!resFile && (
                 <Button
                   type="primary"
@@ -450,10 +562,16 @@ const KiThu = () => {
                 type="primary"
                 style={{width: 150, borderRadius: 10}}
                 onClick={() => {
-                  setXuatLoading(true);
-                  uploadToFireBase();
+             
+
+                  if(isGanMaQR) {
+                    handleXacNhan()
+                  } else {
+                    setXuatLoading(true);
+                    uploadToFireBase();
+                  }
                 }}>
-                Ký duyệt
+                {isGanMaQR ? 'Xác nhận' : 'Ký duyệt'}
               </Button>
             </div>
           </div>
@@ -500,7 +618,13 @@ const KiThu = () => {
                 pages={pages}
                 getPageSizes={(sizes) => {
                   if (pdfSizes.length === 0) {
-                    setPdfSizes(sizes);
+                    console.log(sizes)
+                    setPdfSizes(sizes?.map(item => {
+                      return {
+                        width: item?.width,
+                        height: item?.height,
+                      }
+                    }));
                   }
                 }}
               />
@@ -541,7 +665,7 @@ const KiThu = () => {
                               const height = data?.height;
 
                               const finalY =
-                                pdfSizes[pageIndex]?.height - y - height;
+                              pdfSizes[pageIndex]?.height - y - height;
                               const finalX = x;
 
                               if (image?.id == data?.id) {

@@ -23,6 +23,8 @@ export const TabContext = createContext(null);
 const MainLayout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const isFileDaKi = location.pathname.includes('FILE-DA-KY')
 
   const nguoiDung = useSelector(nguoiDungSelector)
 
@@ -63,7 +65,8 @@ const MainLayout = () => {
 
   return (
     <>
-      <Fragment>
+      {isFileDaKi && <Outlet />}
+      {!isFileDaKi && <Fragment>
         <div
           style={{
             height: "100vh",
@@ -91,7 +94,7 @@ const MainLayout = () => {
           cancelText="Bỏ qua">
           <p>Bạn có chắc chắn muốn đăng xuất ?</p>
         </Modal>
-      </Fragment>
+      </Fragment>}
     </>
   );
 };

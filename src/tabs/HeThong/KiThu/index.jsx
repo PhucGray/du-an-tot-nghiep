@@ -354,9 +354,6 @@ const KiThu = () => {
     } catch (error) {}
   };
 
-  const a = 1.388888889
-
-
   const handleXacNhan = async () => {
     // const finalImages = images.map((image) => {
     //   return {
@@ -373,8 +370,8 @@ const KiThu = () => {
     const ma_DeXuat = parseInt(params?.id)
     const ma_NguoiTao = nguoiDung?.ma_NguoiDung;
     const image = images?.[0];
-    const left = image.finalX
-    const top = image.finalY
+    const left = Math.round(image.finalX/e)
+    const top = Math.round(image.finalY/e + 7)
     const page = image.pageIndex + 1
     const inputFile = _file_gan_ma_;
     const mucDo = mucDoStr ? parseInt(mucDoStr) : 1;

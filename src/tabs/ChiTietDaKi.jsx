@@ -1,23 +1,30 @@
-import { Empty, Spin } from "antd";
+import { Button, Empty, Spin } from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { API_DOMAIN } from "../configs/api";
 import { RETCODE_SUCCESS, SUCCESS } from "../constants/api";
+import { nguoiDungSelector } from "../store/auth/selectors";
 import { getFileChiTiet } from "../store/maQR/service";
 const ChiTietDaKi = () => {
   const params = useParams();
   const [loading, setLoading] = useState(true);
   const [url, setUrl] = useState(null);
+  const [mucDo, setMucDo] = useState(null);
+  const nguoiDung = useSelector(nguoiDungSelector);
+  const [sai, setSai] = useState(false);
 
   useEffect(() => {
     const a = async () => {
       try {
         const res = await getFileChiTiet({ id: params?.id || "afbawf" });
 
+        setSai(res.data?.data === null);
         if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
           const fileDaKy = res.data?.data?.kySoDeXuat?.fileDaKy;
           if (!!fileDaKy) {
+            setMucDo(res.data?.data?.mucDo);
             setUrl(API_DOMAIN + fileDaKy);
           }
         }
@@ -29,11 +36,60 @@ const ChiTietDaKi = () => {
 
     a();
   }, []);
+
+  const link = "https://www.chukysoflames.com/";
+
   return (
     <>
       {!loading && (
         <>
-          {url ? (
+          {!!url && (mucDo === 1 || (mucDo === 2 && !!nguoiDung)) && (
+            <iframe
+              style={{
+                height: "100vh",
+                width: "100vw",
+              }}
+              src={url}
+              title="description"></iframe>
+          )}
+
+          {mucDo === 2 && !nguoiDung && (
+            <div
+              style={{
+                display: "flex",
+                height: "100vh",
+                width: "100vw",
+                justifyContent: "center",
+                alignItems: "center",
+              }}>
+              <div>
+                <div className="text-center">
+                  Bạn vui lòng đăng nhập trước khi quét mã
+                </div>
+                <div>
+                  <Button
+                    type="link"
+                    onClick={() => {
+                      window.open(link, "_SELF");
+                    }}>
+                    {link}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {(mucDo === 3 || sai) && <div
+              style={{
+                display: "flex",
+                height: "100vh",
+                width: "100vw",
+                justifyContent: "center",
+                alignItems: "center",
+              }}>
+              <Empty description="Không có dữ liệu" />
+            </div>}
+          {/* {url ? (
             <iframe
               style={{
                 height: "100vh",
@@ -52,7 +108,7 @@ const ChiTietDaKi = () => {
               }}>
               <Empty description="Không có dữ liệu" />
             </div>
-          )}
+          )} */}
         </>
       )}
 

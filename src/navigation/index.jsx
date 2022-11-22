@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 import SignIn from "../pages/SignIn";
 import MainLayout from "../layout/MainLayout";
@@ -27,6 +27,7 @@ import MaQR from "../tabs/HeThong/QR";
 import ChiTietDaKi from "../tabs/ChiTietDaKi";
 
 const Navigation = () => {
+  const location = useLocation()
   const nguoiDung = useSelector(nguoiDungSelector);
   const token = useSelector(tokenSelector);
 
@@ -40,9 +41,11 @@ const Navigation = () => {
     }
   }, [isLogin]);
 
+  const isFileDaKi = location.pathname.includes('FILE-DA-KY')
+
   return (
     <Routes>
-      <Route path="/" element={isLogin ? <MainLayout /> : <SignIn />}>
+      <Route path="/" element={(isLogin || isFileDaKi) ? <MainLayout isFileDaKi={isFileDaKi} /> : <SignIn />}>
         <Route path={'/'} element={<Haha />} />
         <Route path={TAB.CHI_TIET_DA_KI + '/:id'} element={<ChiTietDaKi />}/>
         <Route path={TAB.VAN_BAN} element={<VanBan />} />

@@ -60,7 +60,10 @@ const MainLayout = () => {
 
     }
 
-    g();
+    if(!isFileDaKi) {
+      g();
+      
+    }
   }, []);
 
   return (

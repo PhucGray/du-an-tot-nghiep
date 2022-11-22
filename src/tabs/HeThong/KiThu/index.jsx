@@ -371,7 +371,7 @@ const KiThu = () => {
     const ma_NguoiTao = nguoiDung?.ma_NguoiDung;
     const image = images?.[0];
     const left = Math.round(image.finalX/e)
-    const top = Math.round(image.finalY/e + 7)
+    const top = Math.round(image.finalY/e + 5)
     const page = image.pageIndex + 1
     const inputFile = _file_gan_ma_;
     const mucDo = mucDoStr ? parseInt(mucDoStr) : 1;

@@ -638,7 +638,7 @@ const KiSoChiTiet = () => {
         title="Lịch sử"
         onCancel={() => setLog(null)}
         onOk={() => setLog(null)}>
-        <Table columns={columns_33} dataSource={log} />
+        <Table columns={columns_33} dataSource={log} pagination={{defaultPageSize: 5}} />
       </Modal>
 
       <Modal

@@ -459,6 +459,7 @@ const ThongSoChiTiet = ({
         <Table 
           columns={columns}
           dataSource={log}
+          pagination={{defaultPageSize: 5}}
         />
       </Modal>
 

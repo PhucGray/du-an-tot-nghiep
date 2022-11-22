@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { Image as KonvaImage, Layer, Stage, Text } from "react-konva";
 import { Pagination } from "semantic-ui-react";
-import { Select, Input, message, Button } from "antd";
+import { Select, Input, message, Button, Modal, Form, Radio } from "antd";
 import useImage from "use-image";
 import Empty from "../../../lib/react-pdf-editor/components/Empty";
 import Page from "../../../lib/react-pdf-editor/components/Page";
@@ -31,6 +31,7 @@ import { nguoiDungSelector } from "../../../store/auth/selectors";
 import {useSelector} from 'react-redux'
 import QrImg from '../../../assets/images/qr.png'
 import {ganMaQrSvc} from '../../../store/maQR/service'
+import { AiOutlineSetting } from "react-icons/ai";
 const { Option } = Select;
 const { TextArea } = Input;
 
@@ -87,6 +88,8 @@ const KiThu = () => {
   const [texts, setTexts] = useState([]);
   const [resFile, setResFile] = useState(null);
 
+  const [modalCauHinhQr, setModalCauHinhQr] = useState(false)
+
   const [images, setImages] = useState([]);
   const [contextMenuData, setContextMenuData] = useState(null);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
@@ -96,6 +99,7 @@ const KiThu = () => {
 
   const [disableXuat, setDisableXuat] = useState(true);
   const [loadingFile, setLoadingFile] = useState(false)
+  const [formCauHinhQR] = Form.useForm();
 
   const [chiTietBuocDuyet, setChiTietBuocDuyet] = useState(null)
 
@@ -486,9 +490,65 @@ const KiThu = () => {
     }
   }, [currentPage]);
 
+  useEffect(() => {
+    localStorage.removeItem('cau-hinh-qr')
+  }, []);
+
   return (
     <div className="mx-auto" style={{ width: "100%", minHeight: "100vh" }}>
-     
+      <Modal
+        width={550}
+        title={"Cấu hình QR"}
+        open={modalCauHinhQr}
+        onOk={() => {}}
+        onCancel={() => {
+          // setModalPasscodeVisible(false);
+          // formPasscode.resetFields();
+          setModalCauHinhQr(false)
+        }}
+        footer={null}>
+        <Form
+          form={formCauHinhQR}
+          name="formCauHinhQR"
+          onFinish={(values) => {
+            localStorage.setItem('cau-hinh-qr', values?.state)
+            setModalCauHinhQr(false)
+          }}
+          autoComplete="off"
+          initialValues={{
+            state: 1
+          }}
+          >
+           <Form.Item label="" name='state'>
+             <Radio.Group onChange={e => {
+             }}>
+               <Radio value={1}>Xem file với mã QR</Radio>
+               <Radio value={2}>Đăng nhập + Mã QR</Radio>
+               <Radio value={3}>Không cho xem</Radio>
+             </Radio.Group>
+           </Form.Item>
+
+          <div className="d-flex justify-content-center gap-3 mt-4">
+            <Form.Item>
+              <Button
+                type="ghost"
+                htmlType="button"
+                onClick={() => setModalCauHinhQr(false)}>
+                Bỏ qua
+              </Button>
+            </Form.Item>
+            <Form.Item>
+              <Button
+                loading={false}
+                type="primary"
+                htmlType="submit">
+                Đồng ý
+              </Button>
+            </Form.Item>
+          </div>
+        </Form>
+      </Modal>
+
       <div>
         {!!file && (
           <div
@@ -542,8 +602,10 @@ const KiThu = () => {
               </div>
             </div>}
 
-            <div className="d-flex justify-content-end mt-3 me-4 gap-3" style={{
-              marginLeft: isGanMaQR ? 'auto' : undefined
+            <div className="d-flex mt-3 me-4 gap-3" style={{
+              marginLeft: isGanMaQR ? 'auto' : undefined,
+              justifyContent: isGanMaQR ? 'space-between' : 'flex-end',
+              flex: isGanMaQR ? 1 : undefined
             }}>
               {!!resFile && (
                 <Button
@@ -555,6 +617,18 @@ const KiThu = () => {
                   Mở file
                 </Button>
               )}
+
+            <Button
+                // onClick={() => setModalDeXuatVisible(true)}
+                onClick={() => {
+                  // navigate('/' + TAB.GAN_MA_QR)
+                  setModalCauHinhQr(true)
+                }}
+                className="d-flex align-items-center"
+                type="ghost"
+                icon={<AiOutlineSetting />}>
+                Cấu hình QR
+              </Button>
 
               <Button
                 disabled={disableXuat}

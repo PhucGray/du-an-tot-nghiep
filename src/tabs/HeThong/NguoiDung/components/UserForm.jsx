@@ -63,8 +63,6 @@ export default ({ userData, userFormState, resetFormTab }) => {
     try {
       const res = await themNguoiDungSvc(data);
 
-      console.log(res.data)
-
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
       } else {

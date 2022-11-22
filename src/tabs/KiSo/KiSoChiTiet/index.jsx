@@ -1004,17 +1004,15 @@ const KiSoChiTiet = () => {
                 Sửa đề xuất
               </Button>
 
-              <Button
-                // onClick={() => setModalDeXuatVisible(true)}
+              {/* <Button
                 onClick={() => {
-                  // navigate('/' + TAB.GAN_MA_QR)
                   setModalCauHinhQr(true)
                 }}
                 className="d-flex align-items-center text-black"
                 type="link"
                 icon={<AiOutlineSetting />}>
                 Cấu hình QR
-              </Button>
+              </Button> */}
 
               <Button
                 // onClick={() => setModalDeXuatVisible(true)}

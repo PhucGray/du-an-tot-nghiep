@@ -19,7 +19,7 @@ export default ({
       const _page = await p;
       if (_page) {
         const context = canvasRef.current?.getContext("2d");
-        const viewport = _page.getViewport({ scale: 1 });
+        const viewport = _page.getViewport({ scale: 1.388888889 });
 
         setWidth(viewport.width * iiii);
         setHeight(viewport.height * iiii);
@@ -52,7 +52,7 @@ export default ({
 
         if (_page) {
           const context = canvasRef.current?.getContext("2d");
-          const viewport = _page.getViewport({ scale: 1 });
+          const viewport = _page.getViewport({ scale: 1.388888889 });
 
           sizes.push({ width: viewport.width* iiii, height: viewport.height * iiii});
         }

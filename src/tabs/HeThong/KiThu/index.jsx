@@ -221,6 +221,8 @@ const KiThu = () => {
     setTexts([...texts].filter((text) => text.id != id));
   };
 
+  const e = 1.388888889
+
   const handleXuatFile = async () => {
     try {
       if (!url) {
@@ -230,10 +232,10 @@ const KiThu = () => {
 
       const finalImages = images.map((image) => {
         return {
-          y: Math.round(image.finalY),
-          x: Math.round(image.finalX),
-          img_w: Math.round(image.width),
-          img_h: Math.round(image.height),
+          y: Math.round(image.finalY/e),
+          x: Math.round(image.finalX/e),
+          img_w: Math.round(image.width/e),
+          img_h: Math.round(image.height/e),
           imgSign: image.src?.split(API_DOMAIN).join(''),
           pageSign: image.pageIndex + 1,
         };
@@ -255,12 +257,12 @@ const KiThu = () => {
 
       if(isKiThat) {
         // console.log(_file_)
-        console.log({
-          inputFile: _file_,
-          id_NguoiDung: nguoiDung?.ma_NguoiDung,
-          postPositionSigns: [...finalImages, ...finalTexts],
-          ma_BuocDuyet: parseInt(isNaN(params?.id) ? '0' : params?.id)
-        })
+        // console.log({
+        //   inputFile: _file_,
+        //   id_NguoiDung: nguoiDung?.ma_NguoiDung,
+        //   postPositionSigns: [...finalImages, ...finalTexts],
+        //   ma_BuocDuyet: parseInt(isNaN(params?.id) ? '0' : params?.id)
+        // })
         const res = await kyThatSvc({
           inputFile: _file_,
           id_NguoiDung: nguoiDung?.ma_NguoiDung,
@@ -618,7 +620,7 @@ const KiThu = () => {
                 </Button>
               )}
 
-            <Button
+         {isGanMaQR &&   <Button
                 // onClick={() => setModalDeXuatVisible(true)}
                 onClick={() => {
                   // navigate('/' + TAB.GAN_MA_QR)
@@ -628,7 +630,7 @@ const KiThu = () => {
                 type="ghost"
                 icon={<AiOutlineSetting />}>
                 Cấu hình QR
-              </Button>
+              </Button>}
 
               <Button
                 disabled={disableXuat}

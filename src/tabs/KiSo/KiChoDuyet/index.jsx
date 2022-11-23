@@ -87,7 +87,7 @@ const KiDeXuat = () => {
 
   const handleTuChoi= async (record) => {
     try {
-      const res = await tuChoiKySvc({id: record?.ma_KySoDeXuat})
+      const res = await tuChoiKySvc({id: record?.ma_BuocDuyet})
 
       if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         g();

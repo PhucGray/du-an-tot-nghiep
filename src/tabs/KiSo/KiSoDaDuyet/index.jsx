@@ -142,21 +142,11 @@ const KiDeXuat = () => {
           <div className="d-flex">
             <div
               onClick={() => {
-                // setRecord(record);
-                // setModalVisible(true);
                 navigate('detail/' + record?.ma_KySoDeXuat);
                 
               }}>
               <Button type="link">Chi tiết</Button>
             </div>
-
-            {/* <Popconfirm
-              title="Bạn có chắc chắn muốn từ chối ký?"
-              onConfirm={() => handleTuChoi(record)}
-              okText="Đồng ý"
-              cancelText="Thoát">
-                <Button type="link">Từ chối</Button>
-            </Popconfirm> */}
           </div>
         );
       },

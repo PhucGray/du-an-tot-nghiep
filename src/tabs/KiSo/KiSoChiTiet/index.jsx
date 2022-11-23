@@ -57,6 +57,7 @@ import {
   getKSDXSvc,
   suaKSDXSvc,
   themBuocDuyetSvc,
+  tuChoiKySvc,
   xoaBuocDuyetSvc,
   xoaKSDX,
 } from "../../../store/kysodexuat/service";
@@ -402,6 +403,25 @@ const KiSoChiTiet = () => {
     } catch (error) {}
   };
 
+  const handleTuChoi= async () => {
+    try {
+      // console.log(KSDXData?.kySoBuocDuyets?.find(i => i?.order === KSDXData?.curentOrder))
+      const res = await tuChoiKySvc({id: KSDXData?.kySoBuocDuyets?.find(i => i?.order === KSDXData?.curentOrder)?.ma_BuocDuyet})
+
+      if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText)
+        navigate(-1)
+      } else {
+        message.error(res.data?.retText)
+      }
+    } catch (error) {
+      //message.error(LOI_HE_THONG)
+    } finally {
+
+    }
+  }
+
+
   const handleChuyenDuyet = async () => {
     setChuyenDuyetLoading(true);
     try {
@@ -435,6 +455,8 @@ const KiSoChiTiet = () => {
       setFileError("");
     }
   }, [file]);
+
+  console.log(KSDXData)
 
   useEffect(() => {
     if (fileTraoDoi) {
@@ -474,7 +496,7 @@ const KiSoChiTiet = () => {
               window.open(API_DOMAIN + record?.inputFile, "_BLANK");
             }}
             className="d-flex align-items-center gap-2"
-            style={{ flex: 1 }}>
+            style={{ flex: 1, cursor: 'pointer' }}>
             {/* {_?.split("files%")?.[1]?.split("?alt")?.[0]} */}
             {_}
             <FilePdfTwoTone twoToneColor={"red"} />
@@ -506,7 +528,7 @@ const KiSoChiTiet = () => {
               window.open(API_DOMAIN +  (pageChiTietKyDaDuyet ? KSDD?.fileDaKy : _ ), "_BLANK");
             }}
             className="d-flex align-items-center gap-2"
-            style={{ flex: 1 }}>
+            style={{ flex: 1, cursor: 'pointer' }}>
             {record.ten_FileGoc?.split('.pdf').join('_daky.pdf')}
             <FilePdfTwoTone twoToneColor={"red"} />
           </div>
@@ -1062,7 +1084,7 @@ const KiSoChiTiet = () => {
                   </Button>
                   <Popconfirm
                     title="Bạn có chắc chắn muốn từ chối đề xuất?"
-                    onConfirm={() => {}}
+                    onConfirm={() => handleTuChoi()}
                     okText="Đồng ý"
                     cancelText="Thoát">
                     <Button

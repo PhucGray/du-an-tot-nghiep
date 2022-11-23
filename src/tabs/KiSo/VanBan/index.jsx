@@ -213,7 +213,7 @@ const VanBan = () => {
               window.open(API_DOMAIN + record?.file)
             }}
             className="d-flex align-items-center gap-2"
-            style={{ flex: 1 }}>
+            style={{ flex: 1, cursor: 'pointer' }}>
             {/* {record.ten_FileGoc?.split('.pdf').join('_daky.pdf')} */}
             {/* <FilePdfTwoTone twoToneColor={"red"} /> */}
             <AiOutlineFile size={30} style={{color: 'blue'}} />

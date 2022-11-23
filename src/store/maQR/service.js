@@ -8,3 +8,11 @@ export const ganMaQrSvc = (payload) => {
 export const getFileChiTiet = ({id}) => {
   return api.get(API.MA_QR + '/' + id)
 }
+
+export const getListQrSvc = () => {
+  return api.get(API.MA_QR)
+}
+
+export const editQr = (payload) => {
+  return api.put(API.MA_QR, payload)
+}

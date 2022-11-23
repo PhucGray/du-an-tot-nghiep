@@ -446,7 +446,7 @@ const ThongSoChiTiet = ({
       dataIndex: "thoiGianThucHien",
       key: "thoiGianThucHien",
       render: (_, record) => {
-        return <>{moment(_).format('DD-MM-YYYY')}</>
+        return <>{moment(_).fromNow()}</>
       }
     },
   ];

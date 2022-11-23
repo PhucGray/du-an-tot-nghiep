@@ -610,7 +610,7 @@ const KiSoChiTiet = () => {
       dataIndex: "thoiGianThucHien",
       key: "thoiGianThucHien",
       render: (_, record) => {
-        return <>{moment(_).format("DD-MM-YYYY")}</>;
+        return <>{moment(_).fromNow()}</>
       },
     },
   ];
@@ -1015,16 +1015,15 @@ const KiSoChiTiet = () => {
               </Button> */}
 
               <Button
-                // onClick={() => setModalDeXuatVisible(true)}
+                className="d-flex align-items-center text-black"
+                type="link"
+                disabled={KSDXData?.isQR}
                 onClick={() => {
-                  // console.log(KSDXData)
-                  console.log(KSDXData?.inputFile)
                   localStorage.setItem('gan-ma-qr', KSDXData?.inputFile)
                   navigate('/' + TAB.GAN_MA_QR + '/' + KSDXData?.ma_KySoDeXuat)
 
                 }}
-                className="d-flex align-items-center text-black"
-                type="link"
+                
                 icon={<AiOutlineQrcode />}>
                 Gắn mã QR
               </Button>

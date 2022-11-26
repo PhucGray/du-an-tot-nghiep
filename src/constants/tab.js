@@ -7,6 +7,7 @@ export const THONG_SO_DON_VI = "thong-so-don-vi";
 export const KI_SO_CHI_TIET = "ki-so-chi-tiet";
 export const GAN_MA_QR = 'gan-ma-qr'
 export const CHI_TIET_DA_KI = 'FILE-DA-KY'
+export const CHUAN_BI_VUNG_KI = 'chuan-bi-vung-ky'
 //---------------------------------------
 export const NGUOI_DUNG = "nguoi-dung";
 // export const CHI_TIET_NGUOI_DUNG = "chi-tiet-nguoi-dung";

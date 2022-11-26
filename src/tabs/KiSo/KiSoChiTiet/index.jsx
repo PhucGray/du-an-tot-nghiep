@@ -34,6 +34,7 @@ import {
   QrcodeOutlined 
 } from "@ant-design/icons";
 import {AiOutlineQrcode, AiOutlineSetting} from 'react-icons/ai'
+import {MdOutlineEditCalendar} from 'react-icons/md'
 import { textToCharacter } from "../../../utils/strings";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
 import {
@@ -456,7 +457,7 @@ const KiSoChiTiet = () => {
     }
   }, [file]);
 
-  console.log(KSDXData)
+  // console.log(KSDXData)
 
   useEffect(() => {
     if (fileTraoDoi) {
@@ -1026,18 +1027,10 @@ const KiSoChiTiet = () => {
                 Sửa đề xuất
               </Button>
 
-              {/* <Button
-                onClick={() => {
-                  setModalCauHinhQr(true)
-                }}
-                className="d-flex align-items-center text-black"
-                type="link"
-                icon={<AiOutlineSetting />}>
-                Cấu hình QR
-              </Button> */}
+        
 
               <Button
-                className="d-flex align-items-center text-black"
+                className="d-flex align-items-center text-black gap-1"
                 type="link"
                 disabled={KSDXData?.isQR}
                 onClick={() => {
@@ -1049,6 +1042,20 @@ const KiSoChiTiet = () => {
                 icon={<AiOutlineQrcode />}>
                 Gắn mã QR
               </Button>
+
+              <Button
+                disabled={dsBuocDuyet.length === 0}
+                // onClick={() => setModalDeXuatVisible(true)}
+                onClick={() => {
+                  localStorage.setItem('chuan-bi', KSDXData?.inputFile)
+                  navigate('/' + TAB.CHUAN_BI_VUNG_KI + '/' + KSDXData?.ma_KySoDeXuat)
+                }}
+                className="d-flex align-items-center text-black gap-1"
+                type="link"
+                icon={<MdOutlineEditCalendar />}>
+                Chuẩn bị vùng ký
+              </Button>
+
 
               <Popconfirm
                 title="Bạn có chắc chắn muốn xoá?"

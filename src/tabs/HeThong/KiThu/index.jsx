@@ -21,17 +21,32 @@ import {
 } from "../../../constants/api";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
 import ContextMenu from "../../../components/ContextMenu";
-import { useLocation, useParams, useRoutes, useNavigate } from "react-router-dom";
+import {
+  useLocation,
+  useParams,
+  useRoutes,
+  useNavigate,
+} from "react-router-dom";
 import { getThongSoNguoiDungSvc } from "../../../store/kyso_thongso/services";
-import { getChiTietBuocDuyetSvc, kyThatSvc, kyThuSvc } from "../../../store/kyso/services";
+import {
+  getChiTietBuocDuyetSvc,
+  kyThatSvc,
+  kyThuSvc,
+} from "../../../store/kyso/services";
 import { v4 as uuidv4 } from "uuid";
-import { Document } from 'react-pdf';
-import * as TAB from '../../../constants/tab'
+import { Document } from "react-pdf";
+import * as TAB from "../../../constants/tab";
 import { nguoiDungSelector } from "../../../store/auth/selectors";
-import {useSelector} from 'react-redux'
-import QrImg from '../../../assets/images/qr.png'
-import {ganMaQrSvc} from '../../../store/maQR/service'
+import { useSelector } from "react-redux";
+import QrImg from "../../../assets/images/qr.png";
+import { ganMaQrSvc } from "../../../store/maQR/service";
 import { AiOutlineSetting } from "react-icons/ai";
+import { getDsBuocDuyetSvc } from "../../../store/kysodexuat/service";
+import {
+  getVungKyDeXuatSvc,
+  themVungKySvc,
+} from "../../../store/vungky/services";
+import { useRef } from "react";
 const { Option } = Select;
 const { TextArea } = Input;
 
@@ -72,14 +87,16 @@ const LionText = ({ onDragEnd, onChangePos, ...props }) => {
 const KiThu = () => {
   const params = useParams();
   const location = useLocation();
-  const isKiThat = location.pathname.includes('ki-that');
-  const isGanMaQR = location.pathname.includes('gan-ma-qr')
-  const _file_ = localStorage.getItem('ki-that')
-  const _file_gan_ma_ = localStorage.getItem('gan-ma-qr');
+  const isKiThat = location.pathname.includes("ki-that");
+  const isGanMaQR = location.pathname.includes("gan-ma-qr");
+  const isChuanBi = location.pathname.includes("chuan-bi-vung-ky");
+  const _file_ = localStorage.getItem("ki-that");
+  const _file_gan_ma_ = localStorage.getItem("gan-ma-qr");
+  const _file_chuan_bi_ = localStorage.getItem("chuan-bi");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const nguoiDung  = useSelector(nguoiDungSelector)
+  const nguoiDung = useSelector(nguoiDungSelector);
 
   const [nguoiDungKi, setNguoiDungKi] = useState(null);
 
@@ -87,8 +104,9 @@ const KiThu = () => {
   const [pdfSize, setPdfSize] = useState({ width: 0, height: 0 });
   const [texts, setTexts] = useState([]);
   const [resFile, setResFile] = useState(null);
+  const [listBuocDuyet, setListBuocDuyet] = useState([]);
 
-  const [modalCauHinhQr, setModalCauHinhQr] = useState(false)
+  const [modalCauHinhQr, setModalCauHinhQr] = useState(false);
 
   const [images, setImages] = useState([]);
   const [contextMenuData, setContextMenuData] = useState(null);
@@ -98,10 +116,11 @@ const KiThu = () => {
   const [xuatLoading, setXuatLoading] = useState(false);
 
   const [disableXuat, setDisableXuat] = useState(true);
-  const [loadingFile, setLoadingFile] = useState(false)
+  const [loadingFile, setLoadingFile] = useState(false);
   const [formCauHinhQR] = Form.useForm();
 
-  const [chiTietBuocDuyet, setChiTietBuocDuyet] = useState(null)
+  const [chiTietBuocDuyet, setChiTietBuocDuyet] = useState(null);
+  const [buocDuyetHienTai, setBuocDuyetHienTai] = useState(null);
 
   const initializePageAndAttachments = (pdfDetails) => {
     initialize(pdfDetails);
@@ -152,13 +171,11 @@ const KiThu = () => {
 
   const getChiTietBuocDuyet = async () => {
     try {
-      const res = await getChiTietBuocDuyetSvc({id: params?.id})
+      const res = await getChiTietBuocDuyetSvc({ id: params?.id });
 
-      setChiTietBuocDuyet(res.data?.data)
-    } catch (error) {
-      
-    }
-  }
+      setChiTietBuocDuyet(res.data?.data);
+    } catch (error) {}
+  };
 
   const handleChonChuKy = (value, option) => {
     const key = option?.key;
@@ -174,8 +191,114 @@ const KiThu = () => {
           isDragging: false,
           src: option?.value,
           pageIndex,
+          buocDuyetHienTai,
         },
       ]);
+    }
+  };
+
+  const handleSelectBuocDuyet = async (value, option) => {
+    const key = option?.key;
+
+    setBuocDuyetHienTai(
+      listBuocDuyet.find((i) => i?.nguoiDung?.ma_NguoiDung == key),
+    );
+    try {
+      const res = await getThongSoNguoiDungSvc({ id: parseInt(key) });
+      const currentUser = res.data?.data;
+      setNguoiDungKi({
+        ...currentUser,
+        hinh1: currentUser?.hinh1 ? API_DOMAIN + currentUser?.hinh1 : null,
+        hinh2: currentUser?.hinh2 ? API_DOMAIN + currentUser?.hinh2 : null,
+        hinh3: currentUser?.hinh3 ? API_DOMAIN + currentUser?.hinh3 : null,
+      });
+    } catch (error) {
+    } finally {
+    }
+  };
+
+  const reduceChuKy = (array) => {
+    const output = array.reduce(function (o, cur) {
+      const occurs = o.reduce(function (n, item, i) {
+        return item.name === cur.name ? i : n;
+      }, -1);
+
+      if (occurs >= 0) {
+        o[occurs].value = o[occurs].value.concat(cur.value);
+      } else {
+        const obj = {
+          name: cur.name,
+          value: [cur.value],
+        };
+        o = o.concat([obj]);
+      }
+
+      return o;
+    }, []);
+
+    return output;
+  };
+
+  const handleLuuVungKy = async () => {
+    const ma_NguoiTao = nguoiDung?.ma_NguoiDung;
+    setXuatLoading(true);
+
+    try {
+      const _images = images.map((image) => {
+        const finalY = pdfSizes[pageIndex]?.height - image?.y - image?.height;
+
+        return {
+          name: image.buocDuyetHienTai?.ma_BuocDuyet,
+          value: {
+            y: finalY,
+            x: image.finalX,
+            img_w: image.width,
+            img_h: image.height,
+            imgSign: image.src?.split(API_DOMAIN).join(""),
+            pageSign: image.pageIndex + 1,
+          },
+        };
+      });
+
+      const _texts = texts.map((text) => {
+        const finalY = pdfSizes[pageIndex]?.height - text?.y - text?.height;
+
+        return {
+          name: text.buocDuyetHienTai?.ma_BuocDuyet,
+          value: {
+            y: finalY,
+            x: text.finalX,
+            img_w: text.width,
+            img_h: text.height,
+            pageSign: text.pageIndex + 1,
+            textSign: text.content,
+          },
+        };
+      });
+
+      const vungKies = reduceChuKy([..._images, ..._texts])?.map((item) => ({
+        ma_BuocDuyet: item?.name,
+        json: JSON.stringify(item?.value)?.split("\\").join("/"),
+      }));
+
+      const data = {
+        ma_NguoiTao,
+        vungKies,
+      };
+
+      // console.log(data)
+
+      const res = await themVungKySvc(data);
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+        navigate(-1);
+      } else {
+        message.error(res.data?.retText);
+      }
+    } catch (error) {
+    } finally {
+      setXuatLoading(false);
     }
   };
 
@@ -194,12 +317,13 @@ const KiThu = () => {
     setTexts([
       ...texts,
       {
-        id: texts.length.toString(),
+        id: uuidv4(),
         x: 0,
         y: 0,
         isDragging: false,
         content: textarea,
         pageIndex,
+        buocDuyetHienTai,
       },
     ]);
     setTextarea("");
@@ -221,7 +345,7 @@ const KiThu = () => {
     setTexts([...texts].filter((text) => text.id != id));
   };
 
-  const e = 1.388888889
+  const e = 1.388888889;
 
   const handleXuatFile = async () => {
     try {
@@ -232,30 +356,27 @@ const KiThu = () => {
 
       const finalImages = images.map((image) => {
         return {
-          y: Math.round(image.finalY/e),
-          x: Math.round(image.finalX/e),
-          img_w: Math.round(image.width/e),
-          img_h: Math.round(image.height/e),
-          imgSign: image.src?.split(API_DOMAIN).join(''),
+          y: Math.round(image.finalY / e),
+          x: Math.round(image.finalX / e),
+          img_w: Math.round(image.width / e),
+          img_h: Math.round(image.height / e),
+          imgSign: image.src?.split(API_DOMAIN).join(""),
           pageSign: image.pageIndex + 1,
         };
       });
 
       const finalTexts = texts.map((text) => {
         return {
-          y: Math.round(text.finalY),
-          x: Math.round(text.finalX),
-          img_w: Math.round(text.width),
-          img_h: Math.round(text.height),
+          y: Math.round(text.finalY / e),
+          x: Math.round(text.finalX / e),
+          img_w: Math.round(text.width / e),
+          img_h: Math.round(text.height / e),
           pageSign: text.pageIndex + 1,
           textSign: text.content,
         };
       });
 
-     
-
-
-      if(isKiThat) {
+      if (isKiThat) {
         // console.log(_file_)
         // console.log({
         //   inputFile: _file_,
@@ -267,15 +388,20 @@ const KiThu = () => {
           inputFile: _file_,
           id_NguoiDung: nguoiDung?.ma_NguoiDung,
           postPositionSigns: [...finalImages, ...finalTexts],
-          ma_BuocDuyet: parseInt(isNaN(params?.id) ? '0' : params?.id)
+          ma_BuocDuyet: parseInt(isNaN(params?.id) ? "0" : params?.id),
         });
 
-        if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
-          message.success(res.data?.retText)
-          navigate('/' + TAB.KI_DA_DUYET + '/detail/' + chiTietBuocDuyet?.ma_KySoDeXuat, {replace: true})
+        if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+          message.success(res.data?.retText);
+          navigate(
+            "/" +
+              TAB.KI_DA_DUYET +
+              "/detail/" +
+              chiTietBuocDuyet?.ma_KySoDeXuat,
+            { replace: true },
+          );
         }
       } else {
-
         const res = await kyThuSvc({
           inputFile: url,
           id_NguoiDung: params?.id,
@@ -286,20 +412,15 @@ const KiThu = () => {
           inputFile: url,
           id_NguoiDung: params?.id,
           postPositionSigns: [...finalImages, ...finalTexts],
-        })
+        });
 
-        
-  
         if (res.status === SUCCESS && res.data.retCode === RETCODE_SUCCESS) {
           const file = res.data.data;
           setResFile(file);
         } else {
-          message.error(res.data?.retText)
+          message.error(res.data?.retText);
         }
       }
-      
-
-      
     } catch (error) {
       console.log("error");
       console.log(error);
@@ -343,7 +464,9 @@ const KiThu = () => {
 
   const handleGetThongSo = async () => {
     try {
-      const res = await getThongSoNguoiDungSvc({ id:isKiThat ?  nguoiDung?.ma_NguoiDung : params?.id });
+      const res = await getThongSoNguoiDungSvc({
+        id: isKiThat ? nguoiDung?.ma_NguoiDung : params?.id,
+      });
       const currentUser = res.data?.data;
       setNguoiDungKi({
         ...currentUser,
@@ -365,14 +488,14 @@ const KiThu = () => {
     //   };
     // });
     // console.log(localStorage.getItem('cau-hinh-qr'))
-    const mucDoStr = localStorage.getItem('cau-hinh-qr');
+    const mucDoStr = localStorage.getItem("cau-hinh-qr");
 
-    const ma_DeXuat = parseInt(params?.id)
+    const ma_DeXuat = parseInt(params?.id);
     const ma_NguoiTao = nguoiDung?.ma_NguoiDung;
     const image = images?.[0];
-    const left = Math.round(image.finalX/e)
-    const top = Math.round(image.finalY/e + 5)
-    const page = image.pageIndex + 1
+    const left = Math.round(image.finalX / e);
+    const top = Math.round(image.finalY / e + 5);
+    const page = image.pageIndex + 1;
     const inputFile = _file_gan_ma_;
     const mucDo = mucDoStr ? parseInt(mucDoStr) : 1;
 
@@ -386,27 +509,25 @@ const KiThu = () => {
       top,
       page,
       inputFile,
-      mucDo
-    }
+      mucDo,
+    };
 
     try {
-      setXuatLoading(true)
+      setXuatLoading(true);
 
       const res = await ganMaQrSvc(data);
 
-      if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
-        message.success(res.data?.retText)
-        navigate(-1)
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+        navigate(-1);
       } else {
-        message.error(res.data?.retText)
+        message.error(res.data?.retText);
       }
     } catch (error) {
-      
     } finally {
-      setXuatLoading(false)
+      setXuatLoading(false);
     }
-  
-  }
+  };
 
   useEffect(() => {
     if (!!params?.id) {
@@ -415,82 +536,342 @@ const KiThu = () => {
     }
   }, [params?.id]);
 
+  function urltoFile(url, filename, mimeType) {
+    return fetch(url)
+      .then(function (res) {
+        return res.arrayBuffer();
+      })
+      .then(function (buf) {
+        return new File([buf], filename, { type: mimeType });
+      });
+  }
 
-  function urltoFile(url, filename, mimeType){
-    return (fetch(url)
-        .then(function(res){return res.arrayBuffer();})
-        .then(function(buf){return new File([buf], filename,{type:mimeType});})
-    );
-}
- 
   const aaaa = (link) => {
-    var request = new XMLHttpRequest();
-    request.open('GET', link, true);
-    request.responseType = 'blob';
-    request.onload = function() {
-        var reader = new FileReader();
-        reader.readAsDataURL(request.response);
-        reader.onload =  function(e){
-          urltoFile(e.target.result, 'hello.pdf','application/pdf')
-          .then(function(file){ 
-    
-            uploadPdf(null, file)
-          });
-        };
+    const request = new XMLHttpRequest();
+    request.open("GET", link, true);
+    request.responseType = "blob";
+    request.onload = function () {
+      const reader = new FileReader();
+      reader.readAsDataURL(request.response);
+      reader.onload = function (e) {
+        urltoFile(e.target.result, "hello.pdf", "application/pdf").then(
+          function (file) {
+            uploadPdf(null, file);
+          },
+        );
+      };
     };
     request.send();
-  }
-   useEffect(()=>{
-    if(isKiThat && !!_file_) {
-      aaaa( API_DOMAIN + _file_)
+  };
+  useEffect(() => {
+    if (isKiThat && !!_file_) {
+      aaaa(API_DOMAIN + _file_);
     }
-  },[isKiThat, _file_])
+  }, [isKiThat, _file_]);
 
-  const [first, setFirst] = useState(true)
-
+  const [first, setFirst] = useState(true);
 
   useEffect(() => {
-    if(isGanMaQR && !!_file_gan_ma_) {
-      setFirst(false)
-      aaaa(API_DOMAIN + _file_gan_ma_)
-      setImages([{
+    if (isGanMaQR && !!_file_gan_ma_) {
+      setFirst(false);
+      aaaa(API_DOMAIN + _file_gan_ma_);
+      setImages([
+        {
           id: uuidv4(),
           x: 0,
           y: 0,
           isDragging: false,
           src: QrImg,
           pageIndex: 0,
-      }]) 
+        },
+      ]);
     }
   }, [isGanMaQR, _file_gan_ma_]);
+
+  const getDsBuocDuyet = async () => {
+    try {
+      // console.log(params?.id)
+      const res = await getDsBuocDuyetSvc({ id: params?.id });
+
+      setListBuocDuyet(
+        res.data?.data?.map((item, index) => {
+          return {
+            ...item,
+            // stt: index + 1,
+            // hoTen: item?.nguoiDung?.hoTen,
+            // trangThai: item?.isDaKy,
+          };
+        }),
+      );
+    } catch (error) {
+    } finally {
+    }
+  };
+
+  const rImg = useRef([]);
+  const rText = useRef([]);
+
+  const getVungKyDeXuat = async () => {
+    try {
+      const res = await getVungKyDeXuatSvc({ id: parseInt(params?.id) });
+
+      // console.log(res?.data?.data?.map(
+      //   item => ({...item, json: JSON.parse(item?.json)})
+      // ).flat())
+
+      const r = [];
+
+      res?.data?.data?.map((item) => {
+        const json = JSON.parse(item?.json);
+
+        // console.log(json)
+        r.push(json);
+      });
+
+      const flatten = r.flat();
+
+      const numberOfImages = flatten.filter((item) => !item?.textSign).length;
+      const numberOfTexts = flatten.filter((item) => !!item?.textSign).length;
+      // console.log(numberOfImages)
+      // console.log(numberOfTexts)
+      // console.log(r.flat())
+
+      for (let i = 0; i < res.data?.data.length; i++) {
+        const item = res.data?.data[i];
+
+        const json = JSON.parse(item?.json);
+        const buocDuyetHienTai = listBuocDuyet.find(
+          (i) => i?.ma_BuocDuyet == item?.ma_BuocDuyet,
+        );
+        const _json = json?.map((item) => ({ ...item, buocDuyetHienTai }));
+
+        for (let i = 0; i < _json.length; i++) {
+          const isLastImg = rImg.current.length === numberOfImages - 1;
+          const isLastText = rText.current.length === numberOfTexts - 1;
+          const item = _json[i];
+
+          const finalY = pdfSizes[pageIndex]?.height - item?.y - item?.img_h;
+          const finalX = item?.x;
+
+          if (!item?.textSign) {
+            rImg.current = [
+              ...rImg.current,
+              {
+                id: uuidv4(),
+                x: item?.x,
+                y: finalY,
+                img_h: item?.img_h,
+                img_w: item?.img_w,
+                isDragging: false,
+                src: API_DOMAIN + item?.imgSign,
+                pageIndex: item?.pageSign - 1,
+                buocDuyetHienTai,
+                finalX,
+                finalY,
+              },
+            ];
+
+            if (isLastImg) {
+              // console.log('run')
+              setImages(rImg.current);
+            }
+          } else {
+            rText.current = [
+              ...rText.current,
+              {
+                id: uuidv4(),
+                x: item?.x,
+                y: finalY,
+                isDragging: false,
+                content: item?.textSign,
+                pageIndex: item?.pageSign - 1,
+                buocDuyetHienTai,
+                finalX,
+                finalY,
+              },
+            ];
+
+            if (isLastText) {
+              setTexts(rText.current);
+            }
+
+            // setTexts([
+            //   ...texts,
+            //   {
+            //     id: uuidv4(),
+            //     x: item?.x,
+            //     y: finalY,
+            //     isDragging: false,
+            //     content: item?.textSign,
+            //     pageIndex: item?.pageSign - 1,
+            //     buocDuyetHienTai,
+            //   },
+            // ]);
+          }
+        }
+      }
+
+      // res.data?.data?.map((item) => {
+      //   const json = JSON.parse(item?.json);
+      //   const buocDuyetHienTai = listBuocDuyet.find(
+      //     (i) => i?.ma_BuocDuyet == item?.ma_BuocDuyet,
+      //   );
+      //   const _json = json?.map((item) => ({ ...item, buocDuyetHienTai }));
+      //   _json?.map((item) => {
+      //     const finalY = pdfSizes[pageIndex]?.height - item?.y - item?.img_h;
+      //     const finalX = item?.x;
+
+      //     if (!item?.textSign) {
+      //       console.log([
+      //         ...images,
+      //         {
+      //           id: uuidv4(),
+      //           x: item?.x,
+      //           y: finalY,
+      //           img_h: item?.img_h,
+      //           img_w: item?.img_w,
+      //           isDragging: false,
+      //           src: API_DOMAIN + item?.imgSign,
+      //           pageIndex: item?.pageSign - 1,
+      //           buocDuyetHienTai,
+      //           finalX,
+      //           finalY
+      //         },
+      //       ])
+      //       setImages([
+      //         ...images,
+      //         {
+      //           id: uuidv4(),
+      //           x: item?.x,
+      //           y: finalY,
+      //           img_h: item?.img_h,
+      //           img_w: item?.img_w,
+      //           isDragging: false,
+      //           src: API_DOMAIN + item?.imgSign,
+      //           pageIndex: item?.pageSign - 1,
+      //           buocDuyetHienTai,
+      //           finalX,
+      //           finalY
+      //         },
+      //       ]);
+      //     } else {
+      //       setTexts([
+      //         ...texts,
+      //         {
+      //           id: uuidv4(),
+      //           x: item?.x,
+      //           y: finalY,
+      //           isDragging: false,
+      //           content: item?.textSign,
+      //           pageIndex: item?.pageSign - 1,
+      //           buocDuyetHienTai,
+      //         },
+      //       ]);
+      //     }
+      //   });
+      // });
+      // res.data?.data?.map((item) => {
+      //   const json = JSON.parse(item?.json);
+      //   const buocDuyetHienTai = listBuocDuyet.find(
+      //     (i) => i?.ma_BuocDuyet == item?.ma_BuocDuyet,
+      //   );
+      //   const _json = json?.map((item) => ({ ...item, buocDuyetHienTai }));
+      //   _json?.map((item) => {
+      //     const finalY = pdfSizes[pageIndex]?.height - item?.y - item?.img_h;
+      //     const finalX = item?.x;
+
+      //     if (!item?.textSign) {
+      //       console.log([
+      //         ...images,
+      //         {
+      //           id: uuidv4(),
+      //           x: item?.x,
+      //           y: finalY,
+      //           img_h: item?.img_h,
+      //           img_w: item?.img_w,
+      //           isDragging: false,
+      //           src: API_DOMAIN + item?.imgSign,
+      //           pageIndex: item?.pageSign - 1,
+      //           buocDuyetHienTai,
+      //           finalX,
+      //           finalY
+      //         },
+      //       ])
+      //       setImages([
+      //         ...images,
+      //         {
+      //           id: uuidv4(),
+      //           x: item?.x,
+      //           y: finalY,
+      //           img_h: item?.img_h,
+      //           img_w: item?.img_w,
+      //           isDragging: false,
+      //           src: API_DOMAIN + item?.imgSign,
+      //           pageIndex: item?.pageSign - 1,
+      //           buocDuyetHienTai,
+      //           finalX,
+      //           finalY
+      //         },
+      //       ]);
+      //     } else {
+      //       setTexts([
+      //         ...texts,
+      //         {
+      //           id: uuidv4(),
+      //           x: item?.x,
+      //           y: finalY,
+      //           isDragging: false,
+      //           content: item?.textSign,
+      //           pageIndex: item?.pageSign - 1,
+      //           buocDuyetHienTai,
+      //         },
+      //       ]);
+      //     }
+      //   });
+      // });
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    if (isChuanBi && !!_file_chuan_bi_) {
+      setFirst(false);
+      aaaa(API_DOMAIN + _file_chuan_bi_);
+      getDsBuocDuyet();
+    }
+  }, [isChuanBi, _file_chuan_bi_]);
+
+  useEffect(() => {
+    if (
+      isChuanBi &&
+      !!_file_chuan_bi_ &&
+      listBuocDuyet.length > 0 &&
+      pdfSizes.length > 0
+    ) {
+      getVungKyDeXuat();
+    }
+  }, [isChuanBi, _file_chuan_bi_, listBuocDuyet, pdfSizes?.length]);
 
   useEffect(() => {
     const a = async () => {
       const pageIndex = (await currentPage).pageIndex;
 
-      setImages([...images].map(item => {
-        return {
-          ...item,
-          pageIndex,
-        }
-      }))
-    //   setImages([{
-    //     id: uuidv4(),
-    //     x: 0,
-    //     y: 0,
-    //     isDragging: false,
-    //     src: QrImg,
-    //     pageIndex: (await currentPage).pageIndex,
-    // }]) 
-    }
+      setImages(
+        [...images].map((item) => {
+          return {
+            ...item,
+            pageIndex,
+          };
+        }),
+      );
+    };
 
-    if(currentPage && isGanMaQR && !first) {
-      a()
+    if (currentPage && isGanMaQR && !first) {
+      a();
     }
   }, [currentPage]);
 
   useEffect(() => {
-    localStorage.removeItem('cau-hinh-qr')
+    localStorage.removeItem("cau-hinh-qr");
   }, []);
 
   return (
@@ -503,29 +884,27 @@ const KiThu = () => {
         onCancel={() => {
           // setModalPasscodeVisible(false);
           // formPasscode.resetFields();
-          setModalCauHinhQr(false)
+          setModalCauHinhQr(false);
         }}
         footer={null}>
         <Form
           form={formCauHinhQR}
           name="formCauHinhQR"
           onFinish={(values) => {
-            localStorage.setItem('cau-hinh-qr', values?.state)
-            setModalCauHinhQr(false)
+            localStorage.setItem("cau-hinh-qr", values?.state);
+            setModalCauHinhQr(false);
           }}
           autoComplete="off"
           initialValues={{
-            state: 1
-          }}
-          >
-           <Form.Item label="" name='state'>
-             <Radio.Group onChange={e => {
-             }}>
-               <Radio value={1}>Xem file với mã QR</Radio>
-               <Radio value={2}>Đăng nhập + Mã QR</Radio>
-               <Radio value={3}>Không cho xem</Radio>
-             </Radio.Group>
-           </Form.Item>
+            state: 1,
+          }}>
+          <Form.Item label="" name="state">
+            <Radio.Group onChange={(e) => {}}>
+              <Radio value={1}>Xem file với mã QR</Radio>
+              <Radio value={2}>Đăng nhập + Mã QR</Radio>
+              <Radio value={3}>Không cho xem</Radio>
+            </Radio.Group>
+          </Form.Item>
 
           <div className="d-flex justify-content-center gap-3 mt-4">
             <Form.Item>
@@ -537,10 +916,7 @@ const KiThu = () => {
               </Button>
             </Form.Item>
             <Form.Item>
-              <Button
-                loading={false}
-                type="primary"
-                htmlType="submit">
+              <Button loading={false} type="primary" htmlType="submit">
                 Đồng ý
               </Button>
             </Form.Item>
@@ -553,63 +929,111 @@ const KiThu = () => {
           <div
             className="d-flex justify-content-between mx-auto mt-3"
             style={{ width: "95%" }}>
-            {!isGanMaQR && <div>
-              <div>Chữ Ký</div>
-              <Select
-                placeholder="Chọn chữ Ký"
-                style={{
-                  width: 120,
-                }}
-                onSelect={handleChonChuKy}>
-                {!!nguoiDungKi?.hinh1 && (
+            {!isGanMaQR && (
+              <div>
+                {isChuanBi && (
+                  <div>
+                    <div>Bước duyệt</div>
+                    <Select
+                      placeholder="Chọn bước duyệt"
+                      style={{
+                        width: 300,
+                      }}
+                      onSelect={handleSelectBuocDuyet}>
+                      {listBuocDuyet?.map((item, index) => (
+                        <Option
+                          key={item?.nguoiDung?.ma_NguoiDung}
+                          value={item?.nguoiDung?.ma_NguoiDung}>
+                          {item?.ten_Buoc} - {item?.nguoiDung?.hoTen}
+                        </Option>
+                      ))}
+                      {/* {!!nguoiDungKi?.hinh1 && (
                   <Option key={nguoiDungKi?.hinh1} value={nguoiDungKi?.hinh1}>
                     Chữ ký 1
                   </Option>
+                )} */}
+                    </Select>
+                  </div>
                 )}
 
-                {!!nguoiDungKi?.hinh2 && (
-                  <Option key={nguoiDungKi?.hinh2} value={nguoiDungKi?.hinh2}>
-                    Chữ ký 2
-                  </Option>
-                )}
+                {
+                  <>
+                    <div className="mt-2">Chữ Ký</div>
+                    <Select
+                      placeholder="Chọn chữ Ký"
+                      style={{
+                        width: 300,
+                      }}
+                      onSelect={handleChonChuKy}>
+                      {!!nguoiDungKi?.hinh1 && (
+                        <Option
+                          key={nguoiDungKi?.hinh1}
+                          value={nguoiDungKi?.hinh1}>
+                          Chữ ký 1
+                        </Option>
+                      )}
 
-                {!!nguoiDungKi?.hinh3 && (
-                  <Option key={nguoiDungKi?.hinh3} value={nguoiDungKi?.hinh3}>
-                    Chữ ký 3
-                  </Option>
-                )}
-              </Select>
+                      {!!nguoiDungKi?.hinh2 && (
+                        <Option
+                          key={nguoiDungKi?.hinh2}
+                          value={nguoiDungKi?.hinh2}>
+                          Chữ ký 2
+                        </Option>
+                      )}
 
-              <div style={{ width: 300, marginTop: 10 }}>
-                <div>Nội dung</div>
-                <TextArea
-                  style={{
-                    borderRadius: 10
-                  }}
-                  rows={4}
-                  value={textarea}
-                  onChange={(e) => setTextarea(e.currentTarget.value)}
-                />
-                <Button
-                  disabled={!textarea.trim()}
-                  type="primary"
-                  className="mt-2 rounded"
-                  style={{ backgroundColor: "#6CD44A", border: "none", color: '#fff' }}
-                  onClick={isEditing ? handleEditText : handleAddText}>
-                  {isEditing ? "Sửa" : "Thêm"} nội dung
-                </Button>
+                      {!!nguoiDungKi?.hinh3 && (
+                        <Option
+                          key={nguoiDungKi?.hinh3}
+                          value={nguoiDungKi?.hinh3}>
+                          Chữ ký 3
+                        </Option>
+                      )}
+                    </Select>
+                  </>
+                }
+
+                <div style={{ width: 300, marginTop: 10 }}>
+                  <div>Nội dung</div>
+                  <TextArea
+                    style={{
+                      borderRadius: 10,
+                    }}
+                    rows={4}
+                    value={textarea}
+                    onChange={(e) => setTextarea(e.currentTarget.value)}
+                  />
+                  <Button
+                    disabled={!textarea.trim()}
+                    type="primary"
+                    className="mt-2 rounded"
+                    style={{
+                      backgroundColor: "#6CD44A",
+                      border: "none",
+                      color: "#fff",
+                    }}
+                    onClick={isEditing ? handleEditText : handleAddText}>
+                    {isEditing ? "Sửa" : "Thêm"} nội dung
+                  </Button>
+                </div>
               </div>
-            </div>}
+            )}
 
-            <div className="d-flex mt-3 me-4 gap-3" style={{
-              marginLeft: isGanMaQR ? 'auto' : undefined,
-              justifyContent: isGanMaQR ? 'space-between' : 'flex-end',
-              flex: isGanMaQR ? 1 : undefined
-            }}>
+            <div
+              className="d-flex mt-3 me-4 gap-3"
+              style={{
+                marginLeft: isGanMaQR ? "auto" : undefined,
+                justifyContent: isGanMaQR ? "space-between" : "flex-end",
+                flex: isGanMaQR ? 1 : undefined,
+              }}>
               {!!resFile && (
                 <Button
                   type="primary"
-                  style={{ backgroundColor: "#ff8a2a", border: "none", borderRadius: 10, width: 150 }}
+                  style={{
+                    backgroundColor: "#ff8a2a",
+                    border: "none",
+                    borderRadius: 10,
+                    width: 150,
+                  }}
                   onClick={() => {
                     window.open(API_DOMAIN + resFile);
                   }}>
@@ -617,34 +1041,42 @@ const KiThu = () => {
                 </Button>
               )}
 
-         {isGanMaQR &&   <Button
-                // onClick={() => setModalDeXuatVisible(true)}
-                onClick={() => {
-                  // navigate('/' + TAB.GAN_MA_QR)
-                  setModalCauHinhQr(true)
-                }}
-                className="d-flex align-items-center"
-                type="ghost"
-                icon={<AiOutlineSetting />}>
-                Cấu hình QR
-              </Button>}
+              {isGanMaQR && (
+                <Button
+                  // onClick={() => setModalDeXuatVisible(true)}
+                  onClick={() => {
+                    // navigate('/' + TAB.GAN_MA_QR)
+                    setModalCauHinhQr(true);
+                  }}
+                  className="d-flex align-items-center"
+                  type="ghost"
+                  icon={<AiOutlineSetting />}>
+                  Cấu hình QR
+                </Button>
+              )}
 
               <Button
                 disabled={disableXuat}
                 loading={xuatLoading}
                 type="primary"
-                style={{width: 150, borderRadius: 10}}
+                style={{ width: 200, borderRadius: 10 }}
                 onClick={() => {
-             
-
-                  if(isGanMaQR) {
-                    handleXacNhan()
+                  if (isGanMaQR) {
+                    handleXacNhan();
                   } else {
-                    setXuatLoading(true);
-                    uploadToFireBase();
+                    if (isChuanBi) {
+                      handleLuuVungKy();
+                    } else {
+                      setXuatLoading(true);
+                      uploadToFireBase();
+                    }
                   }
                 }}>
-                {isGanMaQR ? 'Xác nhận' : 'Ký duyệt'}
+                {isGanMaQR
+                  ? "Xác nhận"
+                  : isChuanBi
+                  ? "Lưu vùng ký"
+                  : "Ký duyệt"}
               </Button>
             </div>
           </div>
@@ -663,7 +1095,7 @@ const KiThu = () => {
               display: "flex",
               justifyContent: "center",
               marginBottom: 10,
-              marginTop: 15
+              marginTop: 15,
             }}>
             <Pagination
               firstItem={isFirstPage ? null : undefined}
@@ -691,13 +1123,14 @@ const KiThu = () => {
                 pages={pages}
                 getPageSizes={(sizes) => {
                   if (pdfSizes.length === 0) {
-                    console.log(sizes)
-                    setPdfSizes(sizes?.map(item => {
-                      return {
-                        width: item?.width,
-                        height: item?.height,
-                      }
-                    }));
+                    setPdfSizes(
+                      sizes?.map((item) => {
+                        return {
+                          width: item?.width,
+                          height: item?.height,
+                        };
+                      }),
+                    );
                   }
                 }}
               />
@@ -738,7 +1171,7 @@ const KiThu = () => {
                               const height = data?.height;
 
                               const finalY =
-                              pdfSizes[pageIndex]?.height - y - height;
+                                pdfSizes[pageIndex]?.height - y - height;
                               const finalX = x;
 
                               if (image?.id == data?.id) {

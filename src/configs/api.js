@@ -81,3 +81,8 @@ export const TRAO_DOI_CHI_TIET = 'Messages/details'
 // MaQR
 
 export const MA_QR = 'MaQRs'
+
+// Vung ky
+export const VUNG_KY = 'KySoVungKys/vungky'
+export const CHECK_VUNG_KY = 'KySoVungKys/check'
+export const VUNG_KY_DE_XUAT = 'KySoVungKys/vungkydexuat'

@@ -44,6 +44,7 @@ import { AiOutlineSetting } from "react-icons/ai";
 import { getDsBuocDuyetSvc } from "../../../store/kysodexuat/service";
 import {
   getVungKyDeXuatSvc,
+  getVungKySvc,
   themVungKySvc,
 } from "../../../store/vungky/services";
 import { useRef } from "react";
@@ -99,6 +100,8 @@ const KiThu = () => {
   const nguoiDung = useSelector(nguoiDungSelector);
 
   const [nguoiDungKi, setNguoiDungKi] = useState(null);
+  const [isVungKyImg, setIsVungKyImg] = useState(false)
+  const [isVungKyText, setIsVungKyText] = useState(false)
 
   const [pdfSizes, setPdfSizes] = useState([]);
   const [pdfSize, setPdfSize] = useState({ width: 0, height: 0 });
@@ -355,8 +358,12 @@ const KiThu = () => {
       }
 
       const finalImages = images.map((image) => {
+        const finalY = pdfSizes[pageIndex]?.height - image?.y - image?.img_h;
+
+        const y = image?.isVungKy === true ?  finalY: image?.finalY;
+
         return {
-          y: Math.round(image.finalY / e),
+          y: Math.round(y / e),
           x: Math.round(image.finalX / e),
           img_w: Math.round(image.width / e),
           img_h: Math.round(image.height / e),
@@ -366,8 +373,12 @@ const KiThu = () => {
       });
 
       const finalTexts = texts.map((text) => {
+        const finalY = pdfSizes[pageIndex]?.height - text?.y - text?.img_h;
+
+        const y = text?.isVungKy === true ?  finalY: text?.finalY;
+
         return {
-          y: Math.round(text.finalY / e),
+          y: Math.round(y / e),
           x: Math.round(text.finalX / e),
           img_w: Math.round(text.width / e),
           img_h: Math.round(text.height / e),
@@ -377,13 +388,12 @@ const KiThu = () => {
       });
 
       if (isKiThat) {
-        // console.log(_file_)
-        // console.log({
-        //   inputFile: _file_,
-        //   id_NguoiDung: nguoiDung?.ma_NguoiDung,
-        //   postPositionSigns: [...finalImages, ...finalTexts],
-        //   ma_BuocDuyet: parseInt(isNaN(params?.id) ? '0' : params?.id)
-        // })
+        console.log({
+          inputFile: _file_,
+          id_NguoiDung: nguoiDung?.ma_NguoiDung,
+          postPositionSigns: [...finalImages, ...finalTexts],
+          ma_BuocDuyet: parseInt(isNaN(params?.id) ? "0" : params?.id),
+        })
         const res = await kyThatSvc({
           inputFile: _file_,
           id_NguoiDung: nguoiDung?.ma_NguoiDung,
@@ -611,30 +621,41 @@ const KiThu = () => {
   const rImg = useRef([]);
   const rText = useRef([]);
 
-  const getVungKyDeXuat = async () => {
+  const getVungKyDeXuat = async (id = null) => {
     try {
-      const res = await getVungKyDeXuatSvc({ id: parseInt(params?.id) });
-
-      // console.log(res?.data?.data?.map(
-      //   item => ({...item, json: JSON.parse(item?.json)})
-      // ).flat())
+      const res = await getVungKyDeXuatSvc({ id: parseInt(id || params?.id) });
 
       const r = [];
 
-      res?.data?.data?.map((item) => {
-        const json = JSON.parse(item?.json);
+      if(!!id) {
+        res?.data?.data?.filter(i => i?.ma_BuocDuyet == params?.id)?.map((item) => {
+          const json = JSON.parse(item?.json);
+          r.push(json);
+        });
+      } else {
+        res?.data?.data?.map((item) => {
+          const json = JSON.parse(item?.json);
+          r.push(json);
+        });
+      }
 
-        // console.log(json)
-        r.push(json);
-      });
 
       const flatten = r.flat();
 
+      if(flatten.length > 0) {
+        setDisableXuat(false);
+      }
+
       const numberOfImages = flatten.filter((item) => !item?.textSign).length;
       const numberOfTexts = flatten.filter((item) => !!item?.textSign).length;
-      // console.log(numberOfImages)
-      // console.log(numberOfTexts)
-      // console.log(r.flat())
+
+      // if(numberOfImages > 0) {
+      //   setIsVungKyImg(true)
+      // }
+
+      // if(numberOfTexts > 0) {
+      //   setIsVungKyText(true)
+      // } 
 
       for (let i = 0; i < res.data?.data.length; i++) {
         const item = res.data?.data[i];
@@ -662,17 +683,19 @@ const KiThu = () => {
                 y: finalY,
                 img_h: item?.img_h,
                 img_w: item?.img_w,
+                height: item?.img_h,
+                width: item?.img_w,
                 isDragging: false,
                 src: API_DOMAIN + item?.imgSign,
                 pageIndex: item?.pageSign - 1,
                 buocDuyetHienTai,
                 finalX,
                 finalY,
+                isVungKy: true
               },
             ];
 
             if (isLastImg) {
-              // console.log('run')
               setImages(rImg.current);
             }
           } else {
@@ -686,8 +709,13 @@ const KiThu = () => {
                 content: item?.textSign,
                 pageIndex: item?.pageSign - 1,
                 buocDuyetHienTai,
+                img_h: item?.img_h,
+                img_w: item?.img_w,
+                height: item?.img_h,
+                width: item?.img_w,
                 finalX,
                 finalY,
+                isVungKy: true
               },
             ];
 
@@ -850,6 +878,28 @@ const KiThu = () => {
       getVungKyDeXuat();
     }
   }, [isChuanBi, _file_chuan_bi_, listBuocDuyet, pdfSizes?.length]);
+
+  const getVungKyHienTai = async () => {
+    try {
+      const res = await getVungKySvc({id: parseInt(params?.id)})
+
+      if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        getVungKyDeXuat(res.data?.data?.kySoBuocDuyet?.ma_KySoDeXuat)
+      }
+    } catch (error) {
+      
+    }
+  }
+  useEffect(() => {
+    if (
+      isKiThat &&
+      !!_file_ &&
+      pdfSizes.length > 0
+    ) {
+      // getVungKyDeXuat();
+      getVungKyHienTai()
+    }
+  }, [isKiThat, _file_, pdfSizes?.length]);
 
   useEffect(() => {
     const a = async () => {
@@ -1056,7 +1106,7 @@ const KiThu = () => {
               )}
 
               <Button
-                disabled={disableXuat}
+                disabled={disableXuat} 
                 loading={xuatLoading}
                 type="primary"
                 style={{ width: 200, borderRadius: 10 }}

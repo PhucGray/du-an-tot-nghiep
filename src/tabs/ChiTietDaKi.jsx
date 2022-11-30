@@ -7,6 +7,7 @@ import { API_DOMAIN } from "../configs/api";
 import { RETCODE_SUCCESS, SUCCESS } from "../constants/api";
 import { nguoiDungSelector } from "../store/auth/selectors";
 import { getFileChiTiet } from "../store/maQR/service";
+import {checkAccountSvc} from '../store/traodoi/services'
 const ChiTietDaKi = () => {
   const params = useParams();
   const [loading, setLoading] = useState(true);
@@ -14,6 +15,7 @@ const ChiTietDaKi = () => {
   const [mucDo, setMucDo] = useState(null);
   const nguoiDung = useSelector(nguoiDungSelector);
   const [sai, setSai] = useState(false);
+  const [hople2, setHople2] = useState(false);
 
   useEffect(() => {
     const a = async () => {
@@ -25,6 +27,13 @@ const ChiTietDaKi = () => {
           const fileDaKy = res.data?.data?.kySoDeXuat?.fileDaKy;
           if (!!fileDaKy) {
             setMucDo(res.data?.data?.mucDo);
+
+            // mucdo
+            if(mucDo === 2) {
+              const res_2 = await checkAccountSvc();
+              console.log(res_2.data);
+            }
+
             setUrl(API_DOMAIN + fileDaKy);
           }
         }

@@ -226,6 +226,7 @@ const KiSoChiTiet = () => {
       formDeXuat.setFieldValue("ten_DeXuat", data?.ten_DeXuat);
       formDeXuat.setFieldValue("loaiVanBan", data?.loaiVanBan);
       formDeXuat.setFieldValue("ghiChu", data?.ghiChu);
+      formDeXuat.setFieldValue('isTaoVanBan', data?.isTaoVanBan)
     } catch (error) {
       console.log(error);
       //message.error(LOI);
@@ -809,6 +810,17 @@ const KiSoChiTiet = () => {
             label="Ghi chú"
             name="ghiChu">
             <TextArea cols={10} />
+          </Form.Item>
+
+          <Form.Item 
+            name="isTaoVanBan" 
+            valuePropName="checked"
+            labelCol={{
+              span: 5,
+            }}
+            label="Tạo văn bản"
+          >
+            <Checkbox onChange={(e) => {}}></Checkbox>
           </Form.Item>
 
           <div

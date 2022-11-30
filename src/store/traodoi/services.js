@@ -16,3 +16,7 @@ export const themTraoDoiSvc = (payload) => {
 export const xoaTraoDoiSvc = ({id}) => {
   return api.delete(API.TRAO_DOI + '/' + id);
 };
+
+export const checkAccountSvc = () => {
+  return api.get(API.KTTK)
+}

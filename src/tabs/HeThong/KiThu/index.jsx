@@ -287,9 +287,8 @@ const KiThu = () => {
       const data = {
         ma_NguoiTao,
         vungKies,
+        ma_DeXuat: params?.id
       };
-
-      // console.log(data)
 
       const res = await themVungKySvc(data);
 

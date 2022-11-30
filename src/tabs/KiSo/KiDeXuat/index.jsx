@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { PlusOutlined, CloudUploadOutlined } from "@ant-design/icons";
-import { Button, Tabs, Table, message, Form, Input, Modal } from "antd";
+import { Button, Tabs, Table, message, Form, Input, Modal, Checkbox } from "antd";
 import { useState } from "react";
 import moment, { isDate } from "moment";
 import {
@@ -136,7 +136,7 @@ const KiDeXuat = () => {
       ...values,
       inputFile: url,
       ma_NguoiDeXuat: nguoiDung?.ma_NguoiDung,
-      ten_FileGoc: fileName
+      ten_FileGoc: fileName,
     };
 
     setAddLoading(true);
@@ -194,9 +194,7 @@ const KiDeXuat = () => {
       dataIndex: "ngayDeXuat",
       key: "ngayDeXuat",
       render: (data, record, index) => {
-        return (
-          <div>{moment(data).format("DD-MM-YYYY")}</div>
-        );
+        return <div>{moment(data).format("DD-MM-YYYY")}</div>;
       },
     },
     {
@@ -246,9 +244,7 @@ const KiDeXuat = () => {
         accept="application/pdf"
         multiple={false}
         onChange={async (e) => {
-          console.log('chay 1111')
           if (e.target.files && e.target.files.length > 0) {
-            console.log('chay 2222')
             const selectedFiles = e.target.files;
             const file = selectedFiles[0];
 
@@ -275,6 +271,9 @@ const KiDeXuat = () => {
           form={form}
           name="suathongso"
           onFinish={handleThemDeXuat}
+          initialValues={{
+            isTaoVanBan: true
+          }}
           autoComplete="off">
           <Form.Item
             labelCol={{
@@ -303,9 +302,19 @@ const KiDeXuat = () => {
               span: 5,
             }}
             label="Ghi chú"
-            name="ghiChu"
-           >
+            name="ghiChu">
             <TextArea cols={10} />
+          </Form.Item>
+
+          <Form.Item 
+            name="isTaoVanBan" 
+            valuePropName="checked"
+            labelCol={{
+              span: 5,
+            }}
+            label="Tạo văn bản"
+          >
+            <Checkbox onChange={(e) => {}}></Checkbox>
           </Form.Item>
 
           <div

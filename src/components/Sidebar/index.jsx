@@ -20,6 +20,8 @@ import {MdOutlineSubtitles} from 'react-icons/md'
 import {TbBuildingWarehouse} from 'react-icons/tb'
 import {BsInfoCircle} from 'react-icons/bs'
 import Logo from '../../assets/images/logo.png'
+import { useSelector } from "react-redux";
+import { nguoiDungSelector } from "../../store/auth/selectors";
 function getItem(label, key, icon, children, type) {
   return {
     key,
@@ -31,33 +33,34 @@ function getItem(label, key, icon, children, type) {
   };
 }
 
-const items = [
-  getItem("Ký số", "ki-so", <EditOutlined />, [
-    getItem("Văn bản", TAB.VAN_BAN, <HiOutlineDocumentText />),
-    getItem("Ký số chờ duyệt", TAB.KI_CHO_DUYET, <RiMapPinTimeLine />),
-    getItem("Ký số đã duyệt", TAB.KI_DA_DUYET, <AiOutlineFileDone />),
-    getItem("Ký số đề xuất", TAB.KI_DE_XUAT, <FaRegLightbulb />),
-    getItem("Thông số người dùng", TAB.THONG_SO_NGUOI_DUNG, <BsSliders />),
-    // getItem("Thông số đơn vị", TAB.THONG_SO_DON_VI),
-    // getItem("Kí số chi tiết", TAB.KI_SO_CHI_TIET),
-    getItem("Mã QR", TAB.QR, <RiQrCodeLine />),
 
-  ]),
-  getItem("Hệ thống", "he-thong", <SettingOutlined />, [
-    getItem("Người dùng", TAB.NGUOI_DUNG, <FiUsers />),
-    getItem("Phòng ban", TAB.PHONG_BAN, <TbBuildingWarehouse />),
-    getItem("Chức danh", TAB.CHUC_DANH, <MdOutlineSubtitles />),
-    getItem("Vai trò", TAB.VAI_TRO, <RiUserSettingsLine />),
-  ]),
-  getItem("Thông tin", "thong-tin", <SolutionOutlined />, [
-    getItem("Cá nhân", TAB.CA_NHAN, <BsInfoCircle />),
-    getItem("Mật khẩu", TAB.MAT_KHAU, <RiLockPasswordLine />),
-  ]),
-  getItem("Đăng xuất", TAB.DANG_XUAT, <LoginOutlined />),
-];
 
 const Sidebar = ({ onTabClick }) => {
   const location = useLocation();
+  const nguoiDung = useSelector(nguoiDungSelector)
+
+  const items = [
+    getItem("Ký số", "ki-so", <EditOutlined />, [
+      getItem("Văn bản", TAB.VAN_BAN, <HiOutlineDocumentText />),
+      getItem("Ký số chờ duyệt", TAB.KI_CHO_DUYET, <RiMapPinTimeLine />),
+      getItem("Ký số đã duyệt", TAB.KI_DA_DUYET, <AiOutlineFileDone />),
+      getItem("Ký số đề xuất", TAB.KI_DE_XUAT, <FaRegLightbulb />),
+      getItem("Thông số người dùng", TAB.THONG_SO_NGUOI_DUNG, <BsSliders />),
+      getItem("Mã QR", TAB.QR, <RiQrCodeLine />),
+  
+    ]),
+    nguoiDung?.isHeThong ? getItem("Hệ thống", "he-thong", <SettingOutlined />, [
+      getItem("Người dùng", TAB.NGUOI_DUNG, <FiUsers />),
+      getItem("Phòng ban", TAB.PHONG_BAN, <TbBuildingWarehouse />),
+      getItem("Chức danh", TAB.CHUC_DANH, <MdOutlineSubtitles />),
+      getItem("Vai trò", TAB.VAI_TRO, <RiUserSettingsLine />),
+    ]) : undefined,
+    getItem("Thông tin", "thong-tin", <SolutionOutlined />, [
+      getItem("Cá nhân", TAB.CA_NHAN, <BsInfoCircle />),
+      getItem("Mật khẩu", TAB.MAT_KHAU, <RiLockPasswordLine />),
+    ]),
+    getItem("Đăng xuất", TAB.DANG_XUAT, <LoginOutlined />),
+  ];
 
   return (
     <PerfectScrollbar

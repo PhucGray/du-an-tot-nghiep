@@ -227,7 +227,7 @@ const VanBan = () => {
       key: "hanhDong",
       render: (_, record) => (
         <div>
-          <div>
+          {nguoiDung?.isVanBan && <div>
             <Button
               onClick={() => {
                 setEditedVanBan(record);
@@ -237,7 +237,6 @@ const VanBan = () => {
               type="link">
               Sửa
             </Button>
-            {/* <Button type="link">Chi tiết</Button> */}
             <Popconfirm
               title="Bạn có chắc chắn muốn xoá?"
               onConfirm={() => handleDeleteVanBan(record)}
@@ -245,7 +244,7 @@ const VanBan = () => {
               cancelText="Thoát">
               <Button type="link">Xoá</Button>
             </Popconfirm>
-          </div>
+          </div>}
         </div>
       ),
     },

@@ -44,11 +44,6 @@ axiosInstance.interceptors.request.use(
   async (config) => {
     const savedNguoiDung = JSON.parse(localStorage.getItem("persist:auth"));
 
-    // console.log("config");
-    // console.log(config);
-    // console.log(JSON.parse(localStorage.getItem("persist:auth")));
-    // const value = await redisClient.get(rediskey);
-    // const keys = JSON.parse(value);
     config.headers = {
       Authorization: `Bearer ${JSON.parse(savedNguoiDung?.token)}`,
       'Access-Control-Allow-Origin': API_DOMAIN,

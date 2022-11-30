@@ -17,7 +17,7 @@ import ThongSoNguoiDung from "../../tabs/KiSo/ThongSoNguoiDung";
 import VaiTro from "../../tabs/HeThong/VaiTro";
 import { getQuyenSvc } from "../../store/nguoidung_vaitro/service";
 import {useSelector} from 'react-redux'
-import { nguoiDungSelector } from "../../store/auth/selectors";
+import { nguoiDungSelector, tokenSelector } from "../../store/auth/selectors";
 export const TabContext = createContext(null);
 
 const MainLayout = () => {
@@ -26,7 +26,8 @@ const MainLayout = () => {
   const location = useLocation();
   const isFileDaKi = location.pathname.includes('FILE-DA-KY')
 
-  const nguoiDung = useSelector(nguoiDungSelector)
+  const nguoiDung = useSelector(nguoiDungSelector);
+  const token = useSelector(tokenSelector);
 
   const [modalLogoutVisible, setModalLogoutVisible] = useState(false);
 
@@ -51,8 +52,33 @@ const MainLayout = () => {
   useEffect(() => {
     const g = async () => {
       try {
-        const res = await getQuyenSvc({id: nguoiDung?.ma_NguoiDung})
-        dispatch(setNguoiDung({...nguoiDung, dsQuyen: res.data?.map(i => i?.ma_Quyen)}))
+        const res = await getQuyenSvc({id: nguoiDung?.ma_NguoiDung});
+        const listMaQuyen = res.data?.map(item => item?.ma_Quyen)
+
+        const a = id => listMaQuyen.includes(id);
+
+        const isHeThong = a(1);
+        const isKySo = a(2);
+        const isDeXuat = a(3);
+        const isDuyet = a(4);
+        const isXemKySo = a(5);
+        const isVanBan = a(6);
+        const isQr = a(8);
+
+        
+        dispatch(setNguoiDung({
+          token,
+          nguoiDung: {
+            ...nguoiDung,
+            isHeThong,
+            isKySo,
+            isDeXuat,
+            isDuyet,
+            isXemKySo,
+            isVanBan,
+            isQr
+          }
+        }))
       } catch (error) {
         
       }

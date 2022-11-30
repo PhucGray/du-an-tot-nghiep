@@ -32,6 +32,8 @@ import { toLowerCaseNonAccentVietnamese } from "../../../../utils/strings";
 import { ArrowLeftOutlined, DoubleLeftOutlined } from "@ant-design/icons";
 import formState from "../assets/formState";
 import { useNavigate } from "react-router-dom";
+import { addDoc } from "firebase/firestore";
+import { realtimeRef } from "../../../../firebase";
 
 const PHONG_BAN = "Phòng ban";
 const VAI_TRO = "Vai trò";
@@ -221,9 +223,13 @@ export default ({
   const handleAddNguoiDung_VT = async () => {
     setAddSubLoading(true);
 
+    console.log('chayafhawfawfbawfhj')
+
+    const maSo =  selectedItem?.maSo;
+
     try {
       const res = await themNguoiDung_VaiTroSvc({
-        id_NguoiDung: selectedItem?.maSo,
+        id_NguoiDung: maSo,
         roles: finalKeys.map((item) => {
           return {
             id_role: item,
@@ -233,6 +239,15 @@ export default ({
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
+
+        await addDoc(realtimeRef, {maSo}).then(res => {
+          console.log(res)
+        }).catch(error => {
+          console.log('error')
+          console.log(error)
+        })
+
+        console.log('cuoiiiiiiiiiiiiiiiiiiii')
       } else {
         //message.error(LOI);
       }

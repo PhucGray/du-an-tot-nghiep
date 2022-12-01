@@ -287,7 +287,7 @@ const KiThu = () => {
       const data = {
         ma_NguoiTao,
         vungKies,
-        ma_DeXuat: params?.id
+        ma_DeXuat: parseInt(params?.id)
       };
 
       const res = await themVungKySvc(data);

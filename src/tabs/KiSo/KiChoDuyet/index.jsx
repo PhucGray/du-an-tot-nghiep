@@ -46,6 +46,8 @@ const KiDeXuat = () => {
   const g = async () => {
     const res = await getListKySoBuocDuyet();
 
+    const a = res.data?.data?.filter(item => item?.ma_NguoiKy === nguoiDung?.ma_NguoiDung)?.length;
+
     setList(
       res.data?.data?.filter(item => item?.ma_NguoiKy === nguoiDung?.ma_NguoiDung)?.map((item, index) => {
         return {

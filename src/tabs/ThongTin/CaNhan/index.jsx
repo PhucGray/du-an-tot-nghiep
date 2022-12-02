@@ -23,6 +23,7 @@ import {
 } from "../../../store/nguoidung/service";
 import { useDispatch } from "react-redux";
 import { setNguoiDung } from "../../../store/auth/actions";
+import { getQuyenSvc } from "../../../store/nguoidung_vaitro/service";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -43,6 +44,42 @@ const CaNhan = () => {
   const [getListChucDanhLoading, setGetListChucDanhLoading] = useState(false);
   const [listChucDanh, setListChucDanh] = useState([]);
   const [editLoading, setEditLoading] = useState(false);
+
+  const g = async (nguoiDung) => {
+    try {
+      const res = await getQuyenSvc({id: nguoiDung?.ma_NguoiDung});
+      const listMaQuyen = res.data?.map(item => item?.ma_Quyen)
+
+      const a = id => listMaQuyen.includes(id);
+
+      const isHeThong = a(1);
+      const isKySo = a(2);
+      const isDeXuat = a(3);
+      const isDuyet = a(4);
+      const isXemKySo = a(5);
+      const isVanBan = a(6);
+      const isQr = a(8);
+
+      
+      dispatch(setNguoiDung({
+        token,
+        nguoiDung: {
+          ...nguoiDung,
+          isHeThong,
+          isKySo,
+          isDeXuat,
+          isDuyet,
+          isXemKySo,
+          isVanBan,
+          isQr
+        }
+      }))
+    } catch (error) {
+      
+    }
+    // console.log(res.data)
+
+  }
 
   const handleEdit = async (values) => {
     const data = !!url
@@ -70,6 +107,7 @@ const CaNhan = () => {
       const res = await suaNguoiDungSvc(data);
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        
         message.success(res.data?.retText);
 
         const res_2 = await getNguoiDungById({ id: nguoiDung?.ma_NguoiDung });
@@ -79,6 +117,7 @@ const CaNhan = () => {
           res_2.data?.retCode === RETCODE_SUCCESS
         ) {
           dispatch(setNguoiDung({ token, nguoiDung: res_2.data?.data }));
+          g(res_2.data?.data)
           // console.log();
         } else {
           message.error(res.data?.retText);

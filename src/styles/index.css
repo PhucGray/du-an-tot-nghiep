@@ -131,3 +131,31 @@ canvas {
   background-color: #fff !important;
   /* cursor: not-allowed; */
 }
+
+
+.ping {
+  background: #fff;
+  border-radius: 50%;
+  border: 7px solid #222;
+  width: 10px;
+  height: 10px;
+  animation: load 1.5s ease-out infinite reverse;
+  position: absolute;
+  right: 3px;
+  top: 3px;
+}
+
+@keyframes load {
+  0% {
+    background: #fff;
+    border: 5px solid rgb(255, 214, 214);
+ }
+  50% {
+    background: #fff;
+    border: 5px solid red;
+ }
+  100% {
+    background: #fff;
+    border: 5px solid rgb(255, 214, 214);
+ }
+}

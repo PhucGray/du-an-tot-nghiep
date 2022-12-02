@@ -46,45 +46,53 @@ const MainLayout = () => {
       return;
     }
 
+    // console.log(e.key)
+    if(e.key.includes(TAB.NGUOI_DUNG)) {
+      return navigate('/' + TAB.NGUOI_DUNG, {state: {reset: true}})
+      // window.location.reload()
+    }
+
     navigate(`/${e.key}`);
   };
 
-  useEffect(() => {
-    const g = async () => {
-      try {
-        const res = await getQuyenSvc({id: nguoiDung?.ma_NguoiDung});
-        const listMaQuyen = res.data?.map(item => item?.ma_Quyen)
+  const g = async () => {
+    try {
+      const res = await getQuyenSvc({id: nguoiDung?.ma_NguoiDung});
+      const listMaQuyen = res.data?.map(item => item?.ma_Quyen)
 
-        const a = id => listMaQuyen.includes(id);
+      const a = id => listMaQuyen.includes(id);
 
-        const isHeThong = a(1);
-        const isKySo = a(2);
-        const isDeXuat = a(3);
-        const isDuyet = a(4);
-        const isXemKySo = a(5);
-        const isVanBan = a(6);
-        const isQr = a(8);
+      const isHeThong = a(1);
+      const isKySo = a(2);
+      const isDeXuat = a(3);
+      const isDuyet = a(4);
+      const isXemKySo = a(5);
+      const isVanBan = a(6);
+      const isQr = a(8);
 
-        
-        dispatch(setNguoiDung({
-          token,
-          nguoiDung: {
-            ...nguoiDung,
-            isHeThong,
-            isKySo,
-            isDeXuat,
-            isDuyet,
-            isXemKySo,
-            isVanBan,
-            isQr
-          }
-        }))
-      } catch (error) {
-        
-      }
-      // console.log(res.data)
-
+      
+      dispatch(setNguoiDung({
+        token,
+        nguoiDung: {
+          ...nguoiDung,
+          isHeThong,
+          isKySo,
+          isDeXuat,
+          isDuyet,
+          isXemKySo,
+          isVanBan,
+          isQr
+        }
+      }))
+    } catch (error) {
+      
     }
+    // console.log(res.data)
+
+  }
+
+  useEffect(() => {
+   
 
     if(!isFileDaKi) {
       g();

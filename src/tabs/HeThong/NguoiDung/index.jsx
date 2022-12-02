@@ -77,6 +77,12 @@ export default () => {
     handleGetListUser()
   }, []);
 
+  useEffect(() => {
+     if(location.state?.reset === true) {
+      setCurrentTab(1)
+     }
+  }, [location.state]);
+
   
   return (
     <Fragment>

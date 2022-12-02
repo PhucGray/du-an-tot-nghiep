@@ -25,6 +25,7 @@ const ChiTietDaKi = () => {
         setSai(res.data?.data === null);
         if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
           const fileDaKy = res.data?.data?.kySoDeXuat?.fileDaKy;
+
           if (!!fileDaKy) {
             setMucDo(res.data?.data?.mucDo);
 
@@ -35,6 +36,8 @@ const ChiTietDaKi = () => {
             }
 
             setUrl(API_DOMAIN + fileDaKy);
+          } else {
+            setSai(true)
           }
         }
       } catch (error) {

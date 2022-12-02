@@ -37,12 +37,19 @@ function getItem(label, key, icon, children, type) {
 
 const Sidebar = ({ onTabClick }) => {
   const location = useLocation();
-  const nguoiDung = useSelector(nguoiDungSelector)
+  const nguoiDung = useSelector(nguoiDungSelector);
 
   const items = [
     getItem("Ký số", "ki-so", <EditOutlined />, [
       getItem("Văn bản", TAB.VAN_BAN, <HiOutlineDocumentText />),
-      nguoiDung?.isDuyet ? getItem("Ký số chờ duyệt", TAB.KI_CHO_DUYET, <RiMapPinTimeLine />) : undefined,
+      nguoiDung?.isDuyet ? getItem(
+      <div style={{
+        flexDirection: 'row',
+        gap: 10,
+      }}>
+        <div>Ký số chờ duyệt</div>
+        <div className="ping"></div>
+      </div>, TAB.KI_CHO_DUYET, <RiMapPinTimeLine />) : undefined,
       getItem("Ký số đã duyệt", TAB.KI_DA_DUYET, <AiOutlineFileDone />),
       getItem("Ký số đề xuất", TAB.KI_DE_XUAT, <FaRegLightbulb />),
       getItem("Thông số người dùng", TAB.THONG_SO_NGUOI_DUNG, <BsSliders />),
@@ -86,6 +93,7 @@ const Sidebar = ({ onTabClick }) => {
         defaultOpenKeys={["ki-so", "he-thong", "thong-tin"]}
         mode="inline"
         items={items}
+        // _internalRenderMenuItem={() => <div>ahha</div>}
       />
     </PerfectScrollbar>
   );

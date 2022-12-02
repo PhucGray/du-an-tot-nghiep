@@ -397,7 +397,7 @@ const VanBan = () => {
             onChange={(e) => handleSearch(e.target.value)}
           />
 
-          <Button type="primary" onClick={() => setIsModalOpen(true)}>Thêm văn bản</Button>
+          {nguoiDung?.isVanBan && <Button type="primary" onClick={() => setIsModalOpen(true)}>Thêm văn bản</Button>}
         </div>
         <Table
           loading={getListLoading}

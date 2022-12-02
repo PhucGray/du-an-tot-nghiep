@@ -596,7 +596,7 @@ const KiSoChiTiet = () => {
           </div>
         </div>
 
-        {!daChuyenDuyet && (
+        {!daChuyenDuyet && nguoiDung?.isDeXuat && (
           <div className="ms-2">
             <div>Hành động</div>
             <div className="d-flex justify-content-center">
@@ -1008,14 +1008,13 @@ const KiSoChiTiet = () => {
           type="link"
           className="ms-3 mt-3"
           onClick={() => {
-            // setCurrentUserDetail(null);
             navigate("/" + TAB.KI_DE_XUAT);
           }}>
           Trở lại danh sách
         </Button>
 
         <div className="d-flex justify-content-center">
-          {!daChuyenDuyet && (
+          {!daChuyenDuyet && nguoiDung?.isDeXuat && (
             <>
               <Popconfirm
                 title="Bạn có chắc chắn muốn chuyển duyệt đề xuất?"
@@ -1039,8 +1038,6 @@ const KiSoChiTiet = () => {
                 Sửa đề xuất
               </Button>
 
-        
-
               <Button
                 className="d-flex align-items-center text-black gap-1"
                 type="link"
@@ -1057,7 +1054,6 @@ const KiSoChiTiet = () => {
 
               <Button
                 disabled={dsBuocDuyet.length === 0}
-                // onClick={() => setModalDeXuatVisible(true)}
                 onClick={() => {
                   localStorage.setItem('chuan-bi', KSDXData?.inputFile)
                   navigate('/' + TAB.CHUAN_BI_VUNG_KI + '/' + KSDXData?.ma_KySoDeXuat)
@@ -1067,7 +1063,6 @@ const KiSoChiTiet = () => {
                 icon={<MdOutlineEditCalendar />}>
                 Chuẩn bị vùng ký
               </Button>
-
 
               <Popconfirm
                 title="Bạn có chắc chắn muốn xoá?"
@@ -1088,7 +1083,7 @@ const KiSoChiTiet = () => {
             </>
           )}
 
-          {pageChiTietKyChoDuyet && (
+          {pageChiTietKyChoDuyet && nguoiDung?.isDeXuat && (
             <>
               {isNguoiKyHienTai && !buocDuyetHienTai?.isDaKy && (
                 <>
@@ -1180,7 +1175,7 @@ const KiSoChiTiet = () => {
 
         <div className="d-flex gap-4 mt-4">
           <div className="" style={{ width: "50%" }}>
-            {!KSDXData?.trangThai && <Button
+            {!KSDXData?.trangThai && nguoiDung?.isDeXuat && <Button
               onClick={() => {
                 setModalBuocDuyetVisible(true);
               }}

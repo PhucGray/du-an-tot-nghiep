@@ -4,8 +4,14 @@ import {getListQrSvc, editQr} from '../../../store/maQR/service'
 import {SUCCESS, RETCODE_SUCCESS} from '../../../constants/api'
 import QRCode from 'qrcode.react';
 import moment from "moment";
+import { useSelector } from "react-redux";
+import { nguoiDungSelector } from "../../../store/auth/selectors";
+import { useNavigate } from "react-router-dom";
 
 const MaQR = () => {
+  const nguoiDung = useSelector(nguoiDungSelector)
+  const navigate = useNavigate()
+
   const [keyword, setKeyword] = useState("");
   const [list, setList] = useState([])
   const [getListLoading, setGetListLoading] = useState(true);
@@ -135,7 +141,7 @@ const MaQR = () => {
       render: (_, record) => (
         <div>
           <div>
-            <Button
+            {nguoiDung?.isQr  && <Button
               onClick={() => {
                 setChiTiet(record);
                 setModalCauHinhQr(true)
@@ -143,7 +149,7 @@ const MaQR = () => {
               }}
               type="link">
               Sửa
-            </Button>
+            </Button>}
             <Button type="link" onClick={() => {
               setChiTiet(record)   
               setModalChiTiet(true)}}>Chi tiết</Button>
@@ -153,6 +159,12 @@ const MaQR = () => {
       ),
     },
   ];
+
+  useEffect(() => { 
+    if(nguoiDung?.isQr === false) {
+      navigate(-1)
+    }
+  }, [nguoiDung]);
 
   return (
     <div>

@@ -22,11 +22,13 @@ import {
   suaPasscodeSvc,
 } from "../../../store/kyso_thongso/services";
 import { transformUser } from "../../../utils/user";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as TAB from "../../../constants/tab";
 import { logThongSoSvc } from "../../../store/log/service";
 import moment from "moment";
 import { API_DOMAIN } from "../../../configs/api";
+import { useSelector } from "react-redux";
+import { nguoiDungSelector } from "../../../store/auth/selectors";
 const VUI_LONG_CHON_FILE = "Vui lòng chọn file pfx";
 
 const Row = ({ label, children, even = true }) => {
@@ -381,6 +383,11 @@ const ThongSoChiTiet = ({
   setCurrentUserDetail,
   handleShowModalEdit,
 }) => {
+  const nguoiDung = useSelector(nguoiDungSelector)
+  const params = useParams()
+
+  const isShowBtn = params?.id == nguoiDung?.ma_NguoiDung || nguoiDung?.isKySo
+
   const navigate = useNavigate();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(CAU_HINH);
@@ -514,7 +521,7 @@ const ThongSoChiTiet = ({
           Trở lại danh sách
         </Button>
 
-        <div className="d-flex justify-content-center">
+        {isShowBtn && <div className="d-flex justify-content-center">
           <Button
             onClick={() => handleShowModalEdit(data)}
             className="d-flex align-items-center text-black"
@@ -564,7 +571,7 @@ const ThongSoChiTiet = ({
             icon={<HistoryOutlined />}>
             Lịch sử
           </Button>
-        </div>
+        </div>}
 
         <div className="mt-2" style={{ paddingInline: 40 }}>
           <Row label="Người ký">

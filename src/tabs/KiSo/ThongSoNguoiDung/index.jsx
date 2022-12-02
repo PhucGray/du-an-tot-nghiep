@@ -663,13 +663,13 @@ export default () => {
               onChange={(e) => handleSearch(e.target.value)}
             />
 
-            <Button
+           {nguoiDung?.isKySo && <Button
               type="primary"
               onClick={() => {
                 setIsModalOpen(true);
               }}>
               Thêm
-            </Button>
+            </Button>}
           </div>
 
           <div>

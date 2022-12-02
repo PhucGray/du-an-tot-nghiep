@@ -42,11 +42,11 @@ const Sidebar = ({ onTabClick }) => {
   const items = [
     getItem("Ký số", "ki-so", <EditOutlined />, [
       getItem("Văn bản", TAB.VAN_BAN, <HiOutlineDocumentText />),
-      getItem("Ký số chờ duyệt", TAB.KI_CHO_DUYET, <RiMapPinTimeLine />),
+      nguoiDung?.isDuyet ? getItem("Ký số chờ duyệt", TAB.KI_CHO_DUYET, <RiMapPinTimeLine />) : undefined,
       getItem("Ký số đã duyệt", TAB.KI_DA_DUYET, <AiOutlineFileDone />),
       getItem("Ký số đề xuất", TAB.KI_DE_XUAT, <FaRegLightbulb />),
       getItem("Thông số người dùng", TAB.THONG_SO_NGUOI_DUNG, <BsSliders />),
-      getItem("Mã QR", TAB.QR, <RiQrCodeLine />),
+      nguoiDung?.isQr ? getItem("Mã QR", TAB.QR, <RiQrCodeLine />) : undefined,
   
     ]),
     nguoiDung?.isHeThong ? getItem("Hệ thống", "he-thong", <SettingOutlined />, [

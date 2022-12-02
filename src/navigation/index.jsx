@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 
 import SignIn from "../pages/SignIn";
 import MainLayout from "../layout/MainLayout";
@@ -30,6 +30,7 @@ const Navigation = () => {
   const location = useLocation()
   const nguoiDung = useSelector(nguoiDungSelector);
   const token = useSelector(tokenSelector);
+  const navigate = useNavigate()
 
   const isLogin = !!nguoiDung && !!token;
 
@@ -41,7 +42,28 @@ const Navigation = () => {
     }
   }, [isLogin]);
 
-  const isFileDaKi = location.pathname.includes('FILE-DA-KY')
+  const isFileDaKi = location.pathname.includes('FILE-DA-KY');
+
+  const goToVanBan = () => {
+    navigate('/' + TAB.VAN_BAN, {replace: true})
+  }
+
+  const dieuKien = 
+  (location.pathname.includes(TAB.KI_CHO_DUYET) && nguoiDung?.isDuyet === false) ||
+  (location.pathname.includes(TAB.QR) && nguoiDung?.isQr === false) ||
+  (nguoiDung?.isHeThong === false && (
+    location.pathname.includes(TAB.NGUOI_DUNG) ||
+    location.pathname.includes(TAB.PHONG_BAN) ||
+    location.pathname.includes(TAB.CHUC_DANH) ||
+    location.pathname.includes(TAB.VAI_TRO)
+  ))
+
+
+  useEffect(() => {
+    if(dieuKien) {
+      goToVanBan()
+    }
+  }, [nguoiDung, location.pathname]);
 
   return (
     <Routes>

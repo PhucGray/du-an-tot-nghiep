@@ -364,13 +364,13 @@ const KiDeXuat = () => {
       </Modal>
 
       <div className="d-flex justify-content-center mt-3">
-        <Button
+        {nguoiDung?.isDeXuat && <Button
           onClick={() => setIsModalOpen(true)}
           className="d-flex align-items-center"
           type="primary"
           icon={<PlusOutlined />}>
           Thêm đề xuất
-        </Button>
+        </Button>}
       </div>
 
       <Tabs

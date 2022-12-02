@@ -55,6 +55,8 @@ export default () => {
   const [selectedItem, setSelectedItem] = useState("");
   const [editText, setNewEditText] = useState("");
 
+  const [anotherSelected, setAnotherSelected] = useState(null)
+
   const [isDetail, setIsDetail] = useState(false);
 
   function onDragEnd(result) {
@@ -262,14 +264,16 @@ export default () => {
               type="link">
               Sửa
             </Button>
-            {/* <Button
+            <Button
               type="link"
               onClick={() => {
                 setIsDetail(true);
                 handleGetListUser(record?.maSo);
+                // setSelectedItem()
+                setAnotherSelected(record)
               }}>
               Chi tiết
-            </Button> */}
+            </Button>
             <Popconfirm
               title="Bạn có chắc chắn muốn xoá?"
               onConfirm={() => handleDelete(record)}
@@ -326,6 +330,7 @@ export default () => {
       ),
     },
   ];
+
   return (
     <div className="vai-tro">
       <Tabs
@@ -404,7 +409,11 @@ export default () => {
             </div>
           ) : isDetail ? (
             <div>
-              <div className="mt-2 mb-4 d-flex justify-content-between">
+
+              <div className="mt-2 mb-4 d-flex justify-content-between align-items-center">
+                <div>Tên phòng ban: <span style={{color: 'blue'}}>{anotherSelected?.tenPhongBan}</span></div>
+
+
                 <Input
                   style={{ width: 200 }}
                   placeholder="Nhập từ khoá tìm kiếm"
@@ -428,7 +437,7 @@ export default () => {
                 loading={getListUserLoading}
                 columns={columns_2}
                 dataSource={userKeyword.trim() ? searchListUser : listUser}
-                pagination={{ defaultPageSize: 5 }}
+                pagination={{ defaultPageSize: 10 }}
               />
             </div>
           ) : (
@@ -449,7 +458,7 @@ export default () => {
                 loading={getListLoading}
                 columns={columns_1}
                 dataSource={keyword.trim() ? searchList : list}
-                pagination={{ defaultPageSize: 5 }}
+                pagination={{ defaultPageSize: 10 }}
               />
             </div>
           )}

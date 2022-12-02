@@ -403,7 +403,7 @@ const VanBan = () => {
           loading={getListLoading}
           columns={columns}
           dataSource={list}
-          pagination={{ defaultPageSize: 5 }}
+          pagination={{ defaultPageSize: 10 }}
         />
       </div>
     </div>

@@ -75,6 +75,7 @@ export default () => {
                 tenChucDanh: i?.ten_ChucDanh,
                 thuTu: i?.order,
                 key: i?.ma_ChucDanh,
+                thuocVe: i?.nguoiDung?.[0]?.hoTen || null,
               };
             }),
         );
@@ -91,7 +92,9 @@ export default () => {
   const handleAdd = async (values) => {
     setAddLoading(true);
     try {
-      const res = await themChucDanhSvc({ ten_ChucDanh: values.tenChucDanh?.trim() });
+      const res = await themChucDanhSvc({
+        ten_ChucDanh: values.tenChucDanh?.trim(),
+      });
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
@@ -134,10 +137,10 @@ export default () => {
         message.success(res.data?.retText);
         handleGetList();
         setModalEditVisible(false);
-        setNewEditText('')
+        setNewEditText("");
       } else {
         //message.error(LOI);
-        message.error(res.data?.retText)
+        message.error(res.data?.retText);
       }
     } catch (error) {
       //message.error(LOI_HE_THONG);
@@ -193,6 +196,12 @@ export default () => {
       title: "Tên chức danh ",
       dataIndex: "tenChucDanh",
       key: "tenChucDanh",
+    },
+    {
+      title: "Thuộc về",
+      dataIndex: "thuocVe",
+      key: "thuocVe",
+      render: (_, record) => <div>{_ ? <div>{_}</div> : <div style={{color: 'orange'}}>Chưa có</div>}</div>,
     },
     {
       title: "Thứ tự",
@@ -320,7 +329,7 @@ export default () => {
                 loading={getListLoading}
                 columns={columns}
                 dataSource={keyword.trim() ? searchList : list}
-                pagination={{ defaultPageSize: 5 }}
+                pagination={{ defaultPageSize: 10 }}
               />
             </div>
           )}

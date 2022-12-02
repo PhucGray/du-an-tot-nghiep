@@ -9,6 +9,7 @@ import {
   Popconfirm,
   Table,
   Checkbox,
+  Avatar,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -76,6 +77,7 @@ import {
 import moment from "moment";
 import { API_DOMAIN } from "../../../configs/api";
 import vi from "moment/locale/vi";
+import { UserOutlined } from '@ant-design/icons';
 const { TextArea } = Input;
 const VUI_LONG_CHON_FILE = "Vui lòng chọn file pfx";
 
@@ -245,6 +247,7 @@ const KiSoChiTiet = () => {
             stt: index + 1,
             hoTen: item?.nguoiDung?.hoTen,
             trangThai: item?.isDaKy,
+            avatar: item?.nguoiDung?.avatar || null
           };
         }),
       );
@@ -546,32 +549,20 @@ const KiSoChiTiet = () => {
   const renderRow = (item, bg = "gray", dangThucHien = false) => {
     return (
       <div className="d-flex">
-        <div className="py-1" style={{ width: 40 }}>
-          <div className="text-center">STT</div>
-          <div
-            className="text-center"
-            style={{
-              background: bg,
-              borderRadius: 5,
-              color: "#fff",
-              height: 40,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}>
-            {item?.order}
-          </div>
-        </div>
+       
 
         <div className="flex-grow-1 ps-3 py-1">
           <div>Người duyệt</div>
-          <div style={{ height: 40, display: "flex", alignItems: "center" }}>
+          <div style={{ height: 40, display: "flex", alignItems: "center", gap: 10 }}>
+          {item?.avatar ?
+            <Avatar size={30} src={item?.avatar} />
+          : <Avatar size={30} icon={<UserOutlined />} />}
             {item?.hoTen}
           </div>
         </div>
 
         <div className="py-1">
-          <div>Trạng thái</div>
+          <div className="text-center">Trạng thái</div>
           <div
             style={{ height: 40, display: "flex", alignItems: "center" }}
             className="d-flex align-items-center gap-2">
@@ -597,8 +588,8 @@ const KiSoChiTiet = () => {
         </div>
 
         {!daChuyenDuyet && nguoiDung?.isDeXuat && (
-          <div className="ms-2">
-            <div>Hành động</div>
+          <div className="ms-2 me-2">
+            <div className="text-center">Hành động</div>
             <div className="d-flex justify-content-center">
               <>
                 {
@@ -1258,7 +1249,13 @@ const KiSoChiTiet = () => {
                       style={{
                         fontSize: 16,
                         color: "blue",
+                        display: 'flex',
+                        gap: 10,
+                        alignItems: 'center'
                       }}>
+                      {item?.avatar ?
+            <Avatar size={30} src={item?.avatar} />
+          : <Avatar size={30} icon={<UserOutlined />} />}
                       {item?.nguoiDung?.hoTen}
                     </div>
 

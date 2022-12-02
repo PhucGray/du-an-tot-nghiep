@@ -347,7 +347,7 @@ export default ({ userData, userFormState, resetFormTab }) => {
                 placeItems: "center",
                 cursor: isDetail ? "not-allowed" : "pointer",
                 position: "relative",
-                backgroundColor: isDetail ? "#d9d9d9" : undefined,
+                backgroundColor: isDetail ? "#fff" : undefined,
                 borderRadius: 10
               }}>
               {!url && <PlusSquareTwoTone />}

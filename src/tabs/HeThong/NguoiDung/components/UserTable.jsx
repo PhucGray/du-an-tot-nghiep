@@ -354,6 +354,8 @@ export default ({
       {isShowTransfer ? (
         <div>
           <div className="mt-2 mb-4 d-flex justify-content-between">
+            <div>Người dùng hiện tại: <span style={{fontWeight: 'bold', color: 'blue'}}>{selectedItem?.itemName}</span></div>
+
             <Button
               type="link"
               className="d-flex align-items-center"
@@ -365,7 +367,6 @@ export default ({
               Danh sách
             </Button>
 
-            {/* <div>Vai trò hiện tại: {selectedItem?.itemName}</div> */}
           </div>
 
           {getSubListLoading ? (

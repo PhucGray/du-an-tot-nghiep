@@ -385,7 +385,7 @@ const KiDeXuat = () => {
             loading={getListLoading}
             columns={columns}
             dataSource={list_1}
-            pagination={{ defaultPageSize: 5 }}
+            pagination={{ defaultPageSize: 10 }}
           />
         </Tabs.TabPane>
         <Tabs.TabPane tab={`Ký số đợi duyệt (${list_2.length})`} key="2">
@@ -393,7 +393,7 @@ const KiDeXuat = () => {
             loading={getListLoading}
             columns={columns}
             dataSource={list_2}
-            pagination={{ defaultPageSize: 5 }}
+            pagination={{ defaultPageSize: 10 }}
           />
         </Tabs.TabPane>
         <Tabs.TabPane tab={`Ký số đã duyệt (${list_3.length})`} key="3">
@@ -401,7 +401,7 @@ const KiDeXuat = () => {
             loading={getListLoading}
             columns={columns}
             dataSource={list_3}
-            pagination={{ defaultPageSize: 5 }}
+            pagination={{ defaultPageSize: 10 }}
           />
         </Tabs.TabPane>
         <Tabs.TabPane tab={`Từ chối Ký (${list_4.length})`} key="4">
@@ -409,7 +409,7 @@ const KiDeXuat = () => {
             loading={getListLoading}
             columns={columns}
             dataSource={list_4}
-            pagination={{ defaultPageSize: 5 }}
+            pagination={{ defaultPageSize: 10 }}
           />
         </Tabs.TabPane>
       </Tabs>

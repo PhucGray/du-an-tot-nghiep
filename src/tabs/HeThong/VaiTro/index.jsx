@@ -316,6 +316,9 @@ export default () => {
           {isShowTransfer ? (
             <div>
               <div className="mt-2 mb-4 d-flex justify-content-between">
+                <div>Vai trò hiện tại: <span style={{color: 'blue', fontWeight: 'bold'}}>{selectedItem?.itemName}</span></div>
+
+
                 <Button
                   type="link"
                   className="d-flex align-items-center"
@@ -327,7 +330,6 @@ export default () => {
                   Danh sách
                 </Button>
 
-                <div>Vai trò hiện tại: {selectedItem?.itemName}</div>
               </div>
 
               {getSubListLoading ? (
@@ -378,7 +380,7 @@ export default () => {
                 loading={getListLoading}
                 columns={columns}
                 dataSource={keyword.trim() ? searchList : list}
-                pagination={{ defaultPageSize: 5 }}
+                pagination={{ defaultPageSize: 10 }}
               />
             </div>
           )}

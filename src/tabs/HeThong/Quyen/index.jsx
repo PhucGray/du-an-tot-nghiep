@@ -206,7 +206,7 @@ export default () => {
               loading={getListLoading}
               columns={columns}
               dataSource={keyword.trim() ? searchList : list}
-              pagination={{ defaultPageSize: 5 }}
+              pagination={{ defaultPageSize: 10 }}
             />
           </div>
         </Tabs.TabPane>

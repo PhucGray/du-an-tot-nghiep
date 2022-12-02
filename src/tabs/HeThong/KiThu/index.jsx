@@ -65,6 +65,8 @@ const LionImage = ({ onDragEnd, onChangePos, ...props }) => {
       }}
       {...props}
       image={image}
+      strokeWidth={1} // border width
+      stroke="blue" // border color
     />
   );
 };

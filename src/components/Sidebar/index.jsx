@@ -22,6 +22,7 @@ import {BsInfoCircle} from 'react-icons/bs'
 import Logo from '../../assets/images/logo.png'
 import { useSelector } from "react-redux";
 import { nguoiDungSelector } from "../../store/auth/selectors";
+import { pingSelector } from "../../store/common/selectors";
 function getItem(label, key, icon, children, type) {
   return {
     key,
@@ -39,6 +40,8 @@ const Sidebar = ({ onTabClick }) => {
   const location = useLocation();
   const nguoiDung = useSelector(nguoiDungSelector);
 
+  const ping = useSelector(pingSelector)
+
   const items = [
     getItem("Ký số", "ki-so", <EditOutlined />, [
       getItem("Văn bản", TAB.VAN_BAN, <HiOutlineDocumentText />),
@@ -48,7 +51,7 @@ const Sidebar = ({ onTabClick }) => {
         gap: 10,
       }}>
         <div>Ký số chờ duyệt</div>
-        <div className="ping"></div>
+        {ping && <div className="ping"></div>}
       </div>, TAB.KI_CHO_DUYET, <RiMapPinTimeLine />) : undefined,
       getItem("Ký số đã duyệt", TAB.KI_DA_DUYET, <AiOutlineFileDone />),
       getItem("Ký số đề xuất", TAB.KI_DE_XUAT, <FaRegLightbulb />),

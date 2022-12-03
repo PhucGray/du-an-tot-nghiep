@@ -46,10 +46,8 @@ const MainLayout = () => {
       return;
     }
 
-    // console.log(e.key)
-    if(e.key.includes(TAB.NGUOI_DUNG)) {
+    if(e.key.includes(TAB.NGUOI_DUNG) && !e.key.includes(TAB.THONG_SO_NGUOI_DUNG)) {
       return navigate('/' + TAB.NGUOI_DUNG, {state: {reset: true}})
-      // window.location.reload()
     }
 
     navigate(`/${e.key}`);

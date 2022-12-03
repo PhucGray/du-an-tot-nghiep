@@ -33,7 +33,7 @@ import { ArrowLeftOutlined, DoubleLeftOutlined } from "@ant-design/icons";
 import formState from "../assets/formState";
 import { useNavigate } from "react-router-dom";
 import { addDoc } from "firebase/firestore";
-import { realtimeRef } from "../../../../firebase";
+import { vaiTroFbRef } from "../../../../firebase";
 
 const PHONG_BAN = "Phòng ban";
 const VAI_TRO = "Vai trò";
@@ -240,7 +240,7 @@ export default ({
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         message.success(res.data?.retText);
 
-        await addDoc(realtimeRef, {maSo}).then(res => {
+        await addDoc(vaiTroFbRef, {maSo}).then(res => {
           console.log(res)
         }).catch(error => {
           console.log('error')

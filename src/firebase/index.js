@@ -13,6 +13,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
-export const realtimeRef = collection(db, "realtime");
+export const vaiTroFbRef = collection(db, "vaitro");
+export const deXuatFbRef = collection(db, "dexuat");
 
 export const storage = getStorage(app);

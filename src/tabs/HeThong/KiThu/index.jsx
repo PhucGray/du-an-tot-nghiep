@@ -48,6 +48,8 @@ import {
   themVungKySvc,
 } from "../../../store/vungky/services";
 import { useRef } from "react";
+import { doc, getDoc, getDocFromCache, updateDoc } from "firebase/firestore";
+import { db } from "../../../firebase";
 const { Option } = Select;
 const { TextArea } = Input;
 
@@ -173,6 +175,22 @@ const KiThu = () => {
     use: UploadTypes.IMAGE,
     afterUploadAttachment: addAttachment,
   });
+
+  const removeBuoc = async () => {
+    const id = localStorage.getItem('idFb')
+    const docRef = doc(db, "dexuat", id);
+    const docSnap = await getDoc(docRef)
+
+    if(docSnap.exists) {
+      const data = docSnap.data();
+
+      const newListOrder = data?.listOrder?.slice(1)
+
+      await updateDoc(docRef, {
+        listOrder: newListOrder,
+    });
+    }
+  }
 
   const getChiTietBuocDuyet = async () => {
     try {
@@ -389,12 +407,6 @@ const KiThu = () => {
       });
 
       if (isKiThat) {
-        console.log({
-          inputFile: _file_,
-          id_NguoiDung: nguoiDung?.ma_NguoiDung,
-          postPositionSigns: [...finalImages, ...finalTexts],
-          ma_BuocDuyet: parseInt(isNaN(params?.id) ? "0" : params?.id),
-        })
         const res = await kyThatSvc({
           inputFile: _file_,
           id_NguoiDung: nguoiDung?.ma_NguoiDung,
@@ -404,6 +416,7 @@ const KiThu = () => {
 
         if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
           message.success(res.data?.retText);
+          removeBuoc()
           navigate(
             "/" +
               TAB.KI_DA_DUYET +
@@ -924,6 +937,8 @@ const KiThu = () => {
   useEffect(() => {
     localStorage.removeItem("cau-hinh-qr");
   }, []);
+
+
 
   return (
     <div className="mx-auto" style={{ width: "100%", minHeight: "100vh" }}>

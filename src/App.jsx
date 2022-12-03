@@ -15,6 +15,8 @@ import { useNavigate } from "react-router-dom";
 import { clearNguoiDung } from "./store/auth/actions";
 import { Button, Modal } from "antd";
 import { useState } from "react";
+import { setPingAction } from "./store/common/actions";
+import * as TAB from './constants/tab'
 
 const App = () => {
   const dispatch = useDispatch();
@@ -23,11 +25,12 @@ const App = () => {
 
   const [modalNoti, setModalNoti] = useState(false)
 
+  const [isReload, setIsReload] = useState(false)
+
   useEffect(() => {
     moment.locale("vi");
 
-    const unsub = onSnapshot(collection(db, "realtime"), (doc) => {
-      // console.log("Current data: ", doc.data());
+    const unsub1 = onSnapshot(collection(db, "vaitro"), (doc) => {
       doc.docs.forEach(async (doc) => {
         const data = doc.data();
 
@@ -40,7 +43,28 @@ const App = () => {
         }
       });
     });
-    return () => unsub();
+
+    const unsub2 = onSnapshot(collection(db, "dexuat"), (doc) => {
+      doc.docs.forEach(async (doc) => {
+        const data = doc.data();
+
+        const listOrder = data?.listOrder
+
+        if(listOrder.length > 0 && listOrder?.[0]?.nguoiDung === nguoiDung?.ma_NguoiDung) {
+          dispatch(setPingAction({ping: true, o: {
+            deXuat: data?.deXuat,
+            id: doc.id
+          }}))
+        } else {
+          dispatch(setPingAction({ping: false, o: null}))
+        }
+      });
+    });
+
+    return () => {
+      unsub1();
+      unsub2()
+    }
   }, []);
 
   return (

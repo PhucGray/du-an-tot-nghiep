@@ -25,7 +25,11 @@ import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import { getListKySoBuocDuyet, kiemTraPasscodeSvc } from "../../../store/kyso/services";
-
+import { collection, doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { db } from "../../../firebase";
+import { setPingAction } from "../../../store/common/actions";
+import * as TAB from '../../../constants/tab'
+import { osSelector } from "../../../store/common/selectors";
 const { TextArea } = Input;
 
 const KiDeXuat = () => {
@@ -45,8 +49,6 @@ const KiDeXuat = () => {
 
   const g = async () => {
     const res = await getListKySoBuocDuyet();
-
-    const a = res.data?.data?.filter(item => item?.ma_NguoiKy === nguoiDung?.ma_NguoiDung)?.length;
 
     setList(
       res.data?.data?.filter(item => item?.ma_NguoiKy === nguoiDung?.ma_NguoiDung)?.map((item, index) => {
@@ -87,12 +89,35 @@ const KiDeXuat = () => {
     }
   }
 
+  const os = useSelector(osSelector)
+  const removeDoc = async (id) => {
+    const docRef = doc(db, "dexuat", id);
+    const docSnap = await getDoc(docRef)
+
+    if(docSnap.exists) {
+      const data = docSnap.data();
+
+
+      await updateDoc(docRef, {
+        listOrder: [],
+    });
+    }
+  }
+
+  
+
   const handleTuChoi= async (record) => {
     try {
+      // console.log(record, os)
+      // console.log(os?.find(i => i?.deXuat === record?.ma_KySoDeXuat))
+      const id = os?.find(i => i?.deXuat === record?.ma_KySoDeXuat)?.id
+
       const res = await tuChoiKySvc({id: record?.ma_BuocDuyet})
 
       if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         g();
+       removeDoc(id)
+
         message.success(res.data?.retText)
       } else {
         message.error(res.data?.retText)
@@ -166,6 +191,28 @@ const KiDeXuat = () => {
   useEffect(() => {
     // getList();
     g();
+  }, []);
+
+  useEffect(() => {
+  
+    const unsub2 = onSnapshot(collection(db, "dexuat"), (doc) => {
+      doc.docs.forEach(async (doc) => {
+        const data = doc.data();
+
+        const listOrder = data?.listOrder
+
+        if(listOrder.length > 0 && listOrder?.[0]?.nguoiDung === nguoiDung?.ma_NguoiDung) {
+          if(location.pathname.includes(TAB.KI_CHO_DUYET)) {
+            // location.reload()
+            g()
+          }
+        } 
+      });
+    });
+
+    return () => {
+      unsub2()
+    }
   }, []);
 
   return (

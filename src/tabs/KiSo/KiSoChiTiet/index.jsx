@@ -78,6 +78,9 @@ import moment from "moment";
 import { API_DOMAIN } from "../../../configs/api";
 import vi from "moment/locale/vi";
 import { UserOutlined } from '@ant-design/icons';
+import { deXuatFbRef } from "../../../firebase";
+import { addDoc } from "firebase/firestore";
+import {osSelector} from '../../../store/common/selectors'
 const { TextArea } = Input;
 const VUI_LONG_CHON_FILE = "Vui lòng chọn file pfx";
 
@@ -121,6 +124,9 @@ const KiSoChiTiet = () => {
   const location = useLocation();
 
   const nguoiDung = useSelector(nguoiDungSelector);
+  const os = useSelector(osSelector);
+  const idFb = os?.find(i => i?.deXuat == params?.id)?.id
+
   const pageChiTietKyChoDuyet = location.pathname.includes(
     "ki-cho-duyet/detail",
   );
@@ -202,6 +208,7 @@ const KiSoChiTiet = () => {
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         localStorage.setItem("ki-that", KSDXData?.inputFile);
+        localStorage.setItem('idFb', idFb)
         navigate("/ki-cho-duyet/ki-that/" + buocDuyetHienTai?.ma_BuocDuyet);
       } else {
         message.error(res.data?.retText);
@@ -433,6 +440,22 @@ const KiSoChiTiet = () => {
       const res = await chuyenDuyetSvc({ id: KSDXData?.ma_KySoDeXuat });
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        const dsBuocDuyet = res.data?.data?.kySoBuocDuyets;
+
+        const listOrder = dsBuocDuyet.map(item => ({order: item?.order, nguoiDung: item?.ma_NguoiKy}))
+
+        const payload = {
+          deXuat: res.data?.data?.ma_KySoDeXuat,
+          listOrder,
+        }
+
+        await addDoc(deXuatFbRef , payload).then(res => {
+        }).catch(error => {
+          console.log('error')
+          console.log(error)
+        })
+
+
         getKSDX();
         getDsBuocDuyet();
         getDsNguoiDungDuyet();

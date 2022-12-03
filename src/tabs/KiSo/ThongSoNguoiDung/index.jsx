@@ -14,7 +14,7 @@ import {
   Row,
   Col,
   Select,
-  DatePicker
+  DatePicker,
 } from "antd";
 import React, { useEffect, useState } from "react";
 import {
@@ -57,7 +57,7 @@ import * as TAB from "../../../constants/tab";
 import { API_DOMAIN } from "../../../configs/api";
 import { useMemo } from "react";
 
-const dateFormat = 'DD-MM-YYYY';
+const dateFormat = "DD-MM-YYYY";
 // const DatePicker = generatePicker(momentGenerateConfig);
 
 const { Option } = Select;
@@ -106,25 +106,7 @@ export default () => {
   const [hinh3Loading, setHinh3Loading] = useState(false);
 
   const [keyword, setKeyword] = useState("");
-  const [list, setList] = useState([
-    {
-      maSo: 1,
-      hoVaTen:
-        "Nguyen Van A ahwfbhaw bwah fbhwakbfhbawhkfb hakwbf hkawbf hkawbhk fbahw",
-      chucDanh: "Tổng giám đốc",
-      hetHan: "20-10-2022",
-      kiThu: false,
-      trangThai: true,
-    },
-    {
-      maSo: 2,
-      hoVaTen: "Nguyen Van A",
-      chucDanh: "Tổng giám đốc",
-      hetHan: "20-10-2022",
-      kiThu: true,
-      trangThai: false,
-    },
-  ]);
+  const [list, setList] = useState([]);
   const [searchList, setSearchList] = useState([]);
 
   const [listNguoiCanDuyet, setListNguoiCanDuyet] = useState([]);
@@ -146,21 +128,6 @@ export default () => {
         setList(list);
 
         const currentUser = list?.find((u) => u?.ma_NguoiDung == params?.id);
-
-        // console.log(currentUser?.hinh1)
-        // console.log(currentUser?.hinh2)
-        // console.log(currentUser?.hinh3)
-        // console.log({...currentUser,
-        //   hinh1: currentUser?.hinh1 ? API_DOMAIN + currentUser?.hinh1 : null,
-        //   hinh2: currentUser?.hinh2 ? API_DOMAIN + currentUser?.hinh2 : null,
-        //   hinh3: currentUser?.hinh3 ? API_DOMAIN + currentUser?.hinh3 : null,
-        // })
-        // console.log(isDetail)
-        // console.log(  {...currentUser,
-        //   hinh1: currentUser?.hinh1 ? API_DOMAIN + currentUser?.hinh1?.split("\\").join('/') : null,
-        //   hinh2: currentUser?.hinh2 ? API_DOMAIN + currentUser?.hinh2?.split("\\").join('/') : null,
-        //   hinh3: currentUser?.hinh3 ? API_DOMAIN + currentUser?.hinh3?.split("\\").join('/') : null,
-        // },)
 
         if (isDetail) {
           setCurrentUserDetail({
@@ -326,9 +293,9 @@ export default () => {
     form.setFieldValue("hinh2", API_DOMAIN + item?.hinh2);
     form.setFieldValue("hinh3", API_DOMAIN + item?.hinh3);
     form.setFieldValue("ma_NguoiDung", item?.ma_NguoiDung);
-  
+
     // setNgayHetHan(item?.ngayChuKyHetHan)
-    form.setFieldValue('ngayHetHan', moment(item?.ngayChuKyHetHan))
+    form.setFieldValue("ngayHetHan", moment(item?.ngayChuKyHetHan));
 
     setHinh1(item?.hinh1 ? API_DOMAIN + item?.hinh1 : null);
     setHinh2(item?.hinh2 ? API_DOMAIN + item?.hinh2 : null);
@@ -348,11 +315,9 @@ export default () => {
         return (
           <div>
             <div style={{ fontSize: 16 }}>{record?.hoTen}</div>
-            {!!record?.loaiChuKy && (
-              <div style={{ fontSize: 12, color: "blue" }}>
-                Loại chữ ký: {record?.loaiChuKy ? "Ký file" : "Smart sign"}
-              </div>
-            )}
+            <div style={{ fontSize: 12, color: "blue" }}>
+              Loại chữ ký: {record?.loaiChuKy ? "Ký file" : "Smart sign"}
+            </div>
             {!!record?.serial && (
               <div style={{ fontSize: 12, color: "blue" }}>
                 Serial: {record?.serial}
@@ -447,8 +412,6 @@ export default () => {
     getListNguoiDungCanDuyet();
   }, [location.pathname]);
 
-
-
   return (
     <>
       <Modal
@@ -456,7 +419,7 @@ export default () => {
         open={isModalOpen}
         onOk={() => {}}
         onCancel={() => {
-          setNgayHetHan(null)
+          setNgayHetHan(null);
 
           if (hinh1Loading || hinh2Loading || hinh3Loading) return;
 
@@ -467,7 +430,6 @@ export default () => {
           setHinh2(null);
           setHinh3(null);
           setHinh1Error(false);
-
         }}
         footer={null}>
         <Form
@@ -571,7 +533,7 @@ export default () => {
             </Form.Item>
           )}
 
-<Form.Item
+          <Form.Item
             labelCol={{
               span: 5,
             }}
@@ -585,7 +547,7 @@ export default () => {
             ]}>
             {<DatePicker format={dateFormat} />}
           </Form.Item>
-         {/* {isEdit ? <Form.Item
+          {/* {isEdit ? <Form.Item
             labelCol={{
               span: 5,
             }}

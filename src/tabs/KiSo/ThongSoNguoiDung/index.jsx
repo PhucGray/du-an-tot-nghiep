@@ -14,6 +14,7 @@ import {
   Row,
   Col,
   Select,
+  DatePicker
 } from "antd";
 import React, { useEffect, useState } from "react";
 import {
@@ -56,6 +57,9 @@ import * as TAB from "../../../constants/tab";
 import { API_DOMAIN } from "../../../configs/api";
 import { useMemo } from "react";
 
+const dateFormat = 'DD-MM-YYYY';
+// const DatePicker = generatePicker(momentGenerateConfig);
+
 const { Option } = Select;
 
 const KICH_THUOC_QUA_LON = "Kích thước ảnh quá lớn";
@@ -68,11 +72,10 @@ export default () => {
 
   // const [isDetail, setisDetail] = useState(() => !!params?.id && location.pathname?.includes("detail"))
   const isDetail = useMemo(() => {
-    return !!params?.id && location.pathname?.includes("detail")
-  }, [location.pathname])
+    return !!params?.id && location.pathname?.includes("detail");
+  }, [location.pathname]);
 
   // console.log(isDetail)
-
 
   const [form] = Form.useForm();
   const nguoiDung = useSelector(nguoiDungSelector);
@@ -147,27 +150,31 @@ export default () => {
         // console.log(currentUser?.hinh1)
         // console.log(currentUser?.hinh2)
         // console.log(currentUser?.hinh3)
-        // console.log({...currentUser, 
+        // console.log({...currentUser,
         //   hinh1: currentUser?.hinh1 ? API_DOMAIN + currentUser?.hinh1 : null,
         //   hinh2: currentUser?.hinh2 ? API_DOMAIN + currentUser?.hinh2 : null,
         //   hinh3: currentUser?.hinh3 ? API_DOMAIN + currentUser?.hinh3 : null,
         // })
         // console.log(isDetail)
-        // console.log(  {...currentUser, 
+        // console.log(  {...currentUser,
         //   hinh1: currentUser?.hinh1 ? API_DOMAIN + currentUser?.hinh1?.split("\\").join('/') : null,
         //   hinh2: currentUser?.hinh2 ? API_DOMAIN + currentUser?.hinh2?.split("\\").join('/') : null,
         //   hinh3: currentUser?.hinh3 ? API_DOMAIN + currentUser?.hinh3?.split("\\").join('/') : null,
         // },)
 
         if (isDetail) {
-         
-          setCurrentUserDetail(
-            {...currentUser, 
-              hinh1: currentUser?.hinh1 ? API_DOMAIN + currentUser?.hinh1?.split("\\").join('/') : null,
-              hinh2: currentUser?.hinh2 ? API_DOMAIN + currentUser?.hinh2?.split("\\").join('/') : null,
-              hinh3: currentUser?.hinh3 ? API_DOMAIN + currentUser?.hinh3?.split("\\").join('/') : null,
-            },
-          );
+          setCurrentUserDetail({
+            ...currentUser,
+            hinh1: currentUser?.hinh1
+              ? API_DOMAIN + currentUser?.hinh1?.split("\\").join("/")
+              : null,
+            hinh2: currentUser?.hinh2
+              ? API_DOMAIN + currentUser?.hinh2?.split("\\").join("/")
+              : null,
+            hinh3: currentUser?.hinh3
+              ? API_DOMAIN + currentUser?.hinh3?.split("\\").join("/")
+              : null,
+          });
         }
       } else {
         //message.error(LOI);
@@ -210,7 +217,7 @@ export default () => {
 
     if (!isValid) return;
 
-    const new3Months = moment().add(3, "months").format();
+    // const new3Months = moment().add(3, "months").format();
     const data = {
       ma_NguoiDung: values?.ma_NguoiDung,
       hinh1,
@@ -221,7 +228,7 @@ export default () => {
       retypePasscode: values.passCode,
       ma_NguoiCapNhatCuoi: nguoiDung?.ma_NguoiDung,
       trangThai: values?.trangThai,
-      ngayChuKyHetHan: new3Months,
+      ngayChuKyHetHan: moment(values?.ngayHetHan).format(),
     };
     try {
       const res = await themNguoiDungDuyetSvc(data);
@@ -230,9 +237,9 @@ export default () => {
         getListThongSo();
         message.success(res.data?.retText);
         form.resetFields();
-        setHinh1(null)
-        setHinh2(null)
-        setHinh3(null)
+        setHinh1(null);
+        setHinh2(null);
+        setHinh3(null);
       }
     } catch (error) {
       //message.error(LOI_HE_THONG);
@@ -249,12 +256,13 @@ export default () => {
 
     const data = {
       ma_NguoiDung: values?.ma_NguoiDung,
-      hinh1:hinh1?.includes(API_DOMAIN) ? null : hinh1, 
-      hinh2:hinh2?.includes(API_DOMAIN) ? null : hinh2, 
-      hinh3:hinh3?.includes(API_DOMAIN) ? null : hinh3, 
+      hinh1: hinh1?.includes(API_DOMAIN) ? null : hinh1,
+      hinh2: hinh2?.includes(API_DOMAIN) ? null : hinh2,
+      hinh3: hinh3?.includes(API_DOMAIN) ? null : hinh3,
       lyDoMacDinh: values.lyDoMacDinh,
       ma_NguoiCapNhatCuoi: nguoiDung?.ma_NguoiDung,
       trangThai: values?.trangThai,
+      ngayChuKyHetHan: moment(values?.ngayHetHan).format(),
     };
 
     try {
@@ -264,14 +272,19 @@ export default () => {
         setIsModalOpen(false);
 
         const currentUser = res?.data?.data;
-       
-        setCurrentUserDetail(
-          {...currentUser, 
-            hinh1: currentUser?.hinh1 ? API_DOMAIN + currentUser?.hinh1?.split("\\").join('/') : null,
-            hinh2: currentUser?.hinh2 ? API_DOMAIN + currentUser?.hinh2?.split("\\").join('/') : null,
-            hinh3: currentUser?.hinh3 ? API_DOMAIN + currentUser?.hinh3?.split("\\").join('/') : null,
-          },
-        );
+
+        setCurrentUserDetail({
+          ...currentUser,
+          hinh1: currentUser?.hinh1
+            ? API_DOMAIN + currentUser?.hinh1?.split("\\").join("/")
+            : null,
+          hinh2: currentUser?.hinh2
+            ? API_DOMAIN + currentUser?.hinh2?.split("\\").join("/")
+            : null,
+          hinh3: currentUser?.hinh3
+            ? API_DOMAIN + currentUser?.hinh3?.split("\\").join("/")
+            : null,
+        });
         message.success(res.data?.retText);
         window.location.reload();
       }
@@ -300,6 +313,8 @@ export default () => {
     }
   };
 
+  const [ngayHetHan, setNgayHetHan] = useState(null);
+
   const handleShowModalEdit = (info) => {
     setIsModalOpen(true);
     setIsEdit(true);
@@ -307,15 +322,18 @@ export default () => {
 
     form.setFieldValue("trangThai", item?.trangThai);
     form.setFieldValue("lyDoMacDinh", item?.lyDoMacDinh);
-    form.setFieldValue("hinh1",API_DOMAIN +  item?.hinh1);
-    form.setFieldValue("hinh2",API_DOMAIN +  item?.hinh2);
-    form.setFieldValue("hinh3",API_DOMAIN +  item?.hinh3);
+    form.setFieldValue("hinh1", API_DOMAIN + item?.hinh1);
+    form.setFieldValue("hinh2", API_DOMAIN + item?.hinh2);
+    form.setFieldValue("hinh3", API_DOMAIN + item?.hinh3);
     form.setFieldValue("ma_NguoiDung", item?.ma_NguoiDung);
+  
+    // setNgayHetHan(item?.ngayChuKyHetHan)
+    form.setFieldValue('ngayHetHan', moment(item?.ngayChuKyHetHan))
 
-    setHinh1(item?.hinh1 ? (API_DOMAIN +  item?.hinh1) : null);
-    setHinh2(item?.hinh2 ? (API_DOMAIN +  item?.hinh2) : null);
-    setHinh3(item?.hinh3 ? (API_DOMAIN +  item?.hinh3) : null);
-  }
+    setHinh1(item?.hinh1 ? API_DOMAIN + item?.hinh1 : null);
+    setHinh2(item?.hinh2 ? API_DOMAIN + item?.hinh2 : null);
+    setHinh3(item?.hinh3 ? API_DOMAIN + item?.hinh3 : null);
+  };
   const columns = [
     {
       title: "Mã số",
@@ -329,10 +347,22 @@ export default () => {
       render: (_, record) => {
         return (
           <div>
-            <div style={{fontSize: 16}}>{record?.hoTen}</div>
-            {!!record?.loaiChuKy && <div style={{fontSize: 12, color: 'blue'}}>Loại chữ ký: {record?.loaiChuKy ? 'Ký file' : 'Smart sign'}</div>}
-            {!!record?.serial && <div style={{fontSize: 12, color: 'blue'}}>Serial: {record?.serial}</div>}
-            {!!record?.subject && <div style={{fontSize: 12, color: 'blue'}}>Subject: {record?.subject}</div>}
+            <div style={{ fontSize: 16 }}>{record?.hoTen}</div>
+            {!!record?.loaiChuKy && (
+              <div style={{ fontSize: 12, color: "blue" }}>
+                Loại chữ ký: {record?.loaiChuKy ? "Ký file" : "Smart sign"}
+              </div>
+            )}
+            {!!record?.serial && (
+              <div style={{ fontSize: 12, color: "blue" }}>
+                Serial: {record?.serial}
+              </div>
+            )}
+            {!!record?.subject && (
+              <div style={{ fontSize: 12, color: "blue" }}>
+                Subject: {record?.subject}
+              </div>
+            )}
           </div>
         );
       },
@@ -346,6 +376,9 @@ export default () => {
       title: "Hết hạn",
       dataIndex: "ngayChuKyHetHan",
       key: "ngayChuKyHetHan",
+      render: (_) => {
+        return <div>{moment(_).format("DD-MM-YYYY")}</div>;
+      },
     },
     {
       title: "Ký thử",
@@ -414,6 +447,8 @@ export default () => {
     getListNguoiDungCanDuyet();
   }, [location.pathname]);
 
+
+
   return (
     <>
       <Modal
@@ -421,6 +456,8 @@ export default () => {
         open={isModalOpen}
         onOk={() => {}}
         onCancel={() => {
+          setNgayHetHan(null)
+
           if (hinh1Loading || hinh2Loading || hinh3Loading) return;
 
           setIsModalOpen(false);
@@ -430,6 +467,7 @@ export default () => {
           setHinh2(null);
           setHinh3(null);
           setHinh1Error(false);
+
         }}
         footer={null}>
         <Form
@@ -476,16 +514,16 @@ export default () => {
                 width: "100%",
               }}>
               {isEdit
-                ? list.map((item, index) =>{
-                  return (
-                    <Option key={index} value={item?.ma_NguoiDung}>
-                    {item?.nguoiDung?.hoTen}
-                  </Option>
-                  )
-                })
+                ? list.map((item, index) => {
+                    return (
+                      <Option key={index} value={item?.ma_NguoiDung}>
+                        {item?.nguoiDung?.hoTen}
+                      </Option>
+                    );
+                  })
                 : listNguoiCanDuyet.map((item, index) => (
                     <Option key={index} value={item?.ma_NguoiDung}>
-                          {item?.hoTen}
+                      {item?.hoTen}
                     </Option>
                   ))}
             </Select>
@@ -529,9 +567,51 @@ export default () => {
                   message: "Vui lòng nhập passcode!",
                 },
               ]}>
-              <Input.Password/>
+              <Input.Password />
             </Form.Item>
           )}
+
+<Form.Item
+            labelCol={{
+              span: 5,
+            }}
+            label="Hết hạn"
+            name="ngayHetHan"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng chọn ngày hết hạn!",
+              },
+            ]}>
+            {<DatePicker format={dateFormat} />}
+          </Form.Item>
+         {/* {isEdit ? <Form.Item
+            labelCol={{
+              span: 5,
+            }}
+            label="Hết hạn"
+            name="ngayHetHan"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng chọn ngày hết hạn!",
+              },
+            ]}>
+            {<DatePicker defaultValue={moment(ngayHetHan)} format={dateFormat} />}
+          </Form.Item> :  <Form.Item
+            labelCol={{
+              span: 5,
+            }}
+            label="Hết hạn"
+            name="ngayHetHan"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng chọn ngày hết hạn!",
+              },
+            ]}>
+            {<DatePicker format={dateFormat} />}
+          </Form.Item>} */}
 
           <ImageModal
             number={1}
@@ -596,8 +676,8 @@ export default () => {
 
           const hinh1 = await uploadImagToFirebase(e);
 
-          if(!hinh1) {
-            return setHinh1Loading(false)
+          if (!hinh1) {
+            return setHinh1Loading(false);
           }
 
           const { width, height } = await ReactImageSize(hinh1);
@@ -622,8 +702,8 @@ export default () => {
 
           const hinh2 = await uploadImagToFirebase(e);
 
-          if(!hinh2) {
-            return setHinh2Loading(false)
+          if (!hinh2) {
+            return setHinh2Loading(false);
           }
 
           const { width, height } = await ReactImageSize(hinh2);
@@ -648,8 +728,8 @@ export default () => {
 
           const hinh3 = await uploadImagToFirebase(e);
 
-          if(!hinh3) {
-            return setHinh3Loading(false)
+          if (!hinh3) {
+            return setHinh3Loading(false);
           }
 
           const { width, height } = await ReactImageSize(hinh3);
@@ -679,13 +759,15 @@ export default () => {
               onChange={(e) => handleSearch(e.target.value)}
             />
 
-           {nguoiDung?.isKySo && <Button
-              type="primary"
-              onClick={() => {
-                setIsModalOpen(true);
-              }}>
-              Thêm
-            </Button>}
+            {nguoiDung?.isKySo && (
+              <Button
+                type="primary"
+                onClick={() => {
+                  setIsModalOpen(true);
+                }}>
+                Thêm
+              </Button>
+            )}
           </div>
 
           <div>

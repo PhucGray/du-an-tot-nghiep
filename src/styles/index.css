@@ -57,7 +57,7 @@ button {
   color: #fff !important;
 }
 
-.ant-input, .ant-input-affix-wrapper, .ant-pagination-item {
+.ant-input, .ant-input-affix-wrapper, .ant-pagination-item, .ant-picker {
   border-radius: 10px !important;
 }
 

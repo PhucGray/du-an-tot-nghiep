@@ -458,8 +458,6 @@ const ThongSoChiTiet = ({
     },
   ];
 
-  // console.log(data)
-
   return (
     <>
       <Modal footer={null} open={!!log} title='Lịch sử' onCancel={() => setLog(null)}>

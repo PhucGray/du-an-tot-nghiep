@@ -131,6 +131,7 @@ export const uploadImagToFirebase = async (e) => {
 
       //     dispatch(setLoading({ state: false }));
       // }
+    } else {
     }
   }
 

@@ -330,6 +330,7 @@ export default () => {
         return (
           <div>
             <div style={{fontSize: 16}}>{record?.hoTen}</div>
+            {!!record?.loaiChuKy && <div style={{fontSize: 12, color: 'blue'}}>Loại chữ ký: {record?.loaiChuKy ? 'Ký file' : 'Smart sign'}</div>}
             {!!record?.serial && <div style={{fontSize: 12, color: 'blue'}}>Serial: {record?.serial}</div>}
             {!!record?.subject && <div style={{fontSize: 12, color: 'blue'}}>Subject: {record?.subject}</div>}
           </div>
@@ -594,6 +595,11 @@ export default () => {
           setHinh1Loading(true);
 
           const hinh1 = await uploadImagToFirebase(e);
+
+          if(!hinh1) {
+            return setHinh1Loading(false)
+          }
+
           const { width, height } = await ReactImageSize(hinh1);
           if (width > 250 || height > 250) {
             setHinh1Error(KICH_THUOC_QUA_LON);
@@ -615,6 +621,11 @@ export default () => {
           setHinh2Loading(true);
 
           const hinh2 = await uploadImagToFirebase(e);
+
+          if(!hinh2) {
+            return setHinh2Loading(false)
+          }
+
           const { width, height } = await ReactImageSize(hinh2);
           if (width > 250 || height > 250) {
             setHinh2Error(KICH_THUOC_QUA_LON);
@@ -636,6 +647,11 @@ export default () => {
           setHinh3Loading(true);
 
           const hinh3 = await uploadImagToFirebase(e);
+
+          if(!hinh3) {
+            return setHinh3Loading(false)
+          }
+
           const { width, height } = await ReactImageSize(hinh3);
           if (width > 250 || height > 250) {
             setHinh3Error(KICH_THUOC_QUA_LON);

@@ -605,6 +605,10 @@ const ThongSoChiTiet = ({
           </Row>
 
           <Row label="Subject">{data?.subject}</Row>
+
+          <Row label="Loại chữ ký" even={false}>{data?.loaiChuKy ? 'Ký file' : 'Smart sign'}</Row>
+
+          <Row label="Ngày hết hạn">{moment(data?.ngayChuKyHetHan).format('DD-MM-YYYY')}</Row>
         </div>
       </div>
     </>

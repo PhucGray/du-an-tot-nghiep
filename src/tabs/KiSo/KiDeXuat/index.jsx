@@ -151,20 +151,11 @@ const KiDeXuat = () => {
         setFileName("");
         setIsModalOpen(false);
         inputFileRef.current.value = null;
-        switch (activeKey) {
-          case "1":
-            getList_1();
-            break;
-          case "2":
-            getList_2();
-            break;
-          case "3":
-            getList_3();
-            break;
-          case "4":
-            getList_4();
-            break;
-        }
+        getList_1();
+        getList_2();
+        getList_3();
+        getList_4();
+        
       } else {
         //message.error(LOI);
       }

@@ -211,6 +211,7 @@ export default () => {
       const res = await getDsUserPBSvc({ id });
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        console.log(res.data?.data)
         const list = res.data?.data?.nguoiDung_PhongBan?.map((i) => {
           return {
             maSo: i?.ma_NguoiDung,
@@ -297,37 +298,6 @@ export default () => {
       title: "Họ và tên",
       dataIndex: "itemName",
       key: "itemName",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Hành động",
-      key: "hanhDong",
-      render: (_, record) => (
-        <div>
-          <div>
-            <div className="d-flex">
-              <Button
-                type="link"
-                onClick={() => {
-                  // dispatch({
-                  //   type: "DETAIL-USER",
-                  //   payload: {
-                  //     props: {
-                  //       maSo: record?.maSo || null,
-                  //     },
-                  //   },
-                  // });
-                }}>
-                Chi tiết
-              </Button>
-            </div>
-          </div>
-        </div>
-      ),
     },
   ];
 

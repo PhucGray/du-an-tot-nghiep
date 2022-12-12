@@ -167,3 +167,6 @@ canvas {
 .pg-viewer-wrapper canvas {
   margin-inline: auto !important;
 }
+.ant-collapse-content > .ant-collapse-content-box {
+  padding: 0 !important;
+}

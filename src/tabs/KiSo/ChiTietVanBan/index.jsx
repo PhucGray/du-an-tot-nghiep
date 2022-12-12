@@ -8,7 +8,7 @@ import moment from "moment";
 import { API_DOMAIN } from "../../../configs/api";
 import { useMemo } from "react";
 import { ArrowLeftOutlined, ArrowDownOutlined } from "@ant-design/icons";
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
+// import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 import FileViewer from 'react-file-viewer';
 
 const ChiTietVanBan = () => {

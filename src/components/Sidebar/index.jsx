@@ -9,7 +9,7 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import * as TAB from "../../constants/tab";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {HiOutlineDocumentText} from 'react-icons/hi'
 import {AiOutlineFileDone} from 'react-icons/ai'
 import {FaRegLightbulb} from 'react-icons/fa'
@@ -39,6 +39,8 @@ function getItem(label, key, icon, children, type) {
 const Sidebar = ({ onTabClick }) => {
   const location = useLocation();
   const nguoiDung = useSelector(nguoiDungSelector);
+
+  const navigate = useNavigate()
 
   const ping = useSelector(pingSelector)
 
@@ -82,9 +84,14 @@ const Sidebar = ({ onTabClick }) => {
         left: 0,
       }}>
       <div className="d-flex justify-content-center mt-2 pb-2" style={{
-        borderRight: '1px solid #f0f0f0'
+        borderRight: '1px solid #f0f0f0',
+
       }}>
-       <img src={Logo} style={{width: '40%'}}  />
+       <img
+        onClick={() => {
+          navigate('/')
+        }}
+       src={Logo} style={{width: '40%', cursor: 'pointer'}}  />
       </div>
       <Menu
         theme="light"

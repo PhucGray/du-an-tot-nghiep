@@ -1023,7 +1023,8 @@ const KiSoChiTiet = () => {
           type="link"
           className="ms-3 mt-3"
           onClick={() => {
-            navigate("/" + TAB.KI_DE_XUAT);
+            // navigate("/" + TAB.KI_DE_XUAT);
+            navigate(-1)
           }}>
           Trở lại danh sách
         </Button>
@@ -1154,6 +1155,10 @@ const KiSoChiTiet = () => {
 
           <Row label="Trạng thái">
             {KSDXData?.trangThai ? "Đang hiệu lực" : "Không hiệu lực"}
+          </Row>
+
+          <Row label="Ghi chú" even={false}>
+            {KSDXData?.ghiChu}
           </Row>
         </div>
 

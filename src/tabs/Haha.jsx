@@ -1,152 +1,249 @@
-import React, {useEffect} from "react";
-import { useCallback } from "react";
-import Particles from "react-tsparticles";
-import { loadFull } from "tsparticles";
+import React, { useEffect } from "react";
+import { Button, Collapse, Table } from "antd";
+import { useState } from "react";
+import { getListVanBan } from "../store/vanban/services";
+import { RETCODE_SUCCESS, SUCCESS } from "../constants/api";
+import moment from "moment";
+import { API_DOMAIN } from "../configs/api";
+import { AiOutlineFile } from "react-icons/ai";
 
-const Haha = () => {
-
-//   useEffect(() => {
-    
-// particlesJS("particles-js", {
-//   "particles": {
-//     "number": {
-//       "value": 380,
-//       "density": {
-//         "enable": true,
-//         "value_area": 800
-//       }
-//     },
-//     "color": {
-//       "value": "#ffffff"
-//     },
-//     "shape": {
-//       "type": "circle",
-//       "stroke": {
-//         "width": 0,
-//         "color": "#000000"
-//       },
-//       "polygon": {
-//         "nb_sides": 5
-//       },
-//       "image": {
-//         "src": "img/github.svg",
-//         "width": 100,
-//         "height": 100
-//       }
-//     },
-//     "opacity": {
-//       "value": 0.5,
-//       "random": false,
-//       "anim": {
-//         "enable": false,
-//         "speed": 1,
-//         "opacity_min": 0.1,
-//         "sync": false
-//       }
-//     },
-//     "size": {
-//       "value": 3,
-//       "random": true,
-//       "anim": {
-//         "enable": false,
-//         "speed": 40,
-//         "size_min": 0.1,
-//         "sync": false
-//       }
-//     },
-//     "line_linked": {
-//       "enable": true,
-//       "distance": 150,
-//       "color": "#ffffff",
-//       "opacity": 0.4,
-//       "width": 1
-//     },
-//     "move": {
-//       "enable": true,
-//       "speed": 6,
-//       "direction": "none",
-//       "random": false,
-//       "straight": false,
-//       "out_mode": "out",
-//       "bounce": false,
-//       "attract": {
-//         "enable": false,
-//         "rotateX": 600,
-//         "rotateY": 1200
-//       }
-//     }
-//   },
-//   "interactivity": {
-//     "detect_on": "canvas",
-//     "events": {
-//       "onhover": {
-//         "enable": true,
-//         "mode": "grab"
-//       },
-//       "onclick": {
-//         "enable": true,
-//         "mode": "push"
-//       },
-//       "resize": true
-//     },
-//     "modes": {
-//       "grab": {
-//         "distance": 140,
-//         "line_linked": {
-//           "opacity": 1
-//         }
-//       },
-//       "bubble": {
-//         "distance": 400,
-//         "size": 40,
-//         "duration": 2,
-//         "opacity": 8,
-//         "speed": 3
-//       },
-//       "repulse": {
-//         "distance": 200,
-//         "duration": 0.4
-//       },
-//       "push": {
-//         "particles_nb": 4
-//       },
-//       "remove": {
-//         "particles_nb": 2
-//       }
-//     }
-//   },
-//   "retina_detect": true
-// });
+import { useNavigate } from "react-router-dom";
+import { getListKySoBuocDuyet } from "../store/kyso/services";
+import { useSelector } from "react-redux";
+import { nguoiDungSelector } from "../store/auth/selectors";
+import { getListKSDX_ChoDuyet } from "../store/kysodexuat/service";
 
 
-// var count_particles, stats, update;
-// stats = new Stats;
-// stats.setMode(0);
-// stats.domElement.style.position = 'absolute';
-// stats.domElement.style.left = '0px';
-// stats.domElement.style.top = '0px';
-// stats.domElement.style.display = 'none';
-// document.body.appendChild(stats.domElement);
-// count_particles = document.querySelector('.js-count-particles');
-// update = function() {
-//   stats.begin();
-//   stats.end();
-//   if (window.pJSDom[0].pJS.particles && window.pJSDom[0].pJS.particles.array) {
-//     count_particles.innerText = window.pJSDom[0].pJS.particles.array.length;
-//   }
-//   requestAnimationFrame(update);
-// };
-// requestAnimationFrame(update);
-//   }, []);
+const { Panel } = Collapse;
+
+const App = () => {
+  const navigate = useNavigate()
+  const nguoiDung = useSelector(nguoiDungSelector)
+
+  const [listVanBan, setListVanBan] = useState([]);
+  const [listChoDuyet, setListChoDuyet] = useState([])
+  const [listDeXuat, setListDeXuat] = useState([])
+
+  const handleGetListVanBan = async () => {
+    // setGetListLoading(true);
+    try {
+      const res = await getListVanBan();
+
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        setListVanBan(
+          res.data?.data?.map((item, index) => ({ ...item, stt: index + 1 })),
+        );
+      }
+    } catch (error) {
+    } finally {
+      // setGetListLoading(false);
+    }
+  };
+
+  const handleGetListChoDuyet = async () => {
+    const res = await getListKySoBuocDuyet();
+
+    setListChoDuyet(
+      res.data?.data?.filter(item => item?.ma_NguoiKy === nguoiDung?.ma_NguoiDung)?.map((item, index) => {
+        return {
+          ...item,
+          stt: index + 1,
+          ten_DeXuat: item?.kySoDeXuat?.ten_DeXuat,
+          nguoiDeXuat: item?.kySoDeXuat?.nguoiDung?.hoTen,
+          ngayDeXuat: item?.ngayDeXuat?.ngayDeXuat,
+        };
+      }),
+    );
+  };
+
+  const handleGetListDeXuat = async () => {
+    try {
+      const res = await getListKSDX_ChoDuyet({
+        id: nguoiDung?.ma_NguoiDung,
+      });
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        setListDeXuat(res.data?.data);
+      } else {
+        //message.error(LOI);
+      }
+    } catch (error) {
+      //message.error(LOI_HE_THONG);
+    } finally {
+      // setGetListLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    handleGetListVanBan()
+    handleGetListChoDuyet()
+    handleGetListDeXuat()
+  }, []);
+
+  const columnsVanBan = [
+    {
+      title: "Ngày hiệu lực",
+      dataIndex: "ngay_HieuLuc",
+      key: "ngay_HieuLuc",
+      render: (_, record) => {
+        return <>{moment(_).format("DD/MM/YYYY")}</>;
+      },
+    },
+    {
+      title: "Chủ đề",
+      dataIndex: "chuDe",
+      key: "chuDe",
+    },
+    {
+      title: "Loại văn bản",
+      dataIndex: "loaiVanBan",
+      key: "loaiVanBan",
+    },
+    {
+      title: "Hành động",
+      key: "hanhDong",
+      render: (_, record) => (
+        <div>
+           <div>
+              <Button
+                onClick={() => {
+                  navigate('/van-ban/detail/' + record?.ma_VanBan)
+                }}
+                type="link">
+                Chi tiết
+              </Button>
+            </div>
+        </div>
+      ),
+    },
+  ];
+
+  const columnsChoDuyet = [
+    {
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (data, record, index) => {
+        return index + 1;
+      },
+    },
+    {
+      title: "Trích yếu",
+      dataIndex: "ten_DeXuat",
+      key: "ten_DeXuat",
+    },
+    {
+      title: "Người đề xuất",
+      dataIndex: "nguoiDeXuat",
+      key: "nguoiDeXuat",
+    },
+    {
+      title: "Ngày đề xuất",
+      dataIndex: "ngayDeXuat",
+      key: "ngayDeXuat",
+      render: (data, record, index) => {
+        return (
+          <div className="text-center">{moment(data).format("DD-MM-YYYY")}</div>
+        );
+      },
+    },
+    {
+      title: "Hành động",
+      dataIndex: "hanhDong",
+      key: "hanhDong",
+      render: (data, record, index) => {
+        return (
+          <div className="d-flex">
+            <div
+              onClick={() => {
+                navigate('ki-cho-duyet/detail/' + record?.ma_KySoDeXuat);
+                
+              }}>
+              <Button type="link">Chi tiết</Button>
+            </div>
+          </div>
+        );
+      },
+    },
+  ];
+
+  const columnsDeXuat = [
+    {
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (data, record, index) => {
+        return index + 1;
+      },
+    },
+    {
+      title: "Trích yếu",
+      dataIndex: "ten_DeXuat",
+      key: "ten_DeXuat",
+    },
+    {
+      title: "Ngày đề xuất",
+      dataIndex: "ngayDeXuat",
+      key: "ngayDeXuat",
+      render: (data, record, index) => {
+        return <div>{moment(data).format("DD-MM-YYYY")}</div>;
+      },
+    },
+    {
+      title: "Hành động",
+      dataIndex: "hanhDong",
+      key: "hanhDong",
+      render: (data, record, index) => {
+        return (
+          // <div className="text-center">{moment(data).format("DD-MM-YYYY")}</div>
+          <div
+            onClick={() => {
+              navigate("ki-de-xuat/detail/" + record.ma_KySoDeXuat);
+            }}>
+            <Button type="link">Chi tiết</Button>
+          </div>
+        );
+      },
+    },
+  ];
+
   return (
     <>
-      {/* <div id="particles-js"></div>
-
-      <div class="count-particles">
-        <span class="js-count-particles">--</span> particles
-      </div> */}
+      <div
+        style={{
+          marginLeft: 30,
+          marginTop: 20,
+          marginBottom: 15,
+          fontSize: 20,
+        }}>
+        Trang chủ
+      </div>
+      <Collapse defaultActiveKey={["1", "2", "3"]} onChange={() => {}}>
+        <Panel header="Văn bản" key="1">
+          <Table
+            bordered={false}
+            columns={columnsVanBan}
+            dataSource={listVanBan}
+            pagination={{ defaultPageSize: 5 }}
+          />
+        </Panel>
+        <Panel header="Đang đợi tôi duyệt" key="2">
+        <Table
+            bordered={false}
+            columns={columnsChoDuyet}
+            dataSource={listChoDuyet}
+            pagination={{ defaultPageSize: 5 }}
+          />
+        </Panel>
+        <Panel header="Đề xuất của tôi chưa được duyệt" key="3">
+          <Table
+            bordered={false}
+            columns={columnsDeXuat}
+            dataSource={listDeXuat}
+            pagination={{ defaultPageSize: 5 }}
+          />
+        </Panel>
+      </Collapse>
     </>
   );
 };
-
-export default Haha;
+export default App;

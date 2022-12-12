@@ -5,7 +5,7 @@ export const getListVanBan = () => {
   return api.get(API.VAN_BAN)
 }
 
-export const getVanBanSvg = ({id}) => {
+export const getVanBanSvc = ({id}) => {
   return api.get(API.VAN_BAN + '/' + id);
 } 
 

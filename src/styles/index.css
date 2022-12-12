@@ -159,3 +159,11 @@ canvas {
     border: 5px solid rgb(255, 214, 214);
  }
 }
+
+.ant-descriptions-item-label {
+  width: 50%;
+}
+
+.pg-viewer-wrapper canvas {
+  margin-inline: auto !important;
+}

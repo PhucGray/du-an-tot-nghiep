@@ -25,6 +25,7 @@ import KiSoChiTiet from "../tabs/KiSo/KiSoChiTiet";
 import Haha from "../tabs/Haha";
 import MaQR from "../tabs/HeThong/QR";
 import ChiTietDaKi from "../tabs/ChiTietDaKi";
+import ChiTietVanBan from "../tabs/KiSo/ChiTietVanBan";
 
 const Navigation = () => {
   const location = useLocation()
@@ -71,6 +72,7 @@ const Navigation = () => {
         <Route path={'/'} element={<Haha />} />
         <Route path={TAB.CHI_TIET_DA_KI + '/:id'} element={<ChiTietDaKi />}/>
         <Route path={TAB.VAN_BAN} element={<VanBan />} />
+        <Route path={TAB.VAN_BAN +'/detail/:id'} element={<ChiTietVanBan />} />
         <Route path={TAB.KI_CHO_DUYET} element={<KiChoDuyet />} />
         <Route path={TAB.KI_CHO_DUYET + '/detail/:id'} element={<KiSoChiTiet />} />
         <Route path={TAB.KI_DA_DUYET} element={<KiDaDuyet />} />

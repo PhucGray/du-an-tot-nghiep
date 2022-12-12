@@ -16,9 +16,11 @@ import moment from "moment";
 import { AiOutlineFile } from "react-icons/ai";
 import { API_DOMAIN } from "../../../configs/api";
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 const { TextArea } = Input;
 
 const VanBan = () => {
+  const navigate = useNavigate()
   const nguoiDung = useSelector(nguoiDungSelector);
 
   const [keyword, setKeyword] = useState("");
@@ -214,7 +216,7 @@ const VanBan = () => {
       dataIndex: "ngay_HieuLuc",
       key: "ngay_HieuLuc",
       render: (_, record) => {
-        return <>{moment(record).format("DD/MM/YYYY")}</>;
+        return <>{moment(_).format("DD/MM/YYYY")}</>;
       },
     },
     {
@@ -232,20 +234,18 @@ const VanBan = () => {
       dataIndex: "fileDaKy",
       key: "fileDaKy",
       render: (_, record) => {
-        // console.log(record)
         return (
-          <div
+          <>
+            {record?.file && <div
             onClick={() => {
-              // window.open(API_DOMAIN +  (pageChiTietKyDaDuyet ? KSDD?.fileDaKy : _ ), "_BLANK");
               window.open(API_DOMAIN + record?.file);
             }}
             className="d-flex align-items-center gap-2"
             style={{ flex: 1, cursor: "pointer" }}>
-            {/* {record.ten_FileGoc?.split('.pdf').join('_daky.pdf')} */}
-            {/* <FilePdfTwoTone twoToneColor={"red"} /> */}
             <AiOutlineFile size={30} style={{ color: "blue" }} />
             {record?.ten_FileGoc}
-          </div>
+          </div>}
+          </>
         );
       },
     },
@@ -261,9 +261,23 @@ const VanBan = () => {
                   setEditedVanBan(record);
                   form.setFieldValue("chuDe", record?.chuDe);
                   form.setFieldValue("loaiVanBan", record?.loaiVanBan);
+                  form.setFieldValue('nguoiKy', record?.nguoiKy)
+                  form.setFieldValue('ngay_HieuLuc', moment(record?.ngay_HieuLuc))
                 }}
                 type="link">
                 Sửa
+              </Button>
+              <Button
+                onClick={() => {
+                  navigate('detail/' + record?.ma_VanBan)
+                  // setEditedVanBan(record);
+                  // form.setFieldValue("chuDe", record?.chuDe);
+                  // form.setFieldValue("loaiVanBan", record?.loaiVanBan);
+                  // form.setFieldValue('nguoiKy', record?.nguoiKy)
+                  // form.setFieldValue('ngay_HieuLuc', moment(record?.ngay_HieuLuc))
+                }}
+                type="link">
+                Chi tiết
               </Button>
               <Popconfirm
                 title="Bạn có chắc chắn muốn xoá?"
@@ -330,7 +344,7 @@ const VanBan = () => {
       />
 
       <Modal
-        title={"Thêm văn bản"}
+        title={!!editedVanBan ? 'Sửa văn bản' : "Thêm văn bản"}
         open={isModalOpen || !!editedVanBan}
         onOk={() => {}}
         onCancel={() => {
@@ -434,7 +448,7 @@ const VanBan = () => {
               <Button
                 type="ghost"
                 htmlType="button"
-                onClick={() => setIsModalOpen(false)}>
+                onClick={() => {setIsModalOpen(false);  setEditedVanBan(null);}}>
                 Bỏ qua
               </Button>
             </Form.Item>

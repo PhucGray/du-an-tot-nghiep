@@ -137,6 +137,7 @@ const KiDeXuat = () => {
       inputFile: url,
       ma_NguoiDeXuat: nguoiDung?.ma_NguoiDung,
       ten_FileGoc: fileName,
+      isTaoVanBan: false,
     };
 
     setAddLoading(true);
@@ -263,7 +264,7 @@ const KiDeXuat = () => {
           name="suathongso"
           onFinish={handleThemDeXuat}
           initialValues={{
-            isTaoVanBan: true
+            // isTaoVanBan: false
           }}
           autoComplete="off">
           <Form.Item
@@ -297,7 +298,7 @@ const KiDeXuat = () => {
             <TextArea cols={10} />
           </Form.Item>
 
-          <Form.Item 
+          {/* <Form.Item 
             name="isTaoVanBan" 
             valuePropName="checked"
             labelCol={{
@@ -306,7 +307,7 @@ const KiDeXuat = () => {
             label="Tạo văn bản"
           >
             <Checkbox onChange={(e) => {}}></Checkbox>
-          </Form.Item>
+          </Form.Item> */}
 
           <div
             className="ms-3 d-flex flex-column"

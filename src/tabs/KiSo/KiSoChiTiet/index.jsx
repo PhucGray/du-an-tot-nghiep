@@ -235,7 +235,7 @@ const KiSoChiTiet = () => {
       formDeXuat.setFieldValue("ten_DeXuat", data?.ten_DeXuat);
       formDeXuat.setFieldValue("loaiVanBan", data?.loaiVanBan);
       formDeXuat.setFieldValue("ghiChu", data?.ghiChu);
-      formDeXuat.setFieldValue('isTaoVanBan', data?.isTaoVanBan)
+      // formDeXuat.setFieldValue('isTaoVanBan', data?.isTaoVanBan)
     } catch (error) {
       console.log(error);
       //message.error(LOI);
@@ -344,6 +344,7 @@ const KiSoChiTiet = () => {
       ma_NguoiDeXuat: KSDXData?.ma_NguoiDeXuat,
       ma_KySoDeXuat: KSDXData?.ma_KySoDeXuat,
       ten_FileGoc: url ? fileName : null,
+      isTaoVanBan: false,
     };
     setSuaDeXuatLoading(true);
 
@@ -826,7 +827,7 @@ const KiSoChiTiet = () => {
             <TextArea cols={10} />
           </Form.Item>
 
-          <Form.Item 
+          {/* <Form.Item 
             name="isTaoVanBan" 
             valuePropName="checked"
             labelCol={{
@@ -835,7 +836,7 @@ const KiSoChiTiet = () => {
             label="Tạo văn bản"
           >
             <Checkbox onChange={(e) => {}}></Checkbox>
-          </Form.Item>
+          </Form.Item> */}
 
           <div
             className="ms-3 d-flex flex-column"

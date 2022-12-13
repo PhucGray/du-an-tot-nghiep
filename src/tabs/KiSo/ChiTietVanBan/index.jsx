@@ -55,7 +55,36 @@ const ChiTietVanBan = () => {
 
   const navigate = useNavigate();
 
-  console.log(API_DOMAIN + '/' + vanBan?.file)
+  // const download = () => {
+  //   var element = document.createElement("a");
+  //   console.log(API_DOMAIN + '/' + vanBan?.file)
+  //   var file = new Blob(
+  //     [
+  //       API_DOMAIN + '/' + vanBan?.file
+  //     ],
+  //     { type: "image/*" }
+  //   );
+  //   element.href = URL.createObjectURL(file);
+  //   element.download = vanBan?.ten_FileGoc;
+  //   element.click();
+  // };
+  const download = async() => {
+    const originalImage=API_DOMAIN + '/' + vanBan?.file
+    const image = await fetch(originalImage);
+   
+    //Split image name
+    const nameSplit=originalImage.split("/");
+    const  duplicateName=nameSplit.pop();
+   
+    const imageBlog = await image.blob()
+    const imageURL = URL.createObjectURL(imageBlog)
+    const link = document.createElement('a')
+    link.href = imageURL;
+    link.download = ""+vanBan?.ten_FileGoc+"";
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)  
+   };
 
   return (
     <>
@@ -94,15 +123,15 @@ const ChiTietVanBan = () => {
         </Descriptions.Item>
       </Descriptions>
       <Descriptions layout="vertical" bordered>
-        <Descriptions.Item span={1} label="Ngày tạo">
-          {moment(vanBan?.ngayTao).format("DD-MM-YYYY")}
+        <Descriptions.Item span={1} label="Người tạo">
+          {vanBan?.nguoiDung?.hoTen}
         </Descriptions.Item>
         <Descriptions.Item span={1} label="Ngày hiệu lực">
           {moment(vanBan?.ngay_HieuLuc).format("DD-MM-YYYY")}
         </Descriptions.Item>
       </Descriptions>
       <Descriptions layout="vertical" bordered>
-        <Descriptions.Item span={1} label="Ngời ký">
+        <Descriptions.Item span={1} label="Người ký">
           {vanBan?.nguoiKy}
         </Descriptions.Item>
         <Descriptions.Item span={1} label="File">
@@ -110,9 +139,16 @@ const ChiTietVanBan = () => {
             <div
               style={{ cursor: "pointer" }}
               onClick={() => {
-                window.open(API_DOMAIN + vanBan?.file, "_BLANK");
+                if(fileType === 'png') {
+                  download()
+                } else {
+                  window.open(API_DOMAIN + vanBan?.file, "_BLANK");
+                }
+
               }}>
               {vanBan?.ten_FileGoc}
+
+              {fileType !== 'pdf' && <span style={{color: 'blue'}}>{' '}Download</span>}
             </div>
           ) : (
             <div>Không có</div>
@@ -122,15 +158,15 @@ const ChiTietVanBan = () => {
       {vanBan?.file && fileType &&<div style={{ textAlign: "center", marginTop: 40, fontSize: 20, marginBottom: 20 }}>
         File preview
       </div>}
-      {/* <iframe
+     {fileType === 'pdf' && <iframe
         style={{ marginTop: 30 }}
         width={"100%"}
         height={800}
-        src={API_DOMAIN + vanBan?.file}></iframe> */}
+        src={API_DOMAIN + '/' + vanBan?.file}></iframe>}
 
       {/* {vanBan?.file && <DocViewer  documents={[{uri: API_DOMAIN + '/' + vanBan?.file}]} />} */}
 
-      {vanBan?.file && fileType && 
+      {vanBan?.file && fileType && fileType !== 'pdf' && 
         <FileViewer 
           fileType={fileType}
           filePath={API_DOMAIN + '/' + vanBan?.file}

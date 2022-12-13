@@ -52,3 +52,7 @@ export const chuyenDuyetSvc = ({id}) => {
 export const tuChoiKySvc = ({id}) => {
   return api.put(API.KSDB_TU_CHOI + '/' + id)
 }
+
+export const themKSDXTaoVanBanSvc = payload => {
+  return api.post(API.KSDX_TAO_VAN_BAN, payload)
+}

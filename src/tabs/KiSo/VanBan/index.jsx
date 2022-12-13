@@ -16,12 +16,18 @@ import moment from "moment";
 import { AiOutlineFile } from "react-icons/ai";
 import { API_DOMAIN } from "../../../configs/api";
 import { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useRoutes, useLocation } from "react-router-dom";
+import { themKSDXTaoVanBanSvc } from "../../../store/kysodexuat/service";
 const { TextArea } = Input;
 
 const VanBan = () => {
   const navigate = useNavigate()
   const nguoiDung = useSelector(nguoiDungSelector);
+  const location = useLocation()
+
+  const vanBanCanTao = location.state?.record || null;
+  const isTaoVanBan = !!vanBanCanTao;
+
 
   const [keyword, setKeyword] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,22 +45,6 @@ const VanBan = () => {
   const [keywordLoaiVanBan, setKeywordLoaiVanBan] = useState('')
   const [keywordMaSo, setKeywordMaSo] = useState('');
 
-  const filteredList = useMemo(() => {
-    // return list.filter()
-  //   return [...list].filter(
-  //     (i) =>
-  //   toLowerCaseNonAccentVietnamese(i?.chuDe || '').includes(
-  //     toLowerCaseNonAccentVietnamese(keywordChuDe),
-  //   ) && 
-  //   toLowerCaseNonAccentVietnamese(i?.loaiVanBan || '').includes(
-  //     toLowerCaseNonAccentVietnamese(keywordLoaiVanBan),
-  //   ) &&
-  //   toLowerCaseNonAccentVietnamese(i?.ma_VanBan || '').includes(
-  //     toLowerCaseNonAccentVietnamese(keywordMaSo),
-  //   )
-  // )
-  }, [list, keywordChuDe, keywordLoaiVanBan, keywordMaSo])
-
   useEffect(() => {
     if(!!keywordChuDe.trim() || !!keywordLoaiVanBan.trim() || !!keywordMaSo.trim()) {
       // console.log(keywordMaSo)
@@ -66,6 +56,14 @@ const VanBan = () => {
         ))
     }
   }, [keywordChuDe, keywordLoaiVanBan, keywordMaSo]);
+
+  useEffect(() => {
+    if(isTaoVanBan) {
+      setIsModalOpen(true)
+      form.setFieldValue('chuDe', vanBanCanTao?.ten_DeXuat)
+      form.setFieldValue('loaiVanBan', vanBanCanTao?.loaiVanBan)
+    }
+  }, [isTaoVanBan]);
 
   const [form] = Form.useForm();
 
@@ -136,6 +134,31 @@ const VanBan = () => {
         setFileName("");
         setIsModalOpen(false);
         inputFileRef.current.value = null;
+        handleGetList();
+      } else {
+      }
+    } catch (error) {
+    } finally {
+      setAddLoading(false);
+    }
+  };
+  const handleThemTaoVanBan = async (values) => {
+    setAddLoading(true);
+    try {
+      let data ={
+        ...values,
+        ma_NguoiTao: nguoiDung?.ma_NguoiDung,
+        file: vanBanCanTao?.fileDaKy,
+        ten_FileGoc: vanBanCanTao?.ten_FileGoc,
+        ngay_HieuLuc: moment(values?.ngay_HieuLuc).format()
+      }
+      
+
+      const res = await themKSDXTaoVanBanSvc(data);
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        message.success(res.data?.retText);
+        form.resetFields();
+        setIsModalOpen(false);
         handleGetList();
       } else {
       }
@@ -356,7 +379,7 @@ const VanBan = () => {
         <Form
           form={form}
           name="suathongso"
-          onFinish={!!editedVanBan ? handleSuaVanBan : handleThemVanBan}
+          onFinish={!!editedVanBan ? handleSuaVanBan : (isTaoVanBan ? handleThemTaoVanBan : handleThemVanBan)}
           autoComplete="off">
           <Form.Item
             labelCol={{
@@ -419,12 +442,12 @@ const VanBan = () => {
 
           <div
             className="ms-3 d-flex flex-column"
-            style={{ marginTop: -10 }}
+            style={{ marginTop: -10, marginBottom: isTaoVanBan ? 20 : 0 }}
             onClick={() => {
               setFile(null);
               inputFileRef.current?.click();
             }}>
-            <div className="d-flex align-items-center">
+           {!isTaoVanBan && <div className="d-flex align-items-center">
               <Button
                 loading={uploading}
                 className="d-flex align-items-center"
@@ -434,7 +457,7 @@ const VanBan = () => {
               </Button>
 
               {fileName}
-            </div>
+            </div>}
 
             {!!fileError && (
               <div className="ms-3 ant-form-item-explain-error">

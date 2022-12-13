@@ -1,6 +1,15 @@
 import React, { useEffect } from "react";
 import { PlusOutlined, CloudUploadOutlined } from "@ant-design/icons";
-import { Button, Tabs, Table, message, Form, Input, Modal, Checkbox } from "antd";
+import {
+  Button,
+  Tabs,
+  Table,
+  message,
+  Form,
+  Input,
+  Modal,
+  Checkbox,
+} from "antd";
 import { useState } from "react";
 import moment, { isDate } from "moment";
 import {
@@ -156,7 +165,6 @@ const KiDeXuat = () => {
         getList_2();
         getList_3();
         getList_4();
-        
       } else {
         //message.error(LOI);
       }
@@ -196,11 +204,22 @@ const KiDeXuat = () => {
       render: (data, record, index) => {
         return (
           // <div className="text-center">{moment(data).format("DD-MM-YYYY")}</div>
-          <div
-            onClick={() => {
-              navigate("detail/" + record.ma_KySoDeXuat);
-            }}>
-            <Button type="link">Chi tiết</Button>
+          <div className="d-flex">
+            <div
+              onClick={() => {
+                navigate("detail/" + record.ma_KySoDeXuat);
+              }}>
+              <Button type="link">Chi tiết</Button>
+            </div>
+
+            {activeKey === '3' && <div
+              onClick={() => {
+                navigate('/van-ban', {
+                  state: {record}
+                })
+              }}>
+              <Button type="link">Tạo văn bản</Button>
+            </div>}
           </div>
         );
       },
@@ -263,9 +282,11 @@ const KiDeXuat = () => {
           form={form}
           name="suathongso"
           onFinish={handleThemDeXuat}
-          initialValues={{
-            // isTaoVanBan: false
-          }}
+          initialValues={
+            {
+              // isTaoVanBan: false
+            }
+          }
           autoComplete="off">
           <Form.Item
             labelCol={{
@@ -356,13 +377,15 @@ const KiDeXuat = () => {
       </Modal>
 
       <div className="d-flex justify-content-center mt-3">
-        {nguoiDung?.isDeXuat && <Button
-          onClick={() => setIsModalOpen(true)}
-          className="d-flex align-items-center"
-          type="primary"
-          icon={<PlusOutlined />}>
-          Thêm đề xuất
-        </Button>}
+        {nguoiDung?.isDeXuat && (
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            className="d-flex align-items-center"
+            type="primary"
+            icon={<PlusOutlined />}>
+            Thêm đề xuất
+          </Button>
+        )}
       </div>
 
       <Tabs

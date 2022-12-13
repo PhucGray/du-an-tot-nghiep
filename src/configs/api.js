@@ -55,6 +55,7 @@ export const KSDX_CHO_DUYET = "KySoDeXuats/choduyet";
 export const KSDX_DA_DUYET = "KySoDeXuats/daduyet";
 export const KSDX_TU_CHOI = "KySoDeXuats/tuchoi";
 export const KSDX_CHUYEN_DUYET = 'KySoDeXuats/chuyenduyet'
+export const KSDX_TAO_VAN_BAN = 'KySoDeXuats/taovanban'
 
 export const KSBD = "KySoBuocDuyets/buocduyet";
 export const KSBD_CHI_TIET ="KySoBuocDuyets/chitietbuocduyet";

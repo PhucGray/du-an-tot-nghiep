@@ -170,3 +170,8 @@ canvas {
 .ant-collapse-content > .ant-collapse-content-box {
   padding: 0 !important;
 }
+
+.ant-descriptions-bordered .ant-descriptions-item-label {
+  background-color: #3678ff !important;
+  color: #fff !important;
+}

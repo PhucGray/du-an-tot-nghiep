@@ -19,7 +19,8 @@ import {
   SUCCESS,
 } from "../../../constants/api";
 import { nguoiDungSelector } from "../../../store/auth/selectors";
-import { useSelector } from "react-redux";
+import { setCurrentItem } from "../../../store/auth/actions";
+import { useSelector,useDispatch } from "react-redux";
 import { useRef } from "react";
 import useUploadFileToFireBase from "../../../hooks/useUploadFileToFireBase";
 
@@ -31,6 +32,7 @@ const { TextArea } = Input;
 const KiDeXuat = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch()
 
 
   const [form] = Form.useForm()
@@ -142,6 +144,7 @@ const KiDeXuat = () => {
           <div className="d-flex">
             <div
               onClick={() => {
+                dispatch(setCurrentItem(record))
                 navigate('detail/' + record?.ma_KySoDeXuat);
                 
               }}>

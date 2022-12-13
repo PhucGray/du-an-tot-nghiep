@@ -5,6 +5,7 @@ import storage from "redux-persist/lib/storage";
 const initState = {
   nguoiDung: null,
   token: null,
+  currentItem: null
 };
 
 const Reducer = (state = initState, action = {}) => {
@@ -13,6 +14,9 @@ const Reducer = (state = initState, action = {}) => {
       return { ...state, ...action?.payload };
     case Actions.CLEAR_NGUOI_DUNG:
       return initState;
+    case Actions.SET_CURRENT_ITEM:
+      console.log(action.payload)
+      return {...state,currentItem: action.payload}
     default:
       return state;
   }

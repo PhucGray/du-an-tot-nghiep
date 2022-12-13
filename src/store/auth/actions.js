@@ -12,3 +12,10 @@ export const clearNguoiDung = () => {
     type: Actions.CLEAR_NGUOI_DUNG,
   };
 };
+
+export const setCurrentItem = (payload) => {
+  return {
+    type: Actions.SET_CURRENT_ITEM,
+    payload,
+  };
+};

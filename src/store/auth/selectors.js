@@ -11,3 +11,9 @@ export const tokenSelector = createSelector(
   auth,
   (data) => data?.token || null,
 );
+
+
+export const currentItemSelector = createSelector(
+  auth,
+  (data) => data?.currentItem || null,
+);

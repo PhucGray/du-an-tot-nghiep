@@ -53,7 +53,6 @@ const Sidebar = ({ onTabClick }) => {
         gap: 10,
       }}>
         <div>Ký số chờ duyệt</div>
-        {ping && <div className="ping"></div>}
       </div>, TAB.KI_CHO_DUYET, <RiMapPinTimeLine />) : undefined,
       getItem("Ký số đã duyệt", TAB.KI_DA_DUYET, <AiOutlineFileDone />),
       getItem("Ký số đề xuất", TAB.KI_DE_XUAT, <FaRegLightbulb />),

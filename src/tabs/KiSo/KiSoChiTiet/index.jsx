@@ -67,7 +67,7 @@ import { useParams } from "react-router-dom";
 import ModalBuocDuyet from "./ModalBuocDuyet";
 import { kiemTraPasscodeSvc } from "../../../store/kyso/services";
 import { useSelector } from "react-redux";
-import { nguoiDungSelector } from "../../../store/auth/selectors";
+import { currentItemSelector, nguoiDungSelector } from "../../../store/auth/selectors";
 import { logDeXuatSvc } from "../../../store/log/service";
 import {
   getListTraoDoiSvc,
@@ -298,6 +298,7 @@ const KiSoChiTiet = () => {
       setModalBuocDuyetVisible(false);
     }
   };
+
 
   const handleXoaBuocDuyet = async (buocduyet) => {
     try {
@@ -554,7 +555,7 @@ const KiSoChiTiet = () => {
         return (
           <div
             onClick={() => {
-              window.open(API_DOMAIN +  (pageChiTietKyDaDuyet ? KSDD?.fileDaKy : _ ), "_BLANK");
+              window.open(API_DOMAIN +  (pageChiTietKyDaDuyet ? currentItem?.fileDaKy : _ ), "_BLANK");
             }}
             className="d-flex align-items-center gap-2"
             style={{ flex: 1, cursor: 'pointer' }}>
@@ -669,6 +670,9 @@ const KiSoChiTiet = () => {
   };
 
   const KSDD = KSDXData?.kySoBuocDuyets?.find(i => i?.ma_NguoiKy === nguoiDung?.ma_NguoiDung);
+
+  const currentItem = useSelector(currentItemSelector)
+
   return (
     <>
       <Modal

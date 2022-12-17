@@ -37,8 +37,6 @@ const App = () => {
         // console.log(data?.maSo + ':' + nguoiDung?.ma_NguoiDung)
         // console.log(nguoiDung?.ma_NguoiDung)
 
-        console.log(data?.maSo + ' ' + nguoiDung?.hoTen + ' ' + nguoiDung?.hoTen)
-
         if (data?.maSo === nguoiDung?.ma_NguoiDung) {
           // console.log(nguoiDung?.hoTen)
           await deleteDoc(doc.ref);
@@ -71,7 +69,7 @@ const App = () => {
       unsub1();
       unsub2()
     }
-  }, []);
+  }, [nguoiDung?.maSo]);
 
   return (
     <>

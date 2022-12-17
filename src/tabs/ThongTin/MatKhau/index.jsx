@@ -43,11 +43,12 @@ const MatKhau = () => {
   };
 
   return (
-    <div className="d-flex flex-column align-items-center mt-4">
+    <div className="d-flex h-100 flex-column align-items-center mt-5">
       <Form
         form={form}
         className="form"
         name="basic"
+        size='large'
         initialValues={{
           remember: true,
         }}

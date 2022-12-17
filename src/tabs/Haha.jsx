@@ -226,7 +226,7 @@ const App = () => {
             pagination={{ defaultPageSize: 5 }}
           />
         </Panel>
-        <Panel header="Đang đợi tôi duyệt" key="2">
+        <Panel header="Ký số đề xuất đang đợi tôi duyệt" key="2">
         <Table
             bordered={false}
             columns={columnsChoDuyet}
@@ -234,7 +234,7 @@ const App = () => {
             pagination={{ defaultPageSize: 5 }}
           />
         </Panel>
-        <Panel header="Đề xuất của tôi chưa được duyệt" key="3">
+        <Panel header="Ký số đề xuất của tôi chưa được duyệt" key="3">
           <Table
             bordered={false}
             columns={columnsDeXuat}

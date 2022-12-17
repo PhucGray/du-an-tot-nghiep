@@ -223,8 +223,6 @@ export default ({
   const handleAddNguoiDung_VT = async () => {
     setAddSubLoading(true);
 
-    console.log('chayafhawfawfbawfhj')
-
     const maSo =  selectedItem?.maSo;
 
     try {
@@ -241,13 +239,12 @@ export default ({
         message.success(res.data?.retText);
 
         await addDoc(vaiTroFbRef, {maSo}).then(res => {
-          console.log(res)
+          // console.log(res)
         }).catch(error => {
           console.log('error')
           console.log(error)
         })
 
-        console.log('cuoiiiiiiiiiiiiiiiiiiii')
       } else {
         //message.error(LOI);
       }

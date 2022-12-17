@@ -42,11 +42,11 @@ const Sidebar = ({ onTabClick }) => {
 
   const navigate = useNavigate()
 
-  const ping = useSelector(pingSelector)
+  // const ping = useSelector(pingSelector)
 
   const items = [
     getItem("Ký số", "ki-so", <EditOutlined />, [
-      getItem("Văn bản", TAB.VAN_BAN, <HiOutlineDocumentText />),
+      nguoiDung?.isVanBan ? getItem("Văn bản", TAB.VAN_BAN, <HiOutlineDocumentText />) : null,
       nguoiDung?.isDuyet ? getItem(
       <div style={{
         flexDirection: 'row',

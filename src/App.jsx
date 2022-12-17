@@ -34,7 +34,13 @@ const App = () => {
       doc.docs.forEach(async (doc) => {
         const data = doc.data();
 
+        // console.log(data?.maSo + ':' + nguoiDung?.ma_NguoiDung)
+        // console.log(nguoiDung?.ma_NguoiDung)
+
+        console.log(data?.maSo + ' ' + nguoiDung?.hoTen + ' ' + nguoiDung?.hoTen)
+
         if (data?.maSo === nguoiDung?.ma_NguoiDung) {
+          // console.log(nguoiDung?.hoTen)
           await deleteDoc(doc.ref);
           dispatch(clearNguoiDung());
           navigate("/", { replace: true });

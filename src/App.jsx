@@ -34,7 +34,7 @@ const App = () => {
       doc.docs.forEach(async (doc) => {
         const data = doc.data();
 
-        console.log(data?.maSo + ' ' + nguoiDung?.ma_NguoiDung + ' ' + nguoiDung?.hoTen)
+        // console.log(data?.maSo + ' ' + nguoiDung?.ma_NguoiDung + ' ' + nguoiDung?.hoTen)
 
         if (data?.maSo === nguoiDung?.ma_NguoiDung) {
           await deleteDoc(doc.ref);

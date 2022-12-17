@@ -50,6 +50,8 @@ import {
 import { useRef } from "react";
 import { doc, getDoc, getDocFromCache, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
+import { useDispatch } from "react-redux";
+import { setCurrentItem } from "../../../store/auth/actions";
 const { Option } = Select;
 const { TextArea } = Input;
 
@@ -92,6 +94,7 @@ const LionText = ({ onDragEnd, onChangePos, ...props }) => {
 const KiThu = () => {
   const params = useParams();
   const location = useLocation();
+  const dispatch = useDispatch();
   const isKiThat = location.pathname.includes("ki-that");
   const isGanMaQR = location.pathname.includes("gan-ma-qr");
   const isChuanBi = location.pathname.includes("chuan-bi-vung-ky");
@@ -416,6 +419,7 @@ const KiThu = () => {
 
         if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
           message.success(res.data?.retText);
+          dispatch(setCurrentItem({fileDaKy: res.data?.data?.fileDaKy}))
           removeBuoc()
           navigate(
             "/" +

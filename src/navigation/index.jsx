@@ -53,7 +53,7 @@ const Navigation = () => {
   (location.pathname.includes(TAB.KI_CHO_DUYET) && nguoiDung?.isDuyet === false) ||
   (location.pathname.includes(TAB.QR) && nguoiDung?.isQr === false) ||
   (nguoiDung?.isHeThong === false && (
-    location.pathname.includes(TAB.NGUOI_DUNG) ||
+    (location.pathname.includes(TAB.NGUOI_DUNG) && !location.pathname.includes(TAB.THONG_SO_NGUOI_DUNG)) ||
     location.pathname.includes(TAB.PHONG_BAN) ||
     location.pathname.includes(TAB.CHUC_DANH) ||
     location.pathname.includes(TAB.VAI_TRO)

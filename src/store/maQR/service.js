@@ -6,6 +6,7 @@ export const ganMaQrSvc = (payload) => {
 };
 
 export const getFileChiTiet = ({id}) => {
+  console.log(API.MA_QR + '/' + id)
   return api.get(API.MA_QR + '/' + id)
 }
 

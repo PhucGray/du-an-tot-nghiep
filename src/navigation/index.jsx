@@ -66,8 +66,6 @@ const Navigation = () => {
     }
   }, [nguoiDung, location.pathname]);
 
-  console.log(isFileDaKi)
-
   return (
     <Routes>
       <Route path="/" element={(isLogin || isFileDaKi) ? <MainLayout isFileDaKi={isFileDaKi} /> : <SignIn />}>

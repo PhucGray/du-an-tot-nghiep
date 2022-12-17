@@ -42,13 +42,17 @@ const axiosInstance = axios.create({ baseURL: API_URL });
 // );
 axiosInstance.interceptors.request.use(
   async (config) => {
-    const savedNguoiDung = JSON.parse(localStorage.getItem("persist:auth"));
+    const savedNguoiDung = JSON.parse(localStorage.getItem("persist:auth") || '{}');
 
-    config.headers = {
-      Authorization: `Bearer ${JSON.parse(savedNguoiDung?.token)}`,
-      'Access-Control-Allow-Origin': API_DOMAIN,
-      "Content-Type": "application/json",
-    };
+    if(savedNguoiDung?.token) {
+      config.headers = {
+        Authorization: `Bearer ${JSON.parse(savedNguoiDung?.token)}`,
+        'Access-Control-Allow-Origin': API_DOMAIN,
+        "Content-Type": "application/json",
+      };
+    }
+
+    
     return config;
   },
   (error) => {

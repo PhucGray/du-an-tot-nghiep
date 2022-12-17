@@ -1037,6 +1037,7 @@ const KiSoChiTiet = () => {
           {!daChuyenDuyet && nguoiDung?.isDeXuat && (
             <>
               <Popconfirm
+                disabled={dsBuocDuyet.length === 0}
                 title="Bạn có chắc chắn muốn chuyển duyệt đề xuất?"
                 onConfirm={handleChuyenDuyet}
                 okText="Đồng ý"

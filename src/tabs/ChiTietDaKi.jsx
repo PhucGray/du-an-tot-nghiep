@@ -17,26 +17,35 @@ const ChiTietDaKi = () => {
   const [sai, setSai] = useState(false);
   const [hople2, setHople2] = useState(false);
 
+  console.log('CHAY 1')
   useEffect(() => {
+    console.log('CHAY 2')
+    
     const a = async () => {
       try {
         const res = await getFileChiTiet({ id: params?.id || "afbawf" });
+        console.log('CHAY 3')
 
         setSai(res.data?.data === null);
         if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
           const fileDaKy = res.data?.data?.kySoDeXuat?.fileDaKy;
 
+          console.log('CHAY 4')
+
           if (!!fileDaKy) {
+            console.log('CHAY 5')
             setMucDo(res.data?.data?.mucDo);
 
             // mucdo
             if(mucDo === 2) {
+              console.log('CHAY 6')
               const res_2 = await checkAccountSvc();
               console.log(res_2.data);
             }
 
             setUrl(API_DOMAIN + fileDaKy);
           } else {
+            console.log('CHAY 7')
             setSai(true)
           }
         }

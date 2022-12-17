@@ -41,6 +41,12 @@ const ChiTietDaKi = () => {
               console.log('CHAY 6')
               const res_2 = await checkAccountSvc();
               console.log(res_2.data);
+
+              if(res_2.status === SUCCESS && res_2.data?.retCode === RETCODE_SUCCESS) {
+
+              } else {
+                setSai(true)
+              }
             }
 
             setUrl(API_DOMAIN + fileDaKy);

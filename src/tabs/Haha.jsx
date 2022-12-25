@@ -10,24 +10,26 @@ import { AiOutlineFile } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { getListKySoBuocDuyet } from "../store/kyso/services";
 import { useSelector } from "react-redux";
-import { nguoiDungSelector } from "../store/auth/selectors";
+import { nguoiDungSelector, tokenSelector } from "../store/auth/selectors";
 import { getListKSDX_ChoDuyet } from "../store/kysodexuat/service";
-
+import api from '../api'
 
 const { Panel } = Collapse;
 
 const App = () => {
   const navigate = useNavigate()
-  const nguoiDung = useSelector(nguoiDungSelector)
+  const nguoiDung = useSelector(nguoiDungSelector);
+  const token = useSelector(tokenSelector);
+  // console.log(nguoiDung)
 
   const [listVanBan, setListVanBan] = useState([]);
   const [listChoDuyet, setListChoDuyet] = useState([])
   const [listDeXuat, setListDeXuat] = useState([])
 
-  const handleGetListVanBan = async () => {
+  const handleGetListVanBan = async (token) => {
     // setGetListLoading(true);
     try {
-      const res = await getListVanBan();
+      const res = await getListVanBan(token);
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         setListVanBan(
@@ -35,13 +37,14 @@ const App = () => {
         );
       }
     } catch (error) {
+      // window.location.reload()
     } finally {
       // setGetListLoading(false);
     }
   };
 
-  const handleGetListChoDuyet = async () => {
-    const res = await getListKySoBuocDuyet();
+  const handleGetListChoDuyet = async (token) => {
+    const res = await getListKySoBuocDuyet(token);
 
     setListChoDuyet(
       res.data?.data?.filter(item => item?.ma_NguoiKy === nguoiDung?.ma_NguoiDung)?.map((item, index) => {
@@ -60,6 +63,7 @@ const App = () => {
     try {
       const res = await getListKSDX_ChoDuyet({
         id: nguoiDung?.ma_NguoiDung,
+        token
       });
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
         setListDeXuat(res.data?.data);
@@ -72,12 +76,14 @@ const App = () => {
       // setGetListLoading(false);
     }
   };
-
   useEffect(() => {
-    handleGetListVanBan()
-    handleGetListChoDuyet()
-    handleGetListDeXuat()
-  }, []);
+    if(!!token) {
+      console.log('run')
+      handleGetListVanBan(token)
+      handleGetListChoDuyet(token)
+      handleGetListDeXuat(token)
+    }
+  }, [token]);
 
   const columnsVanBan = [
     {

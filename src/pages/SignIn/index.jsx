@@ -38,7 +38,11 @@ const SignIn = () => {
         dispatch(setNguoiDung(res.data?.data));
         message.success(res.data?.retText);
 
-        navigate("/", { replace: true });
+        // setTimeout(() => {
+        //   navigate("/", { replace: true });
+        // }, 3000);
+
+        // window.location.reload();
       } else {
         message.error(res.data?.retText);
       }

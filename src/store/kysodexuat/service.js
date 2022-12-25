@@ -9,7 +9,11 @@ export const getListKSDX_DaDuyet = ({ id }) => {
   return api.get(API.KSDX_DA_DUYET + "/" + id);
 };
 
-export const getListKSDX_ChoDuyet = ({ id }) => {
+export const getListKSDX_ChoDuyet = ({ id, token = null }) => {
+  if(token) {
+    return api.get(API.KSDX_CHO_DUYET + '/' + id, {"Authorization" : `Bearer ${token}`})
+  }
+
   return api.get(API.KSDX_CHO_DUYET + "/" + id);
 };
 

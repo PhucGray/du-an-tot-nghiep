@@ -36,12 +36,12 @@ const Navigation = () => {
   const isLogin = !!nguoiDung && !!token;
 
   useEffect(() => {
-    if (isLogin) {
+    if (isLogin && !!token) {
       api.defaults.headers.common = {
         Authorization: `Bearer ${token}`,
       };
     }
-  }, [isLogin]);
+  }, [isLogin, token]);
 
   const isFileDaKi = location.pathname.includes('FILE-DA-KY');
 

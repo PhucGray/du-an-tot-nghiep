@@ -101,6 +101,9 @@ const KiThu = () => {
   const _file_ = localStorage.getItem("ki-that");
   const _file_gan_ma_ = localStorage.getItem("gan-ma-qr");
   const _file_chuan_bi_ = localStorage.getItem("chuan-bi");
+  const listImgStr = localStorage.getItem('listImg');
+
+  const listImg = listImgStr ? JSON.parse(listImgStr) : null;
 
   const navigate = useNavigate();
 
@@ -431,12 +434,6 @@ const KiThu = () => {
         }
       } else {
         const res = await kyThuSvc({
-          inputFile: url,
-          id_NguoiDung: params?.id,
-          postPositionSigns: [...finalImages, ...finalTexts],
-        });
-
-        console.log({
           inputFile: url,
           id_NguoiDung: params?.id,
           postPositionSigns: [...finalImages, ...finalTexts],
@@ -942,7 +939,11 @@ const KiThu = () => {
     localStorage.removeItem("cau-hinh-qr");
   }, []);
 
-
+  // console.log(texts)
+  // console.log(currentPage)console.log()
+  // console.log(listImg)
+  // console.log(currentPage)
+  // console.log(pageIndex)
 
   return (
     <div className="mx-auto" style={{ width: "100%", minHeight: "100vh" }}>
@@ -1186,6 +1187,8 @@ const KiThu = () => {
                 marginInline: "auto",
               }}>
               <Page
+                listImg={listImg}
+                pageIndex={pageIndex}
                 setPdfSize={setPdfSize}
                 dimensions={dimensions}
                 updateDimensions={setDimensions}
@@ -1233,6 +1236,7 @@ const KiThu = () => {
                         }}
                         onChangePos={(data) => {
                           setDisableXuat(false);
+
                           setImages(
                             [...images].map((image, index) => {
                               const x = data?.x;
@@ -1257,11 +1261,7 @@ const KiThu = () => {
                                 };
                               }
 
-                              return {
-                                ...image,
-                                width,
-                                height,
-                              };
+                              return image;
                             }),
                           );
                         }}
@@ -1297,8 +1297,9 @@ const KiThu = () => {
                                 text.x = x;
                                 text.y = y;
                                 const finalY =
-                                  pdfSizes[index].height - y - height;
+                                  pdfSizes[pageIndex]?.height - y - height;
                                 const finalX = x;
+
 
                                 return {
                                   ...text,

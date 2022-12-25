@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { API_DOMAIN } from "../../../configs/api";
 
 export default ({
   page,
@@ -7,6 +8,8 @@ export default ({
   setPdfSize,
   pages,
   getPageSizes = () => {},
+  listImg,
+  pageIndex
 }) => {
   const canvasRef = useRef();
   const [width, setWidth] = useState((dimensions && dimensions.width) || 0);
@@ -64,7 +67,20 @@ export default ({
   }, [pages]);
 
   return (
-    <div>
+    <div style={{position: 'relative'}}>
+     {listImg?.length > 0 && <div
+        style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}
+      >
+        <img 
+          // src='https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg?crop=1.00xw:0.669xh;0,0.190xh&resize=640:*'
+          src={API_DOMAIN + '/' + listImg?.[pageIndex]}
+          style={{
+            height: '100%',
+            width: '100%',
+            opacity: 1
+          }}
+        />
+      </div>}
       <canvas ref={canvasRef} width={width} height={height} />
     </div>
   );

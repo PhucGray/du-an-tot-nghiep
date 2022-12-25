@@ -1,7 +1,9 @@
 import api from "../../api";
 import * as API from "../../configs/api";
 
-export const getListVanBan = () => {
+export const getListVanBan = (token = null) => {
+  if(!!token) return api.get(API.VAN_BAN, {headers: {"Authorization" : `Bearer ${token}`}})
+
   return api.get(API.VAN_BAN)
 }
 

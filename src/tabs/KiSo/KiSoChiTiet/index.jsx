@@ -207,8 +207,12 @@ const KiSoChiTiet = () => {
       const res = await kiemTraPasscodeSvc(data);
 
       if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        const index = KSDXData?.kySoBuocDuyets?.findIndex(i => i ?.ma_BuocDuyet === buocDuyetHienTai?.ma_BuocDuyet);
+        const fileKyThat = index === 0 ? KSDXData?.inputFile : KSDXData?.kySoBuocDuyets?.[index - 1]?.fileDaKy
         localStorage.setItem("ki-that", KSDXData?.inputFile);
-        localStorage.setItem('idFb', idFb)
+        localStorage.setItem('idFb', idFb);
+        // localStorage.setItem('listImg', JSON.stringify(listImg))
+        localStorage.setItem('listImg', JSON.stringify(listImg))
         navigate("/ki-cho-duyet/ki-that/" + buocDuyetHienTai?.ma_BuocDuyet);
       } else {
         message.error(res.data?.retText);
@@ -219,12 +223,17 @@ const KiSoChiTiet = () => {
       setSubmitPasscodeLoading(false);
     }
   };
+  
+
+  // console.log(KSDXData)
+  const [listImg, setListImg] = useState(null)
 
   const getKSDX = async () => {
     try {
       const res = await getKSDXSvc({ id: params?.id });
 
-      const data = res.data?.data;
+      const data = res.data?.data?.chitiet;
+      setListImg(res.data?.data?.listImg)
       setKSDXData({
         ...data,
         tenFile: data?.ten_FileGoc,

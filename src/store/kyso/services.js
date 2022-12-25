@@ -9,7 +9,11 @@ export const getChiTietBuocDuyetSvc = ({id}) => {
   return api.get(API.KSBD_CHI_TIET + '/' + id)
 } 
 
-export const getListKySoBuocDuyet = () => {
+export const getListKySoBuocDuyet = (token = null) => {
+  if(token) {
+    return api.get(API.KS_BUOC_DUYET, {"Authorization" : `Bearer ${token}`})
+  }
+
   return api.get(API.KS_BUOC_DUYET);
 };
 

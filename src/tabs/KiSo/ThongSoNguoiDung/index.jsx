@@ -394,13 +394,13 @@ export default () => {
               }}>
               Chi tiết
             </Button>
-            <Popconfirm
+            {nguoiDung?.isKySo && <Popconfirm
               title="Bạn có chắc chắn muốn xoá?"
               onConfirm={() => handleDelete(record)}
               okText="Đồng ý"
               cancelText="Thoát">
               <Button type="link">Xoá</Button>
-            </Popconfirm>
+            </Popconfirm>}
           </div>
         </div>
       ),

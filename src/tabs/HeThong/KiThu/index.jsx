@@ -101,7 +101,7 @@ const KiThu = () => {
   const _file_ = localStorage.getItem("ki-that");
   const _file_gan_ma_ = localStorage.getItem("gan-ma-qr");
   const _file_chuan_bi_ = localStorage.getItem("chuan-bi");
-  const listImgStr = localStorage.getItem('listImg');
+  const listImgStr = localStorage.getItem("listImg");
 
   const listImg = listImgStr ? JSON.parse(listImgStr) : null;
 
@@ -110,8 +110,8 @@ const KiThu = () => {
   const nguoiDung = useSelector(nguoiDungSelector);
 
   const [nguoiDungKi, setNguoiDungKi] = useState(null);
-  const [isVungKyImg, setIsVungKyImg] = useState(false)
-  const [isVungKyText, setIsVungKyText] = useState(false)
+  const [isVungKyImg, setIsVungKyImg] = useState(false);
+  const [isVungKyText, setIsVungKyText] = useState(false);
 
   const [pdfSizes, setPdfSizes] = useState([]);
   const [pdfSize, setPdfSize] = useState({ width: 0, height: 0 });
@@ -134,6 +134,8 @@ const KiThu = () => {
 
   const [chiTietBuocDuyet, setChiTietBuocDuyet] = useState(null);
   const [buocDuyetHienTai, setBuocDuyetHienTai] = useState(null);
+
+  const [maBUocDuyetHtKyThat, setMaBuocDuyetHTKyThat] = useState(null);
 
   const initializePageAndAttachments = (pdfDetails) => {
     initialize(pdfDetails);
@@ -183,20 +185,20 @@ const KiThu = () => {
   });
 
   const removeBuoc = async () => {
-    const id = localStorage.getItem('idFb')
+    const id = localStorage.getItem("idFb");
     const docRef = doc(db, "dexuat", id);
-    const docSnap = await getDoc(docRef)
+    const docSnap = await getDoc(docRef);
 
-    if(docSnap.exists) {
+    if (docSnap.exists) {
       const data = docSnap.data();
 
-      const newListOrder = data?.listOrder?.slice(1)
+      const newListOrder = data?.listOrder?.slice(1);
 
       await updateDoc(docRef, {
         listOrder: newListOrder,
-    });
+      });
     }
-  }
+  };
 
   const getChiTietBuocDuyet = async () => {
     try {
@@ -313,7 +315,7 @@ const KiThu = () => {
       const data = {
         ma_NguoiTao,
         vungKies,
-        ma_DeXuat: parseInt(params?.id)
+        ma_DeXuat: parseInt(params?.id),
       };
 
       const res = await themVungKySvc(data);
@@ -385,7 +387,7 @@ const KiThu = () => {
       const finalImages = images.map((image) => {
         const finalY = pdfSizes[pageIndex]?.height - image?.y - image?.img_h;
 
-        const y = image?.isVungKy === true ?  finalY: image?.finalY;
+        const y = image?.isVungKy === true ? finalY : image?.finalY;
 
         return {
           y: Math.round(y / e),
@@ -400,7 +402,7 @@ const KiThu = () => {
       const finalTexts = texts.map((text) => {
         const finalY = pdfSizes[pageIndex]?.height - text?.y - text?.img_h;
 
-        const y = text?.isVungKy === true ?  finalY: text?.finalY;
+        const y = text?.isVungKy === true ? finalY : text?.finalY;
 
         return {
           y: Math.round(y / e),
@@ -422,8 +424,8 @@ const KiThu = () => {
 
         if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
           message.success(res.data?.retText);
-          dispatch(setCurrentItem({fileDaKy: res.data?.data?.fileDaKy}))
-          removeBuoc()
+          dispatch(setCurrentItem({ fileDaKy: res.data?.data?.fileDaKy }));
+          removeBuoc();
           navigate(
             "/" +
               TAB.KI_DA_DUYET +
@@ -615,7 +617,6 @@ const KiThu = () => {
 
   const getDsBuocDuyet = async () => {
     try {
-      // console.log(params?.id)
       const res = await getDsBuocDuyetSvc({ id: params?.id });
 
       setListBuocDuyet(
@@ -635,18 +636,25 @@ const KiThu = () => {
 
   const rImg = useRef([]);
   const rText = useRef([]);
+  const kithatRImg = useRef([]);
 
-  const getVungKyDeXuat = async (id = null) => {
+  const getVungKyDeXuat = async (id = null, idBuoc = null) => {
     try {
       const res = await getVungKyDeXuatSvc({ id: parseInt(id || params?.id) });
 
+      // console.log(res.data?.data)
+      const bdht = res.data?.data?.find((i) => i?.ma_BuocDuyet === idBuoc);
+      const _bdht = { ...bdht, json: JSON.parse(bdht?.json) };
+
       const r = [];
 
-      if(!!id) {
-        res?.data?.data?.filter(i => i?.ma_BuocDuyet == params?.id)?.map((item) => {
-          const json = JSON.parse(item?.json);
-          r.push(json);
-        });
+      if (!!id) {
+        res?.data?.data
+          ?.filter((i) => i?.ma_BuocDuyet == (idBuoc || params?.id))
+          ?.map((item) => {
+            const json = JSON.parse(item?.json);
+            r.push(json);
+          });
       } else {
         res?.data?.data?.map((item) => {
           const json = JSON.parse(item?.json);
@@ -654,224 +662,137 @@ const KiThu = () => {
         });
       }
 
-
       const flatten = r.flat();
 
-      if(flatten.length > 0) {
+      if (flatten.length > 0) {
         setDisableXuat(false);
       }
 
       const numberOfImages = flatten.filter((item) => !item?.textSign).length;
       const numberOfTexts = flatten.filter((item) => !!item?.textSign).length;
 
-      // if(numberOfImages > 0) {
-      //   setIsVungKyImg(true)
-      // }
+      if (isKiThat) {
+        // console.log(_bdht?.json)
 
-      // if(numberOfTexts > 0) {
-      //   setIsVungKyText(true)
-      // } 
-
-      for (let i = 0; i < res.data?.data.length; i++) {
-        const item = res.data?.data[i];
-
-        const json = JSON.parse(item?.json);
-        const buocDuyetHienTai = listBuocDuyet.find(
-          (i) => i?.ma_BuocDuyet == item?.ma_BuocDuyet,
-        );
-        const _json = json?.map((item) => ({ ...item, buocDuyetHienTai }));
-
-        for (let i = 0; i < _json.length; i++) {
-          const isLastImg = rImg.current.length === numberOfImages - 1;
-          const isLastText = rText.current.length === numberOfTexts - 1;
-          const item = _json[i];
-
+        for (let i = 0; i < _bdht?.json?.length; i++) {
+          const item = _bdht?.json?.[i];
+          // console.log(item)
           const finalY = pdfSizes[pageIndex]?.height - item?.y - item?.img_h;
           const finalX = item?.x;
+          // console.log(finalX)
+          // console.log('chay 2')
 
-          if (!item?.textSign) {
-            rImg.current = [
-              ...rImg.current,
-              {
-                id: uuidv4(),
-                x: item?.x,
-                y: finalY,
-                img_h: item?.img_h,
-                img_w: item?.img_w,
-                height: item?.img_h,
-                width: item?.img_w,
-                isDragging: false,
-                src: API_DOMAIN + item?.imgSign,
-                pageIndex: item?.pageSign - 1,
-                buocDuyetHienTai,
-                finalX,
-                finalY,
-                isVungKy: true
-              },
-            ];
+          kithatRImg.current = [
+            ...kithatRImg.current,
+            {
+              id: uuidv4(),
+              x: item?.x,
+              y: finalY,
+              img_h: item?.img_h,
+              img_w: item?.img_w,
+              height: item?.img_h,
+              width: item?.img_w,
+              isDragging: false,
+              src: API_DOMAIN + item?.imgSign,
+              pageIndex: item?.pageSign - 1,
+              finalX,
+              finalY,
+              isVungKy: true
+            },
+          ];
+        }
 
-            if (isLastImg) {
-              setImages(rImg.current);
+        // console.log(kithatRImg.current)
+        setImages(kithatRImg.current)
+
+        // setImages({
+        //   id: uuidv4(),
+        //   x: item?.x,
+        //   y: finalY,
+        //   img_h: item?.img_h,
+        //   img_w: item?.img_w,
+        //   height: item?.img_h,
+        //   width: item?.img_w,
+        //   isDragging: false,
+        //   src: API_DOMAIN + item?.imgSign,
+        //   pageIndex: item?.pageSign - 1,
+        //   buocDuyetHienTai,
+        //   finalX,
+        //   finalY,
+        //   isVungKy: true
+        // },)
+      } else {
+        for (let i = 0; i < res.data?.data.length; i++) {
+          const item = res.data?.data[i];
+
+          const json = JSON.parse(item?.json);
+
+          const buocDuyetHienTai = bdht
+            ? _bdht
+            : listBuocDuyet.find((i) => i?.ma_BuocDuyet == item?.ma_BuocDuyet);
+
+          const _json = json?.map((item) => ({ ...item, buocDuyetHienTai }));
+
+          for (let i = 0; i < _json.length; i++) {
+            const isLastImg = rImg.current.length === numberOfImages - 1;
+            const isLastText = rText.current.length === numberOfTexts - 1;
+            const item = _json[i];
+
+            const finalY = pdfSizes[pageIndex]?.height - item?.y - item?.img_h;
+            const finalX = item?.x;
+
+            if (!item?.textSign) {
+              rImg.current = [
+                ...rImg.current,
+                {
+                  id: uuidv4(),
+                  x: item?.x,
+                  y: finalY,
+                  img_h: item?.img_h,
+                  img_w: item?.img_w,
+                  height: item?.img_h,
+                  width: item?.img_w,
+                  isDragging: false,
+                  src: API_DOMAIN + item?.imgSign,
+                  pageIndex: item?.pageSign - 1,
+                  buocDuyetHienTai,
+                  finalX,
+                  finalY,
+                  isVungKy: true,
+                },
+              ];
+
+              if (isLastImg) {
+                setImages(rImg.current);
+              }
+            } else {
+              rText.current = [
+                ...rText.current,
+                {
+                  id: uuidv4(),
+                  x: item?.x,
+                  y: finalY,
+                  isDragging: false,
+                  content: item?.textSign,
+                  pageIndex: item?.pageSign - 1,
+                  buocDuyetHienTai,
+                  img_h: item?.img_h,
+                  img_w: item?.img_w,
+                  height: item?.img_h,
+                  width: item?.img_w,
+                  finalX,
+                  finalY,
+                  isVungKy: true,
+                },
+              ];
+
+              if (isLastText) {
+                setTexts(rText.current);
+              }
             }
-          } else {
-            rText.current = [
-              ...rText.current,
-              {
-                id: uuidv4(),
-                x: item?.x,
-                y: finalY,
-                isDragging: false,
-                content: item?.textSign,
-                pageIndex: item?.pageSign - 1,
-                buocDuyetHienTai,
-                img_h: item?.img_h,
-                img_w: item?.img_w,
-                height: item?.img_h,
-                width: item?.img_w,
-                finalX,
-                finalY,
-                isVungKy: true
-              },
-            ];
-
-            if (isLastText) {
-              setTexts(rText.current);
-            }
-
-            // setTexts([
-            //   ...texts,
-            //   {
-            //     id: uuidv4(),
-            //     x: item?.x,
-            //     y: finalY,
-            //     isDragging: false,
-            //     content: item?.textSign,
-            //     pageIndex: item?.pageSign - 1,
-            //     buocDuyetHienTai,
-            //   },
-            // ]);
           }
         }
       }
-
-      // res.data?.data?.map((item) => {
-      //   const json = JSON.parse(item?.json);
-      //   const buocDuyetHienTai = listBuocDuyet.find(
-      //     (i) => i?.ma_BuocDuyet == item?.ma_BuocDuyet,
-      //   );
-      //   const _json = json?.map((item) => ({ ...item, buocDuyetHienTai }));
-      //   _json?.map((item) => {
-      //     const finalY = pdfSizes[pageIndex]?.height - item?.y - item?.img_h;
-      //     const finalX = item?.x;
-
-      //     if (!item?.textSign) {
-      //       console.log([
-      //         ...images,
-      //         {
-      //           id: uuidv4(),
-      //           x: item?.x,
-      //           y: finalY,
-      //           img_h: item?.img_h,
-      //           img_w: item?.img_w,
-      //           isDragging: false,
-      //           src: API_DOMAIN + item?.imgSign,
-      //           pageIndex: item?.pageSign - 1,
-      //           buocDuyetHienTai,
-      //           finalX,
-      //           finalY
-      //         },
-      //       ])
-      //       setImages([
-      //         ...images,
-      //         {
-      //           id: uuidv4(),
-      //           x: item?.x,
-      //           y: finalY,
-      //           img_h: item?.img_h,
-      //           img_w: item?.img_w,
-      //           isDragging: false,
-      //           src: API_DOMAIN + item?.imgSign,
-      //           pageIndex: item?.pageSign - 1,
-      //           buocDuyetHienTai,
-      //           finalX,
-      //           finalY
-      //         },
-      //       ]);
-      //     } else {
-      //       setTexts([
-      //         ...texts,
-      //         {
-      //           id: uuidv4(),
-      //           x: item?.x,
-      //           y: finalY,
-      //           isDragging: false,
-      //           content: item?.textSign,
-      //           pageIndex: item?.pageSign - 1,
-      //           buocDuyetHienTai,
-      //         },
-      //       ]);
-      //     }
-      //   });
-      // });
-      // res.data?.data?.map((item) => {
-      //   const json = JSON.parse(item?.json);
-      //   const buocDuyetHienTai = listBuocDuyet.find(
-      //     (i) => i?.ma_BuocDuyet == item?.ma_BuocDuyet,
-      //   );
-      //   const _json = json?.map((item) => ({ ...item, buocDuyetHienTai }));
-      //   _json?.map((item) => {
-      //     const finalY = pdfSizes[pageIndex]?.height - item?.y - item?.img_h;
-      //     const finalX = item?.x;
-
-      //     if (!item?.textSign) {
-      //       console.log([
-      //         ...images,
-      //         {
-      //           id: uuidv4(),
-      //           x: item?.x,
-      //           y: finalY,
-      //           img_h: item?.img_h,
-      //           img_w: item?.img_w,
-      //           isDragging: false,
-      //           src: API_DOMAIN + item?.imgSign,
-      //           pageIndex: item?.pageSign - 1,
-      //           buocDuyetHienTai,
-      //           finalX,
-      //           finalY
-      //         },
-      //       ])
-      //       setImages([
-      //         ...images,
-      //         {
-      //           id: uuidv4(),
-      //           x: item?.x,
-      //           y: finalY,
-      //           img_h: item?.img_h,
-      //           img_w: item?.img_w,
-      //           isDragging: false,
-      //           src: API_DOMAIN + item?.imgSign,
-      //           pageIndex: item?.pageSign - 1,
-      //           buocDuyetHienTai,
-      //           finalX,
-      //           finalY
-      //         },
-      //       ]);
-      //     } else {
-      //       setTexts([
-      //         ...texts,
-      //         {
-      //           id: uuidv4(),
-      //           x: item?.x,
-      //           y: finalY,
-      //           isDragging: false,
-      //           content: item?.textSign,
-      //           pageIndex: item?.pageSign - 1,
-      //           buocDuyetHienTai,
-      //         },
-      //       ]);
-      //     }
-      //   });
-      // });
     } catch (error) {}
   };
 
@@ -896,23 +817,21 @@ const KiThu = () => {
 
   const getVungKyHienTai = async () => {
     try {
-      const res = await getVungKySvc({id: parseInt(params?.id)})
+      const res = await getVungKySvc({ id: parseInt(params?.id) });
 
-      if(res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
-        getVungKyDeXuat(res.data?.data?.kySoBuocDuyet?.ma_KySoDeXuat)
+      if (res.status === SUCCESS && res.data?.retCode === RETCODE_SUCCESS) {
+        setMaBuocDuyetHTKyThat(res.data?.data?.ma_BuocDuyet);
+        getVungKyDeXuat(
+          res.data?.data?.kySoBuocDuyet?.ma_KySoDeXuat,
+          res.data?.data?.ma_BuocDuyet,
+        );
       }
-    } catch (error) {
-      
-    }
-  }
+    } catch (error) {}
+  };
+
   useEffect(() => {
-    if (
-      isKiThat &&
-      !!_file_ &&
-      pdfSizes.length > 0
-    ) {
-      // getVungKyDeXuat();
-      getVungKyHienTai()
+    if (isKiThat && !!_file_ && pdfSizes.length > 0) {
+      getVungKyHienTai();
     }
   }, [isKiThat, _file_, pdfSizes?.length]);
 
@@ -1127,7 +1046,7 @@ const KiThu = () => {
               )}
 
               <Button
-                disabled={disableXuat} 
+                disabled={disableXuat}
                 loading={xuatLoading}
                 type="primary"
                 style={{ width: 200, borderRadius: 10 }}
@@ -1188,6 +1107,7 @@ const KiThu = () => {
               }}>
               <Page
                 listImg={listImg}
+                isKiThat={isKiThat}
                 pageIndex={pageIndex}
                 setPdfSize={setPdfSize}
                 dimensions={dimensions}
@@ -1299,7 +1219,6 @@ const KiThu = () => {
                                 const finalY =
                                   pdfSizes[pageIndex]?.height - y - height;
                                 const finalX = x;
-
 
                                 return {
                                   ...text,

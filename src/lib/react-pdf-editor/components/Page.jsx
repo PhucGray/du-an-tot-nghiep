@@ -9,7 +9,8 @@ export default ({
   pages,
   getPageSizes = () => {},
   listImg,
-  pageIndex
+  pageIndex,
+  isKiThat
 }) => {
   const canvasRef = useRef();
   const [width, setWidth] = useState((dimensions && dimensions.width) || 0);
@@ -68,7 +69,7 @@ export default ({
 
   return (
     <div style={{position: 'relative'}}>
-     {listImg?.length > 0 && <div
+     {listImg?.length > 0 && isKiThat && <div
         style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}
       >
         <img 

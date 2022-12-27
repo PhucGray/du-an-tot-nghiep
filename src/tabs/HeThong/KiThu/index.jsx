@@ -211,6 +211,8 @@ const KiThu = () => {
   const handleChonChuKy = (value, option) => {
     const key = option?.key;
 
+    console.log(buocDuyetHienTai)
+
     if (key) {
       setImages([
         ...images,
@@ -231,11 +233,16 @@ const KiThu = () => {
   const handleSelectBuocDuyet = async (value, option) => {
     const key = option?.key;
 
+    // console.log(key?.split('?'))
+    const k = key?.split('?');
+    const ma_BuocDuyet = parseInt(k?.[0])
+    const ma_NguoiDung= parseInt(k?.[1])
+
     setBuocDuyetHienTai(
-      listBuocDuyet.find((i) => i?.nguoiDung?.ma_NguoiDung == key),
+      listBuocDuyet.find((i) => i?.ma_BuocDuyet == ma_BuocDuyet),
     );
     try {
-      const res = await getThongSoNguoiDungSvc({ id: parseInt(key) });
+      const res = await getThongSoNguoiDungSvc({ id: ma_NguoiDung });
       const currentUser = res.data?.data;
       setNguoiDungKi({
         ...currentUser,
@@ -317,6 +324,9 @@ const KiThu = () => {
         vungKies,
         ma_DeXuat: parseInt(params?.id),
       };
+
+      // console.log(data)
+      // console.log(reduceChuKy([..._images]))
 
       const res = await themVungKySvc(data);
 
@@ -644,7 +654,14 @@ const KiThu = () => {
 
       // console.log(res.data?.data)
       const bdht = res.data?.data?.find((i) => i?.ma_BuocDuyet === idBuoc);
+
+      // console.log(res.data?.data)
+      // console.log(res.data?.data)
+      // console.log(JSON.parse(bdht?.json))
       const _bdht = { ...bdht, json: JSON.parse(bdht?.json) };
+      // console.log(JSON.parse(bdht?.json))
+      // console.log(idBuoc)
+      // console.log(_bdht)
 
       const r = [];
 
@@ -674,6 +691,7 @@ const KiThu = () => {
       if (isKiThat) {
         // console.log(_bdht?.json)
 
+        // console.log(_bdht)
         for (let i = 0; i < _bdht?.json?.length; i++) {
           const item = _bdht?.json?.[i];
           // console.log(item)
@@ -863,6 +881,7 @@ const KiThu = () => {
   // console.log(listImg)
   // console.log(currentPage)
   // console.log(pageIndex)
+  // console.log(listBuocDuyet)
 
   return (
     <div className="mx-auto" style={{ width: "100%", minHeight: "100vh" }}>
@@ -932,8 +951,8 @@ const KiThu = () => {
                       onSelect={handleSelectBuocDuyet}>
                       {listBuocDuyet?.map((item, index) => (
                         <Option
-                          key={item?.nguoiDung?.ma_NguoiDung}
-                          value={item?.nguoiDung?.ma_NguoiDung}>
+                          key={item?.ma_BuocDuyet + '?' + item?.nguoiDung?.ma_NguoiDung}
+                          value={item?.ma_BuocDuyet + '?' + item?.nguoiDung?.ma_NguoiDung}>
                           {item?.ten_Buoc} - {item?.nguoiDung?.hoTen}
                         </Option>
                       ))}

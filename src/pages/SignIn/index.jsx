@@ -149,7 +149,7 @@ const SignIn = () => {
               }}>Ghi nhớ đăng nhập</Checkbox>
             </Form.Item>
 
-            <Link to="forgot-password">Quên mật khẩu ?</Link>
+            {/* <Link to="forgot-password">Quên mật khẩu ?</Link> */}
           </div>
 
           <Button
